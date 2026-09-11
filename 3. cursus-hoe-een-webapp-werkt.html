@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Praktische cursus over webapps, HTTP, JSON, API's en fetch voor leerlingen van het vijfde middelbaar.">
+  <title>Hoe werkt een webapp? — HTTP, JSON en API's</title>
+  <style>
+    :root {
+      --primary:#1565c0; --primary-dark:#0d47a1; --primary-soft:#e8f1fb;
+      --accent:#ffb300; --ink:#17212b; --muted:#5f6b76; --line:#d9e0e7;
+      --surface:#fff; --background:#f4f7fa; --success:#18794e;
+      --success-soft:#e8f7ef; --warning:#9a5b00; --warning-soft:#fff5dc;
+      --danger:#b42318; --danger-soft:#ffebe9; --code:#102235;
+      --shadow:0 4px 18px rgba(23,33,43,.09); --radius:14px; --nav-width:270px;
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);background:var(--background);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.58}
+    button,input{font:inherit} a{color:var(--primary)} code,kbd,pre{font-family:"Cascadia Code",Consolas,monospace}
+    code{padding:.08rem .32rem;border-radius:5px;color:#0b4d86;background:#edf3f8}
+    kbd{display:inline-block;min-width:1.8em;margin:0 .08em;padding:.08em .42em;border:1px solid #aeb8c2;border-bottom-width:3px;border-radius:5px;background:#fff;text-align:center}
+    .skip-link{position:fixed;z-index:100;top:-60px;left:16px;padding:10px 14px;color:#fff;background:var(--primary-dark);border-radius:0 0 8px 8px}.skip-link:focus{top:0}
+    .sidebar{position:fixed;z-index:20;inset:0 auto 0 0;width:var(--nav-width);padding:24px 18px;overflow-y:auto;color:#fff;background:linear-gradient(175deg,#0d47a1,#12324f)}
+    .brand{display:flex;gap:12px;align-items:center;margin-bottom:20px}.brand-mark{display:grid;width:46px;height:46px;place-items:center;border-radius:12px;color:var(--primary-dark);background:#fff;font-weight:900}.brand strong,.brand small{display:block}.brand small{color:#cfe1f5}
+    .sidebar nav a{display:block;margin:3px 0;padding:9px 11px;border-radius:8px;color:#e5f0fc;text-decoration:none;font-size:.94rem}.sidebar nav a:hover,.sidebar nav a:focus{color:#fff;background:rgba(255,255,255,.12);outline:none}
+    .progress-label{display:flex;justify-content:space-between;margin-top:24px;color:#d7e8f8;font-size:.82rem}.progress-track{height:7px;margin-top:6px;overflow:hidden;border-radius:20px;background:rgba(255,255,255,.18)}.progress-bar{width:0;height:100%;background:var(--accent);transition:width .25s}
+    main{width:min(1100px,calc(100% - var(--nav-width)));margin-left:var(--nav-width);padding:32px clamp(20px,4vw,62px) 80px}
+    .hero{position:relative;min-height:390px;display:flex;flex-direction:column;justify-content:center;margin-bottom:26px;padding:clamp(32px,6vw,72px);overflow:hidden;border-radius:22px;color:#fff;background:radial-gradient(circle at 85% 15%,rgba(255,179,0,.95) 0 7%,transparent 7.3%),radial-gradient(circle at 92% 62%,rgba(255,255,255,.12) 0 18%,transparent 18.3%),linear-gradient(135deg,#1565c0,#0d3d70 72%);box-shadow:var(--shadow)}
+    .eyebrow{margin:0 0 10px;color:#dcecff;font-size:.82rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase}.hero h1{max-width:760px;margin:0;font-size:clamp(2.4rem,6vw,4.8rem);line-height:1.02;letter-spacing:-.045em}.hero p:not(.eyebrow){max-width:720px;margin:20px 0 0;color:#e7f1fb;font-size:clamp(1.05rem,2vw,1.28rem)}.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+    .button{display:inline-flex;gap:8px;align-items:center;min-height:42px;padding:9px 15px;border:0;border-radius:8px;color:#fff;background:var(--primary);font-weight:700;text-decoration:none;cursor:pointer}.button:hover{filter:brightness(.95)}.button.light{color:var(--primary-dark);background:#fff}.button.ghost{border:1px solid rgba(255,255,255,.45);background:transparent}
+    .lesson{margin:26px 0;padding:clamp(22px,4vw,42px);scroll-margin-top:20px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:0 2px 10px rgba(23,33,43,.055)}
+    .lesson-number{display:inline-flex;padding:4px 9px;border-radius:999px;color:var(--primary-dark);background:var(--primary-soft);font-size:.78rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+    h2{margin:10px 0 8px;font-size:clamp(1.65rem,3vw,2.3rem);line-height:1.15;letter-spacing:-.025em}h3{margin:30px 0 8px;font-size:1.25rem}h4{margin:20px 0 5px;font-size:1rem}p{margin:.55rem 0 1rem}.lead{max-width:820px;color:var(--muted);font-size:1.08rem}
+    .goal-grid,.card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}.mini-card{padding:16px;border:1px solid var(--line);border-radius:10px;background:#fbfcfd}.mini-card strong{display:block;margin-bottom:3px}.mini-card p{margin:0;color:var(--muted)}
+    .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:24px 0}.flow div{position:relative;min-height:90px;display:grid;place-items:center;padding:14px;border:2px solid #bad0e5;border-radius:11px;color:var(--primary-dark);background:#f7fbff;font-weight:800;text-align:center}.flow div:not(:last-child)::after{position:absolute;z-index:2;right:-17px;color:var(--accent);font-size:1.5rem;content:"→"}
+    .note,.warning,.danger,.success{margin:18px 0;padding:14px 16px;border-left:5px solid var(--primary);border-radius:8px;background:var(--primary-soft)}.warning{border-color:var(--accent);background:var(--warning-soft)}.danger{border-color:var(--danger);background:var(--danger-soft)}.success{border-color:var(--success);background:var(--success-soft)}.note strong,.warning strong,.danger strong,.success strong{display:block}
+    .table-wrap{margin:18px 0;overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.95rem}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:#334251;background:#f1f5f8}tr:last-child td{border-bottom:0}
+    .steps{margin:16px 0;padding:0;counter-reset:steps;list-style:none}.steps li{position:relative;min-height:42px;margin:10px 0;padding-left:50px;counter-increment:steps}.steps li::before{position:absolute;top:-2px;left:0;display:grid;width:34px;height:34px;place-items:center;border-radius:50%;color:#fff;background:var(--primary);font-weight:800;content:counter(steps)}
+    .terminal{position:relative;margin:16px 0;overflow:hidden;border-radius:10px;color:#e8eef5;background:var(--code);box-shadow:0 4px 12px rgba(7,20,32,.2)}.terminal-title{padding:8px 14px;color:#9fb4c8;background:#0b1a29;font-size:.78rem}pre{margin:0;padding:18px 55px 18px 18px;overflow-x:auto;white-space:pre;line-height:1.52}pre code{padding:0;color:inherit;background:transparent}.copy-button{position:absolute;top:42px;right:10px;padding:6px 9px;border:1px solid #50677d;border-radius:6px;color:#dce8f4;background:#1e3850;font-size:.76rem;cursor:pointer}
+    .task{margin:22px 0;padding:19px;border:2px solid #bad0e5;border-radius:12px;background:#f8fbfe}.task-head{display:flex;gap:12px;align-items:flex-start}.task-icon{display:grid;flex:0 0 38px;width:38px;height:38px;place-items:center;border-radius:9px;color:#fff;background:var(--primary);font-weight:900}.task h3,.task h4{margin-top:2px}.done-row{display:flex;gap:9px;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--line);color:var(--success);font-weight:700}.done-row input{width:19px;height:19px;accent-color:var(--success)}
+    details{margin:14px 0;border:1px solid var(--line);border-radius:9px;background:#fff}summary{padding:13px 15px;color:var(--primary-dark);font-weight:750;cursor:pointer}details>div{padding:0 15px 15px}details.teacher{border-left:5px solid #7b1fa2}details.teacher summary{color:#6a1b9a}
+    .checklist{padding-left:0;list-style:none}.checklist li{margin:8px 0;padding-left:28px}.checklist li::before{float:left;margin-left:-28px;color:var(--success);font-weight:900;content:"✓"}
+    .quiz label{display:block;margin:7px 0;padding:9px 11px;border:1px solid var(--line);border-radius:7px;cursor:pointer}.quiz label:hover{background:#f4f8fb}.quiz input{margin-right:8px;accent-color:var(--primary)}.quiz-result{min-height:1.4em;margin-top:12px;font-weight:800}.sources{font-size:.92rem}.sources li{margin:7px 0}.footer{padding:28px 8px 0;color:var(--muted);text-align:center;font-size:.88rem}
+    @media(max-width:880px){.sidebar{position:static;width:100%;max-height:none;padding:15px 18px}.sidebar nav{display:flex;gap:3px;overflow-x:auto;padding-bottom:5px}.sidebar nav a{flex:0 0 auto;white-space:nowrap}.brand{margin-bottom:8px}.progress-label,.progress-track{display:none}main{width:100%;margin:0;padding:18px 14px 60px}.hero{min-height:350px;border-radius:14px}.flow{grid-template-columns:repeat(2,1fr)}.flow div:not(:last-child)::after{display:none}}
+    @media(max-width:600px){.goal-grid,.card-grid,.flow{grid-template-columns:1fr}.lesson{padding:22px 17px}th,td{padding:9px}pre{font-size:.82rem}}
+    @media print{@page{size:A4;margin:15mm}body{color:#000;background:#fff;font-size:10.5pt}.sidebar,.hero-actions,.copy-button,.done-row,.quiz button,.footer{display:none!important}main{width:100%;margin:0;padding:0}.hero{min-height:0;margin:0 0 10mm;padding:14mm;color:#fff;box-shadow:none}.lesson{margin:0 0 9mm;padding:0;border:0;box-shadow:none;break-before:page}.lesson:first-of-type{break-before:auto}.task,.note,.warning,.danger,.success,.terminal,table,details,.flow{break-inside:avoid}details>div{display:block}a{color:inherit;text-decoration:none}}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#inhoud">Ga naar de cursus</a>
+  <aside class="sidebar" aria-label="Cursusnavigatie">
+    <div class="brand"><div class="brand-mark">HTTP</div><div><strong>Hoe werkt een webapp?</strong><small>5e middelbaar</small></div></div>
+    <nav>
+      <a href="#start">Start</a><a href="#les1">1. De onderdelen</a><a href="#les2">2. HTTP</a>
+      <a href="#les3">3. JSON en API's</a><a href="#les4">4. Fetch en DevTools</a>
+      <a href="#eindproef">Eindproef</a><a href="#spiekbrief">Spiekbrief</a>
+    </nav>
+    <div class="progress-label"><span>Mijn oefeningen</span><strong id="progressText">0/0</strong></div>
+    <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+  </aside>
+
+  <main id="inhoud">
+    <header class="hero" id="start">
+      <p class="eyebrow">Van klik tot antwoord</p>
+      <h1>Achter elke knop gebeurt een gesprek.</h1>
+      <p>Volg één bericht van de browser naar een backend en terug. Je leert HTTP lezen, JSON herkennen, een API ontwerpen en echte netwerkverzoeken onderzoeken.</p>
+      <div class="hero-actions"><a class="button light" href="#les1">Start de cursus</a><button class="button ghost" type="button" onclick="window.print()">Afdrukken / pdf</button></div>
+    </header>
+
+    <section class="lesson" aria-labelledby="route-title">
+      <span class="lesson-number">Overzicht</span><h2 id="route-title">De reis van een bericht</h2>
+      <div class="flow" aria-label="De werking van een webapp">
+        <div>Browser<br><small>interface</small></div><div>HTTP<br><small>verzoek</small></div><div>Backend<br><small>logica + data</small></div><div>HTTP<br><small>antwoord</small></div>
+      </div>
+      <div class="goal-grid">
+        <div class="mini-card"><strong>Onderdelen herkennen</strong><p>Frontend, backend, webserver en database uit elkaar houden.</p></div>
+        <div class="mini-card"><strong>HTTP lezen</strong><p>Methode, URL, headers, body en statuscode verklaren.</p></div>
+        <div class="mini-card"><strong>Een API ontwerpen</strong><p>Endpoints en JSON-afspraken uitschrijven vóór je programmeert.</p></div>
+        <div class="mini-card"><strong>Zelf onderzoeken</strong><p>Met Network in DevTools bewijzen wat er werkelijk gebeurt.</p></div>
+      </div>
+      <details class="teacher"><summary>Docentfiche: timing en voorbereiding</summary><div>
+        <div class="table-wrap"><table><thead><tr><th>Lesuur</th><th>Inhoud</th><th>Resultaat</th></tr></thead><tbody>
+          <tr><td>1</td><td>Architectuur en URL's</td><td>Leerlingen tekenen de route van één actie.</td></tr>
+          <tr><td>2</td><td>HTTP, JSON en API-contract</td><td>Leerlingen lezen requests en ontwerpen endpoints.</td></tr>
+          <tr><td>3</td><td>Vite, fetch en Network</td><td>Werkende pagina met mockdata, laad- en fouttoestand.</td></tr>
+          <tr><td>4</td><td>Eindproef</td><td>Volledig API-contract voor een klasprikbord.</td></tr>
+        </tbody></table></div>
+        <p>Voorkennis: de cursus VS Code/Vite. Nodig: een werkend Vite-project en een moderne browser. Er is nog geen PHP nodig.</p>
+      </div></details>
+    </section>
+
+    <section class="lesson" id="les1" aria-labelledby="les1-title">
+      <span class="lesson-number">Les 1</span><h2 id="les1-title">Frontend, backend en data</h2>
+      <p class="lead">Een webapp is meer dan een website. De browser toont de interface, maar gegevens en beslissingen kunnen op een andere computer staan.</p>
+      <div class="table-wrap"><table><thead><tr><th>Onderdeel</th><th>Taak</th><th>Voorbeeld</th></tr></thead><tbody>
+        <tr><td><strong>Client</strong></td><td>Toestel of programma dat iets vraagt.</td><td>Browser op je laptop.</td></tr>
+        <tr><td><strong>Frontend</strong></td><td>Wat de gebruiker ziet en bedient.</td><td>HTML, CSS en JavaScript.</td></tr>
+        <tr><td><strong>Webserver</strong></td><td>Ontvangt HTTP-verzoeken en stuurt antwoorden.</td><td>Vite-devserver of PHP-server.</td></tr>
+        <tr><td><strong>Backend</strong></td><td>Controleert invoer en voert regels uit.</td><td>PHP-code die een bericht opslaat.</td></tr>
+        <tr><td><strong>Database</strong></td><td>Bewaart en doorzoekt gegevens.</td><td>Later: SQLite of MariaDB.</td></tr>
+        <tr><td><strong>API</strong></td><td>De afgesproken ingang tot de backend.</td><td><code>GET /api/berichten</code>.</td></tr>
+      </tbody></table></div>
+      <div class="note"><strong>Statisch tegenover dynamisch</strong>Een statische pagina stuurt bestaande bestanden terug. Een dynamische app maakt een antwoord op basis van invoer, regels en opgeslagen gegevens.</div>
+
+      <h3>Wat betekent een URL?</h3>
+      <div class="terminal"><div class="terminal-title">Voorbeeld-URL</div><pre><code>https://apps.school.be:443/api/berichten?limit=10
+└─┬─┘   └──────┬──────┘└┬┘└──────┬──────┘└───┬───┘
+schema         host      poort     pad          query</code></pre></div>
+      <ul>
+        <li><strong>Schema</strong>: welk protocol? <code>https</code> is HTTP met versleuteling.</li>
+        <li><strong>Host</strong>: welke computer of dienst?</li>
+        <li><strong>Poort</strong>: welke ingang? HTTPS gebruikt normaal 443; lokaal zie je vaak 5173 of 8000.</li>
+        <li><strong>Pad</strong>: welke bron wil je?</li>
+        <li><strong>Query</strong>: extra parameters na <code>?</code>.</li>
+      </ul>
+      <div class="note"><strong>localhost en 127.0.0.1</strong>Beide verwijzen naar je eigen computer. <code>http://127.0.0.1:5173</code> is dus niet automatisch zichtbaar voor de rest van de klas.</div>
+
+      <div class="task"><div class="task-head"><div class="task-icon">1A</div><div><h3>Teken de route</h3><p>Volg de knop “Plaats bericht”.</p></div></div>
+        <ol><li>Teken browser, webserver, backend en opslag.</li><li>Zet pijlen voor verzoek en antwoord.</li><li>Schrijf bij elke pijl welke gegevens reizen.</li><li>Markeer waar invoer gecontroleerd moet worden.</li></ol>
+        <details><summary>Controle</summary><div>De browser stuurt tekst; de backend valideert en bewaart; de backend antwoordt met resultaat en statuscode; de browser past de pagina aan.</div></details>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="1a"> Opdracht 1A voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les2" aria-labelledby="les2-title">
+      <span class="lesson-number">Les 2</span><h2 id="les2-title">HTTP: verzoek en antwoord</h2>
+      <p class="lead">HTTP is de taal waarmee een client en server berichten uitwisselen. Elk verzoek krijgt één antwoord.</p>
+      <div class="card-grid">
+        <div class="mini-card"><strong>Request</strong><p>Methode + pad + headers + soms een body.</p></div>
+        <div class="mini-card"><strong>Response</strong><p>Statuscode + headers + soms een body.</p></div>
+      </div>
+      <div class="terminal"><div class="terminal-title">Vereenvoudigd HTTP-verzoek</div><pre><code>POST /api/berichten HTTP/1.1
+Host: app.school.be
+Content-Type: application/json
+Accept: application/json
+
+{"tekst":"Hallo klas!"}</code></pre></div>
+      <div class="terminal"><div class="terminal-title">Vereenvoudigd HTTP-antwoord</div><pre><code>HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+
+{"data":{"id":42,"tekst":"Hallo klas!"}}</code></pre></div>
+      <div class="note"><strong>HTTP is stateless</strong>Een volgend verzoek weet niet vanzelf wat er eerder gebeurde. Inloggen werkt daarom met een cookie of token dat bij volgende verzoeken wordt meegestuurd.</div>
+
+      <h3>Veelgebruikte methodes</h3>
+      <div class="table-wrap"><table><thead><tr><th>Methode</th><th>Bedoeling</th><th>Voorbeeld</th></tr></thead><tbody>
+        <tr><td><code>GET</code></td><td>Gegevens lezen.</td><td>Lijst berichten ophalen.</td></tr>
+        <tr><td><code>POST</code></td><td>Iets nieuws maken.</td><td>Nieuw bericht plaatsen.</td></tr>
+        <tr><td><code>PUT</code></td><td>Een bron volledig vervangen.</td><td>Volledig profiel overschrijven.</td></tr>
+        <tr><td><code>PATCH</code></td><td>Een deel wijzigen.</td><td>Alleen de tekst aanpassen.</td></tr>
+        <tr><td><code>DELETE</code></td><td>Iets verwijderen.</td><td>Bericht 42 wissen.</td></tr>
+      </tbody></table></div>
+
+      <h3>Statuscodes zijn het verkeerslicht</h3>
+      <div class="table-wrap"><table><thead><tr><th>Code</th><th>Betekenis</th><th>Typische situatie</th></tr></thead><tbody>
+        <tr><td><code>200 OK</code></td><td>Gelukt</td><td>GET levert gegevens.</td></tr>
+        <tr><td><code>201 Created</code></td><td>Aangemaakt</td><td>POST maakte een bericht.</td></tr>
+        <tr><td><code>204 No Content</code></td><td>Gelukt, geen body</td><td>Verwijderen zonder extra antwoord.</td></tr>
+        <tr><td><code>400 Bad Request</code></td><td>Verzoek ongeldig</td><td>JSON is kapot.</td></tr>
+        <tr><td><code>401 Unauthorized</code></td><td>Niet aangemeld</td><td>Login ontbreekt of is verlopen.</td></tr>
+        <tr><td><code>403 Forbidden</code></td><td>Geen toestemming</td><td>Aangemeld, maar geen beheerder.</td></tr>
+        <tr><td><code>404 Not Found</code></td><td>Niet gevonden</td><td>Endpoint of id bestaat niet.</td></tr>
+        <tr><td><code>409 Conflict</code></td><td>Conflict</td><td>Gebruikersnaam bestaat al.</td></tr>
+        <tr><td><code>422 Unprocessable Content</code></td><td>Inhoud faalt validatie</td><td>Tekst is leeg of te lang.</td></tr>
+        <tr><td><code>500 Internal Server Error</code></td><td>Fout in server</td><td>Backend kan bestand niet lezen.</td></tr>
+      </tbody></table></div>
+      <div class="warning"><strong>Een fout is ook een correct antwoord</strong>Een nette API gebruikt bijvoorbeeld 422 met een duidelijke JSON-fout. Altijd 200 sturen en alleen “error” in de body zetten maakt debuggen moeilijker.</div>
+
+      <div class="task"><div class="task-head"><div class="task-icon">2A</div><div><h3>Kies methode en status</h3><p>Vul eerst zelf in en open daarna de oplossing.</p></div></div>
+        <ol><li>De lijst met berichten opvragen.</li><li>Een geldig nieuw bericht bewaren.</li><li>Een leeg bericht weigeren.</li><li>Bericht 999 verwijderen, maar het bestaat niet.</li></ol>
+        <details><summary>Oplossing</summary><div>1: GET + 200. 2: POST + 201. 3: POST + 422. 4: DELETE + 404.</div></details>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="2a"> Opdracht 2A voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les3" aria-labelledby="les3-title">
+      <span class="lesson-number">Les 3</span><h2 id="les3-title">JSON en een API-contract</h2>
+      <p class="lead">JSON is tekst met een vaste structuur. Frontend en backend spreken vooraf af welke velden ze verzenden.</p>
+      <div class="terminal"><div class="terminal-title">Geldige JSON</div><button class="copy-button" type="button">Kopieer</button><pre><code>{
+  "data": [
+    { "id": 1, "tekst": "Welkom!", "auteur": "Ada" },
+    { "id": 2, "tekst": "Tot morgen", "auteur": "Linus" }
+  ]
+}</code></pre></div>
+      <ul class="checklist"><li>Sleutels en tekst staan tussen dubbele aanhalingstekens.</li><li>Een object gebruikt accolades; een lijst gebruikt vierkante haken.</li><li>Booleans zijn <code>true</code> of <code>false</code>; lege waarde is <code>null</code>.</li><li>JSON heeft geen commentaar en geen komma na het laatste item.</li></ul>
+      <div class="danger"><strong>JSON is geen JavaScript-object</strong>Ze lijken op elkaar, maar JSON is tekst. <code>JSON.stringify(object)</code> maakt JSON-tekst; <code>JSON.parse(tekst)</code> maakt er in JavaScript weer gegevens van.</div>
+
+      <h3>Endpoint = methode + pad</h3>
+      <div class="table-wrap"><table><thead><tr><th>Methode</th><th>Pad</th><th>Actie</th><th>Succes</th></tr></thead><tbody>
+        <tr><td>GET</td><td><code>/api/berichten</code></td><td>Alle berichten</td><td>200</td></tr>
+        <tr><td>GET</td><td><code>/api/berichten/42</code></td><td>Eén bericht</td><td>200 of 404</td></tr>
+        <tr><td>POST</td><td><code>/api/berichten</code></td><td>Nieuw bericht</td><td>201</td></tr>
+        <tr><td>PATCH</td><td><code>/api/berichten/42</code></td><td>Bericht aanpassen</td><td>200 of 404</td></tr>
+        <tr><td>DELETE</td><td><code>/api/berichten/42</code></td><td>Bericht verwijderen</td><td>204 of 404</td></tr>
+      </tbody></table></div>
+      <p>Die volledige afspraak noemen we een <strong>API-contract</strong>: endpoints, invoervelden, antwoordvelden, validatie en statuscodes.</p>
+
+      <div class="task"><div class="task-head"><div class="task-icon">3A</div><div><h3>Test JSON met opzettelijke fouten</h3><p>Gebruik de Console in DevTools.</p></div></div>
+        <ol><li>Open DevTools met <kbd>F12</kbd> en kies Console.</li><li>Probeer <code>JSON.parse('{"naam":"Ada"}')</code>.</li><li>Verwijder één dubbel aanhalingsteken en probeer opnieuw.</li><li>Lees het regelnummer in de foutmelding.</li><li>Zet een JavaScript-object om met <code>JSON.stringify({naam: 'Ada'})</code>.</li></ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="3a"> Opdracht 3A voltooid</label>
+      </div>
+
+      <div class="task"><div class="task-head"><div class="task-icon">3B</div><div><h3>Ontwerp vóór je codeert</h3><p>Maak op papier het endpoint “taak voltooid”.</p></div></div>
+        <p>Noteer methode, pad, JSON-input, JSON-output, twee validatieregels en minstens drie mogelijke statuscodes.</p>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="3b"> Opdracht 3B voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les4" aria-labelledby="les4-title">
+      <span class="lesson-number">Les 4</span><h2 id="les4-title">Fetch en Network: bewijs het zelf</h2>
+      <p class="lead">We bouwen een kleine frontend met mockdata. De vorm van het antwoord is al die van onze latere PHP-API.</p>
+      <h3>Project maken</h3>
+      <div class="terminal"><div class="terminal-title">Opdrachtprompt</div><button class="copy-button" type="button">Kopieer</button><pre><code>cd /d "%USERPROFILE%\Dev"
+npm create vite@latest webapp-werking -- --template vanilla
+cd webapp-werking
+npm install
+mkdir public\api
+code .</code></pre></div>
+
+      <h3>1. Mock-API maken</h3>
+      <p>Maak <code>public/api/berichten.json</code>:</p>
+      <div class="terminal"><div class="terminal-title">public/api/berichten.json</div><button class="copy-button" type="button">Kopieer</button><pre><code>{
+  "data": [
+    { "id": 1, "tekst": "Welkom bij het prikbord", "auteur": "Ada" },
+    { "id": 2, "tekst": "De echte backend volgt hierna", "auteur": "Linus" }
+  ]
+}</code></pre></div>
+
+      <h3>2. JavaScript schrijven</h3>
+      <p>Vervang <code>src/main.js</code> door:</p>
+      <div class="terminal"><div class="terminal-title">src/main.js</div><button class="copy-button" type="button">Kopieer</button><pre><code>import './style.css';
+
+document.querySelector('#app').innerHTML = `
+  &lt;main class="container"&gt;
+    &lt;h1&gt;Klasprikbord&lt;/h1&gt;
+    &lt;p id="status"&gt;Berichten laden…&lt;/p&gt;
+    &lt;ul id="berichten"&gt;&lt;/ul&gt;
+    &lt;button id="herlaad" type="button"&gt;Opnieuw laden&lt;/button&gt;
+  &lt;/main&gt;
+`;
+
+const status = document.querySelector('#status');
+const lijst = document.querySelector('#berichten');
+
+async function laadBerichten() {
+  status.textContent = 'Berichten laden…';
+  lijst.replaceChildren();
+
+  try {
+    const response = await fetch('/api/berichten.json');
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const resultaat = await response.json();
+
+    for (const bericht of resultaat.data) {
+      const item = document.createElement('li');
+      item.textContent = `${bericht.auteur}: ${bericht.tekst}`;
+      lijst.append(item);
+    }
+
+    status.textContent = `${resultaat.data.length} berichten gevonden.`;
+  } catch (error) {
+    status.textContent = `Laden mislukt: ${error.message}`;
+  }
+}
+
+document.querySelector('#herlaad').addEventListener('click', laadBerichten);
+laadBerichten();</code></pre></div>
+      <div class="note"><strong>Waarom async en await?</strong>Een netwerkantwoord komt later. <code>await</code> pauzeert alleen deze async-functie tot de Promise klaar is; de browser zelf blijft reageren.</div>
+      <div class="warning"><strong>Belangrijk bij fetch</strong>Een antwoord met 404 of 500 bereikt normaal nog steeds je code. Daarom test je zelf <code>response.ok</code>. Een echte netwerkfout belandt rechtstreeks in <code>catch</code>.</div>
+      <div class="success"><strong>Veilig tonen</strong>De berichten worden met <code>textContent</code> toegevoegd. Gebruik voor gegevens van gebruikers niet zomaar <code>innerHTML</code>, want de browser kan ingevoerde HTML dan als code uitvoeren.</div>
+
+      <h3>3. Eenvoudige opmaak</h3>
+      <div class="terminal"><div class="terminal-title">src/style.css</div><button class="copy-button" type="button">Kopieer</button><pre><code>:root { font-family: system-ui, sans-serif; color: #17212b; background: #eef3f8; }
+body { margin: 0; }
+.container { width: min(680px, 92%); margin: 4rem auto; padding: 2rem; background: white; border-radius: 1rem; }
+li { margin: .7rem 0; padding: .8rem; border-left: 4px solid #1565c0; background: #f4f8fc; }
+button { padding: .7rem 1rem; border: 0; border-radius: .5rem; color: white; background: #1565c0; cursor: pointer; }</code></pre></div>
+      <div class="terminal"><div class="terminal-title">Opdrachtprompt</div><button class="copy-button" type="button">Kopieer</button><pre><code>npm run dev</code></pre></div>
+
+      <div class="task"><div class="task-head"><div class="task-icon">4A</div><div><h3>Onderzoek het verzoek</h3><p>Niet gokken: kijk in Network.</p></div></div>
+        <ol><li>Open de Vite-URL en daarna DevTools → Network.</li><li>Herlaad de pagina.</li><li>Klik op <code>berichten.json</code>.</li><li>Noteer Request URL, Request Method, Status Code en Content-Type.</li><li>Bekijk Preview of Response en zoek de twee berichten.</li></ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="4a"> Opdracht 4A voltooid</label>
+      </div>
+
+      <div class="task"><div class="task-head"><div class="task-icon">4B</div><div><h3>Maak gecontroleerd een 404</h3><p>Een fout is een meetbaar onderdeel van de app.</p></div></div>
+        <ol><li>Verander tijdelijk de fetch-URL in <code>/api/bestaat-niet.json</code>.</li><li>Voorspel wat status en pagina zullen tonen.</li><li>Controleer in Network dat de status 404 is.</li><li>Herstel de juiste URL.</li></ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="4b"> Opdracht 4B voltooid</label>
+      </div>
+
+      <div class="task"><div class="task-head"><div class="task-icon">4C</div><div><h3>Breid het antwoord uit</h3><p>Verander data en interface.</p></div></div>
+        <ol><li>Voeg aan elk bericht <code>"gemaakt_op": "2026-09-11T10:00:00Z"</code> toe.</li><li>Toon de datum in de lijst.</li><li>Voeg een derde bericht toe.</li><li>Controleer dat de teller automatisch 3 wordt.</li></ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="4c"> Opdracht 4C voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="eindproef" aria-labelledby="eindproef-title">
+      <span class="lesson-number">Eindproef</span><h2 id="eindproef-title">Ontwerp het klasprikbord</h2>
+      <p class="lead">Je schrijft nog geen backend. Je levert de blauwdruk waarmee frontend- en backendontwikkelaar onafhankelijk kunnen werken.</p>
+      <div class="task"><div class="task-head"><div class="task-icon">★</div><div><h3>API-contract en prototype</h3><p>Ontwerp lezen, toevoegen en verwijderen.</p></div></div>
+        <ol>
+          <li>Maak een tabel met drie endpoints: GET, POST en DELETE.</li>
+          <li>Schrijf voorbeeld-JSON voor een geldige POST.</li>
+          <li>Schrijf JSON-antwoorden voor succes, lege tekst en onbekend id.</li>
+          <li>Kies passende statuscodes en motiveer ze.</li>
+          <li>Noteer validatie: tekst verplicht, na trimmen 1 tot 200 tekens.</li>
+          <li>Pas de mockdata en frontend aan jouw contract aan.</li>
+          <li>Bewijs GET 200 en een geforceerde GET 404 met twee screenshots uit Network.</li>
+        </ol>
+        <h4>Beoordeling</h4>
+        <div class="table-wrap"><table><thead><tr><th>Onderdeel</th><th>Punten</th></tr></thead><tbody><tr><td>Correcte endpoints en methodes</td><td>4</td></tr><tr><td>Geldige, consequente JSON</td><td>4</td></tr><tr><td>Statuscodes en validatie</td><td>4</td></tr><tr><td>Werkende fetch met laad- en fouttoestand</td><td>4</td></tr><tr><td>Network-bewijs en mondelinge uitleg</td><td>4</td></tr></tbody></table></div>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="eindproef"> Eindproef voltooid — klaar voor een echte backend</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="spiekbrief" aria-labelledby="spiekbrief-title">
+      <span class="lesson-number">Naslag</span><h2 id="spiekbrief-title">Spiekbrief en zelftest</h2>
+      <div class="table-wrap"><table><thead><tr><th>Begrip</th><th>Onthoud</th></tr></thead><tbody>
+        <tr><td>Frontend</td><td>Interface in de client.</td></tr><tr><td>Backend</td><td>Servercode voor regels, validatie en data.</td></tr><tr><td>API</td><td>Afspraak waarmee software met de backend praat.</td></tr><tr><td>Endpoint</td><td>Methode + pad, bijvoorbeeld <code>POST /api/berichten</code>.</td></tr><tr><td>Request</td><td>Wat de client vraagt.</td></tr><tr><td>Response</td><td>Status, headers en eventueel body.</td></tr><tr><td>JSON</td><td>Gestructureerde tekst voor gegevensuitwisseling.</td></tr><tr><td>Network</td><td>DevTools-paneel met werkelijk netwerkverkeer.</td></tr>
+      </tbody></table></div>
+      <form class="quiz" id="quizForm">
+        <p><strong>1. Waar hoort controle van gebruikersinvoer zeker thuis?</strong></p><label><input type="radio" name="q1" value="a">Alleen in CSS</label><label><input type="radio" name="q1" value="b">In de backend, ook als de frontend al controleert</label><label><input type="radio" name="q1" value="c">Alleen in de database</label>
+        <p><strong>2. Welke combinatie maakt normaal een nieuw bericht?</strong></p><label><input type="radio" name="q2" value="a">GET + 201</label><label><input type="radio" name="q2" value="b">DELETE + 200</label><label><input type="radio" name="q2" value="c">POST + 201</label>
+        <p><strong>3. Wat betekent 404?</strong></p><label><input type="radio" name="q3" value="a">Niet gevonden</label><label><input type="radio" name="q3" value="b">Aangemaakt</label><label><input type="radio" name="q3" value="c">Geen inhoud</label>
+        <p><strong>4. Waarom test je <code>response.ok</code>?</strong></p><label><input type="radio" name="q4" value="a">Omdat fetch 404 normaal niet automatisch als netwerkfout afwijst</label><label><input type="radio" name="q4" value="b">Om JSON te versleutelen</label><label><input type="radio" name="q4" value="c">Om CSS te laden</label>
+        <p><strong>5. Wat is een API-contract?</strong></p><label><input type="radio" name="q5" value="a">Een betaald abonnement</label><label><input type="radio" name="q5" value="b">De afspraken over endpoints, data, validatie en antwoorden</label><label><input type="radio" name="q5" value="c">Een map met HTML</label>
+        <button class="button" type="submit">Controleer antwoorden</button><div class="quiz-result" id="quizResult" role="status"></div>
+      </form>
+      <details class="teacher"><summary>Officiële bronnen</summary><div><p>Gecontroleerd op 11 september 2026.</p><ul class="sources">
+        <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview">MDN — An overview of HTTP</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods">MDN — HTTP request methods</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status">MDN — HTTP response status codes</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch">MDN — Using the Fetch API</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/JSON">MDN — Working with JSON</a></li>
+      </ul></div></details>
+    </section>
+    <p class="footer">HTTP · JSON · API · fetch · 5e middelbaar · voortgang wordt alleen in deze browser bewaard</p>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+      var checks = Array.from(document.querySelectorAll('.progress-check'));
+      var progressText = document.getElementById('progressText');
+      var progressBar = document.getElementById('progressBar');
+      var storageKey = 'cursus-hoe-een-webapp-werkt-voortgang-v1';
+      function updateProgress(){var completed=checks.filter(function(c){return c.checked;}).length;var percentage=checks.length?Math.round(completed/checks.length*100):0;progressText.textContent=completed+'/'+checks.length;progressBar.style.width=percentage+'%'}
+      function loadProgress(){var saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')}catch(error){saved={}}checks.forEach(function(c){c.checked=Boolean(saved[c.dataset.id])});updateProgress()}
+      function saveProgress(){var saved={};checks.forEach(function(c){saved[c.dataset.id]=c.checked});try{localStorage.setItem(storageKey,JSON.stringify(saved))}catch(error){}updateProgress()}
+      checks.forEach(function(c){c.addEventListener('change',saveProgress)});loadProgress();
+      function fallbackCopy(value){var area=document.createElement('textarea');area.value=value;area.setAttribute('readonly','');area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();var copied=document.execCommand('copy');document.body.removeChild(area);return copied}
+      document.querySelectorAll('.copy-button').forEach(function(button){button.addEventListener('click',function(){var value=button.parentElement.querySelector('code').innerText;var original=button.textContent;var action=navigator.clipboard&&window.isSecureContext?navigator.clipboard.writeText(value).then(function(){return true}):Promise.resolve(fallbackCopy(value));action.then(function(ok){button.textContent=ok?'Gekopieerd':'Selecteer handmatig';setTimeout(function(){button.textContent=original},1400)}).catch(function(){button.textContent=fallbackCopy(value)?'Gekopieerd':'Selecteer handmatig';setTimeout(function(){button.textContent=original},1400)})})});
+      document.getElementById('quizForm').addEventListener('submit',function(event){event.preventDefault();var answers={q1:'b',q2:'c',q3:'a',q4:'a',q5:'b'};var score=0;var complete=true;Object.keys(answers).forEach(function(q){var selected=document.querySelector('input[name="'+q+'"]:checked');if(!selected)complete=false;if(selected&&selected.value===answers[q])score++});var result=document.getElementById('quizResult');if(!complete){result.textContent='Beantwoord eerst alle vijf vragen.';result.style.color='var(--danger)';return}result.textContent=score+'/5 juist'+(score===5?' — je bent klaar voor PHP.':' — herbekijk de betrokken lesblokken.');result.style.color=score===5?'var(--success)':'var(--warning)'})
+    }());
+  </script>
+</body>
+</html>
