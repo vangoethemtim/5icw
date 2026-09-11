@@ -1,0 +1,1280 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Praktische basiscursus Windows-computergebruik voor leerlingen van het vijfde middelbaar.">
+  <title>Computergebruik — van bestanden tot PowerShell</title>
+  <style>
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0d47a1;
+      --primary-soft: #e8f1fb;
+      --accent: #ffb300;
+      --ink: #17212b;
+      --muted: #5f6b76;
+      --line: #d9e0e7;
+      --surface: #ffffff;
+      --background: #f4f7fa;
+      --success: #18794e;
+      --success-soft: #e8f7ef;
+      --warning: #9a5b00;
+      --warning-soft: #fff5dc;
+      --danger: #b42318;
+      --danger-soft: #ffebe9;
+      --code: #102235;
+      --shadow: 0 4px 18px rgba(23, 33, 43, .09);
+      --radius: 14px;
+      --nav-width: 270px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--background);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.58;
+    }
+
+    button, input { font: inherit; }
+    a { color: var(--primary); }
+    code, kbd, pre { font-family: "Cascadia Code", Consolas, monospace; }
+    code {
+      padding: .08rem .32rem;
+      border-radius: 5px;
+      color: #0b4d86;
+      background: #edf3f8;
+    }
+    kbd {
+      display: inline-block;
+      min-width: 1.8em;
+      margin: 0 .08em;
+      padding: .08em .42em;
+      border: 1px solid #aeb8c2;
+      border-bottom-width: 3px;
+      border-radius: 5px;
+      color: #253341;
+      background: #fff;
+      font-size: .9em;
+      text-align: center;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: -60px;
+      left: 16px;
+      padding: 10px 14px;
+      color: #fff;
+      background: var(--primary-dark);
+      border-radius: 0 0 8px 8px;
+    }
+    .skip-link:focus { top: 0; }
+
+    .sidebar {
+      position: fixed;
+      z-index: 20;
+      inset: 0 auto 0 0;
+      width: var(--nav-width);
+      padding: 24px 18px;
+      overflow-y: auto;
+      color: #fff;
+      background: linear-gradient(175deg, #0d47a1 0%, #12324f 100%);
+    }
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .brand-mark {
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--primary-dark);
+      background: #fff;
+      font-weight: 900;
+    }
+    .brand strong, .brand small { display: block; }
+    .brand small { color: #cfe1f5; }
+    .sidebar nav a {
+      display: block;
+      margin: 3px 0;
+      padding: 9px 11px;
+      border-radius: 8px;
+      color: #e5f0fc;
+      text-decoration: none;
+      font-size: .94rem;
+    }
+    .sidebar nav a:hover,
+    .sidebar nav a:focus {
+      color: #fff;
+      background: rgba(255, 255, 255, .12);
+      outline: none;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      color: #d7e8f8;
+      font-size: .82rem;
+    }
+    .progress-track {
+      height: 7px;
+      margin-top: 6px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .18);
+    }
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: var(--accent);
+      transition: width .25s ease;
+    }
+
+    main {
+      width: min(1100px, calc(100% - var(--nav-width)));
+      margin-left: var(--nav-width);
+      padding: 32px clamp(20px, 4vw, 62px) 80px;
+    }
+    .hero {
+      position: relative;
+      min-height: 390px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 26px;
+      padding: clamp(32px, 6vw, 72px);
+      overflow: hidden;
+      border-radius: 22px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(255, 179, 0, .95) 0 7%, transparent 7.3%),
+        radial-gradient(circle at 92% 62%, rgba(255, 255, 255, .12) 0 18%, transparent 18.3%),
+        linear-gradient(135deg, #1565c0, #0d3d70 72%);
+      box-shadow: var(--shadow);
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #dcecff;
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      max-width: 720px;
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+    .hero p:not(.eyebrow) {
+      max-width: 690px;
+      margin: 20px 0 0;
+      color: #e7f1fb;
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+    .button {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      min-height: 42px;
+      padding: 9px 15px;
+      border: 0;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button:hover { filter: brightness(.95); }
+    .button.light { color: var(--primary-dark); background: #fff; }
+    .button.ghost { border: 1px solid rgba(255,255,255,.45); background: transparent; }
+
+    .lesson {
+      margin: 26px 0;
+      padding: clamp(22px, 4vw, 42px);
+      scroll-margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 2px 10px rgba(23, 33, 43, .055);
+    }
+    .lesson-number {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    h2 {
+      margin: 10px 0 8px;
+      font-size: clamp(1.65rem, 3vw, 2.3rem);
+      line-height: 1.15;
+      letter-spacing: -.025em;
+    }
+    h3 { margin: 30px 0 8px; font-size: 1.25rem; }
+    h4 { margin: 20px 0 5px; font-size: 1rem; }
+    p { margin: .55rem 0 1rem; }
+    .lead { max-width: 800px; color: var(--muted); font-size: 1.08rem; }
+
+    .goal-grid, .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+    .mini-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfcfd;
+    }
+    .mini-card strong { display: block; margin-bottom: 3px; }
+    .mini-card p { margin: 0; color: var(--muted); }
+
+    .filename-demo {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      margin: 24px 0;
+      padding: 24px;
+      border: 2px dashed #a8bfd7;
+      border-radius: 12px;
+      background: #f7fbff;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: clamp(1.6rem, 5vw, 3.2rem);
+      font-weight: 800;
+    }
+    .filename-demo .name { color: var(--primary-dark); }
+    .filename-demo .dot { color: var(--muted); }
+    .filename-demo .extension { color: var(--danger); }
+    .labels {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      margin-top: -16px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .note, .warning, .danger, .success {
+      margin: 18px 0;
+      padding: 14px 16px;
+      border-left: 5px solid var(--primary);
+      border-radius: 8px;
+      background: var(--primary-soft);
+    }
+    .warning { border-color: var(--accent); background: var(--warning-soft); }
+    .danger { border-color: var(--danger); background: var(--danger-soft); }
+    .success { border-color: var(--success); background: var(--success-soft); }
+    .note strong, .warning strong, .danger strong, .success strong { display: block; }
+
+    .table-wrap { margin: 18px 0; overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .95rem;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { color: #334251; background: #f1f5f8; }
+    tr:last-child td { border-bottom: 0; }
+
+    .steps {
+      margin: 16px 0;
+      padding: 0;
+      counter-reset: steps;
+      list-style: none;
+    }
+    .steps li {
+      position: relative;
+      min-height: 42px;
+      margin: 10px 0;
+      padding-left: 50px;
+      counter-increment: steps;
+    }
+    .steps li::before {
+      position: absolute;
+      top: -2px;
+      left: 0;
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 800;
+      content: counter(steps);
+    }
+
+    .terminal {
+      position: relative;
+      margin: 16px 0;
+      overflow: hidden;
+      border-radius: 10px;
+      color: #e8eef5;
+      background: var(--code);
+      box-shadow: 0 4px 12px rgba(7, 20, 32, .2);
+    }
+    .terminal-title {
+      padding: 8px 14px;
+      color: #9fb4c8;
+      background: #0b1a29;
+      font-size: .78rem;
+    }
+    pre {
+      margin: 0;
+      padding: 18px 55px 18px 18px;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.52;
+    }
+    pre code { padding: 0; color: inherit; background: transparent; }
+    .copy-button {
+      position: absolute;
+      top: 42px;
+      right: 10px;
+      padding: 6px 9px;
+      border: 1px solid #50677d;
+      border-radius: 6px;
+      color: #dce8f4;
+      background: #1e3850;
+      font-size: .76rem;
+      cursor: pointer;
+    }
+
+    .task {
+      margin: 22px 0;
+      padding: 19px;
+      border: 2px solid #bad0e5;
+      border-radius: 12px;
+      background: #f8fbfe;
+    }
+    .task-head {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .task-icon {
+      display: grid;
+      flex: 0 0 38px;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 9px;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 900;
+    }
+    .task h3, .task h4 { margin-top: 2px; }
+    .task ul { margin-bottom: 0; }
+    .done-row {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--success);
+      font-weight: 700;
+    }
+    .done-row input { width: 19px; height: 19px; accent-color: var(--success); }
+
+    details {
+      margin: 14px 0;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
+    }
+    summary {
+      padding: 13px 15px;
+      color: var(--primary-dark);
+      font-weight: 750;
+      cursor: pointer;
+    }
+    details > div { padding: 0 15px 15px; }
+    details.teacher { border-left: 5px solid #7b1fa2; }
+    details.teacher summary { color: #6a1b9a; }
+
+    .path {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+      margin: 18px 0;
+      padding: 14px;
+      border-radius: 9px;
+      background: #edf3f8;
+      font-family: "Cascadia Code", Consolas, monospace;
+    }
+    .path span { padding: 5px 8px; border-radius: 6px; background: #fff; }
+    .path b { color: var(--primary); }
+
+    .checklist { padding-left: 0; list-style: none; }
+    .checklist li { margin: 8px 0; padding-left: 28px; }
+    .checklist li::before {
+      float: left;
+      margin-left: -28px;
+      color: var(--success);
+      font-weight: 900;
+      content: "✓";
+    }
+
+    .quiz label {
+      display: block;
+      margin: 7px 0;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    .quiz label:hover { background: #f4f8fb; }
+    .quiz input { margin-right: 8px; accent-color: var(--primary); }
+    .quiz-result { min-height: 1.4em; margin-top: 12px; font-weight: 800; }
+
+    .footer {
+      padding: 28px 8px 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: .88rem;
+    }
+
+    @media (max-width: 880px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        max-height: none;
+        padding: 15px 18px;
+      }
+      .sidebar nav {
+        display: flex;
+        gap: 3px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+      }
+      .sidebar nav a { flex: 0 0 auto; white-space: nowrap; }
+      .brand { margin-bottom: 8px; }
+      .progress-label, .progress-track { display: none; }
+      main { width: 100%; margin: 0; padding: 18px 14px 60px; }
+      .hero { min-height: 350px; border-radius: 14px; }
+    }
+
+    @media (max-width: 600px) {
+      .goal-grid, .card-grid { grid-template-columns: 1fr; }
+      .lesson { padding: 22px 17px; }
+      .labels { gap: 40px; }
+      th, td { padding: 9px; }
+      pre { font-size: .82rem; }
+    }
+
+    @media print {
+      @page { size: A4; margin: 15mm; }
+      body { color: #000; background: #fff; font-size: 10.5pt; }
+      .sidebar, .hero-actions, .copy-button, .done-row, .quiz button, .footer { display: none !important; }
+      main { width: 100%; margin: 0; padding: 0; }
+      .hero { min-height: 0; margin: 0 0 10mm; padding: 14mm; color: #fff; box-shadow: none; }
+      .lesson { margin: 0 0 9mm; padding: 0; border: 0; box-shadow: none; break-before: page; }
+      .lesson:first-of-type { break-before: auto; }
+      .task, .note, .warning, .danger, .success, .terminal, table, details { break-inside: avoid; }
+      details > div { display: block; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#inhoud">Ga naar de cursus</a>
+
+  <aside class="sidebar" aria-label="Cursusnavigatie">
+    <div class="brand">
+      <div class="brand-mark">C:\</div>
+      <div><strong>Computergebruik</strong><small>5e middelbaar</small></div>
+    </div>
+    <nav>
+      <a href="#start">Start</a>
+      <a href="#les1">1. Bestanden en extensies</a>
+      <a href="#les2">2. Verborgen en systeem</a>
+      <a href="#les3">3. Paden en profielen</a>
+      <a href="#les4">4. Opdrachtprompt</a>
+      <a href="#les5">5. Batchbestanden</a>
+      <a href="#les6">6. PowerShell</a>
+      <a href="#eindproef">Eindproef</a>
+      <a href="#spiekbrief">Spiekbrief</a>
+    </nav>
+    <div class="progress-label"><span>Mijn oefeningen</span><strong id="progressText">0/0</strong></div>
+    <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+  </aside>
+
+  <main id="inhoud">
+    <header class="hero" id="start">
+      <p class="eyebrow">Praktische basiscursus Windows</p>
+      <h1>Begrijp je computer.</h1>
+      <p>Van bestandsextensies en mappen tot CMD, batchbestanden en je eerste PowerShell-script. Eerst begrijpen wat er onder de motorkap gebeurt, daarna pas programmeren in VS Code.</p>
+      <div class="hero-actions">
+        <a class="button light" href="#les1">Start de cursus</a>
+        <button class="button ghost" type="button" onclick="window.print()">Afdrukken / pdf</button>
+      </div>
+    </header>
+
+    <section class="lesson" aria-labelledby="route-title">
+      <span class="lesson-number">Overzicht</span>
+      <h2 id="route-title">Wat moet je na deze cursus kunnen?</h2>
+      <div class="goal-grid">
+        <div class="mini-card"><strong>Bestanden begrijpen</strong><p>Naam, extensie, bestandstype, kenmerken en koppeling met een programma uitleggen.</p></div>
+        <div class="mini-card"><strong>Windows doorgronden</strong><p>Speciale mappen, je gebruikersprofiel en omgevingsvariabelen terugvinden.</p></div>
+        <div class="mini-card"><strong>Met tekst werken</strong><p>Bestanden en mappen veilig beheren via de opdrachtprompt.</p></div>
+        <div class="mini-card"><strong>Automatiseren</strong><p>Een eenvoudig batchbestand en PowerShell-script lezen, aanpassen en uitvoeren.</p></div>
+      </div>
+
+      <h3>Werkafspraken</h3>
+      <ul class="checklist">
+        <li>Voer opdrachten uit in <code>%USERPROFILE%\ComputerGebruik</code>, tenzij iets anders vermeld staat.</li>
+        <li>Typ alleen een opdracht als je kunt uitleggen wat ze zal doen.</li>
+        <li>Gebruik geen administratorvenster voor deze cursus.</li>
+        <li>Een verborgen bestand is niet beveiligd en een andere extensie verandert de inhoud niet.</li>
+      </ul>
+
+      <details class="teacher">
+        <summary>Docentfiche: voorgestelde timing</summary>
+        <div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Lesuur</th><th>Inhoud</th><th>Resultaat</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Bestanden en extensies</td><td>Leerling toont extensies en herkent misleidende bestandsnamen.</td></tr>
+                <tr><td>2</td><td>Kenmerken en speciale bestanden</td><td>Leerling gebruikt Verborgen items en <code>attrib</code>.</td></tr>
+                <tr><td>3</td><td>Paden, profiel en variabelen</td><td>Leerling onderscheidt absoluut, relatief, UNC en PATH.</td></tr>
+                <tr><td>4</td><td>CMD en tekststromen</td><td>Leerling beheert een oefenmap zonder Verkenner.</td></tr>
+                <tr><td>5</td><td>Batchbestanden</td><td>Leerling maakt een herbruikbaar <code>.bat</code>-bestand.</td></tr>
+                <tr><td>6</td><td>PowerShell en eindproef</td><td>Leerling maakt een rapport en een lege webprojectstructuur.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="lesson" id="les1" aria-labelledby="les1-title">
+      <span class="lesson-number">Les 1</span>
+      <h2 id="les1-title">Bestanden en extensies</h2>
+      <p class="lead">Een bestand is een reeks gegevens met een naam. De extensie achter de laatste punt helpt Windows bepalen om welk soort bestand het gaat en met welk programma het standaard wordt geopend.</p>
+
+      <div class="filename-demo" aria-label="Voorbeeld bestandsnaam verslag punt docx">
+        <span class="name">verslag</span><span class="dot">.</span><span class="extension">docx</span>
+      </div>
+      <div class="labels"><span>bestandsnaam</span><span>extensie</span></div>
+
+      <h3>Waarom bestaat een extensie?</h3>
+      <p>Windows gebruikt de extensie onder andere voor het pictogram, de standaardapp en de beschikbare acties. De extensie beschrijft het verwachte formaat, maar bewijst niet wat er werkelijk in het bestand zit.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Extensie</th><th>Type</th><th>Typische toepassing</th></tr></thead>
+          <tbody>
+            <tr><td><code>.txt</code></td><td>Platte tekst</td><td>Kladblok, configuratie of notities</td></tr>
+            <tr><td><code>.docx</code></td><td>Word-document</td><td>Opgemaakte tekst</td></tr>
+            <tr><td><code>.pdf</code></td><td>Portable Document Format</td><td>Document met vaste lay-out</td></tr>
+            <tr><td><code>.jpg</code>, <code>.png</code></td><td>Afbeelding</td><td>Foto of afbeelding</td></tr>
+            <tr><td><code>.zip</code></td><td>Archief</td><td>Een pakket met gecomprimeerde bestanden</td></tr>
+            <tr><td><code>.html</code>, <code>.css</code>, <code>.js</code></td><td>Webbestanden</td><td>Structuur, stijl en gedrag van een webpagina</td></tr>
+            <tr><td><code>.exe</code>, <code>.msi</code></td><td>Uitvoerbaar / installatie</td><td>Programma starten of installeren</td></tr>
+            <tr><td><code>.bat</code>, <code>.cmd</code>, <code>.ps1</code></td><td>Script</td><td>Opdrachten automatisch uitvoeren</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warning">
+        <strong>Hernoemen is niet converteren</strong>
+        <code>foto.jpg</code> hernoemen naar <code>foto.pdf</code> verandert de afbeeldingsgegevens niet in een pdf. Je verandert alleen het etiket.
+      </div>
+
+      <h3>Extensies altijd tonen</h3>
+      <ol class="steps">
+        <li>Open <strong>Verkenner</strong> met <kbd>Windows</kbd> + <kbd>E</kbd>.</li>
+        <li>Kies <strong>Beeld → Weergeven → Bestandsnaamextensies</strong>.</li>
+        <li>Controleer of bekende bestanden nu eindigen op bijvoorbeeld <code>.pdf</code>, <code>.jpg</code> of <code>.docx</code>.</li>
+      </ol>
+
+      <div class="danger">
+        <strong>Waarom tonen veiliger is</strong>
+        Als extensies verborgen zijn, kan <code>factuur.pdf.exe</code> lijken op <code>factuur.pdf</code>. De echte extensie is <code>.exe</code>: het is dus een programma.
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">1A</div><div><h3>Praktijk: ontmasker het bestand</h3><p>Maak de werking van extensies zichtbaar.</p></div></div>
+        <ol>
+          <li>Druk <kbd>Windows</kbd> + <kbd>R</kbd>, typ <code>%USERPROFILE%</code> en druk <kbd>Enter</kbd>.</li>
+          <li>Maak daar een map <code>ComputerGebruik</code>.</li>
+          <li>Open Kladblok, typ <code>Dit is gewone tekst.</code> en bewaar als <code>proef.txt</code>.</li>
+          <li>Maak een kopie en hernoem die naar <code>proef.jpg</code>.</li>
+          <li>Probeer het hernoemde bestand te openen. Noteer waarom dit mislukt.</li>
+          <li>Wijzig de extensie opnieuw naar <code>.txt</code>.</li>
+        </ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="1a"> Opdracht 1A voltooid</label>
+      </div>
+
+      <details>
+        <summary>Controle: wat is precies fout aan “een .pdf is altijd een pdf”?</summary>
+        <div>De extensie is slechts een naamdeel. Een programma controleert ook de interne structuur of kenmerkende bytes van het bestand. Een verkeerde of misleidende extensie garandeert het formaat niet.</div>
+      </details>
+    </section>
+
+    <section class="lesson" id="les2" aria-labelledby="les2-title">
+      <span class="lesson-number">Les 2</span>
+      <h2 id="les2-title">Verborgen bestanden, systeembestanden en speciale mappen</h2>
+      <p class="lead">Windows kent kenmerken toe aan bestanden en mappen. Die kenmerken beïnvloeden hoe Verkenner ze toont, maar ze versleutelen of beveiligen niets.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Kenmerk</th><th>Letter</th><th>Betekenis</th></tr></thead>
+          <tbody>
+            <tr><td>Alleen-lezen</td><td><code>R</code></td><td>Geeft aan dat wijzigen niet de bedoeling is. Het is geen sterke beveiliging.</td></tr>
+            <tr><td>Verborgen</td><td><code>H</code></td><td>Wordt standaard niet getoond in Verkenner.</td></tr>
+            <tr><td>Systeem</td><td><code>S</code></td><td>Wordt door Windows als systeembestand behandeld en extra verborgen.</td></tr>
+            <tr><td>Archief</td><td><code>A</code></td><td>Kan door back-upsoftware worden gebruikt om wijzigingen te herkennen.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Verborgen items tonen</h3>
+      <p>Open Verkenner en kies <strong>Beeld → Weergeven → Verborgen items</strong>. Verborgen bestanden verschijnen lichter. Laat in <strong>Mapopties</strong> de instelling <strong>Beveiligde besturingssysteembestanden verbergen</strong> ingeschakeld.</p>
+
+      <div class="note">
+        <strong>Verborgen ≠ geheim</strong>
+        Iedereen kan de weergave inschakelen. Gebruik toegangsrechten of versleuteling als gegevens echt afgeschermd moeten worden.
+      </div>
+
+      <h3>Veelvoorkomende speciale bestanden</h3>
+      <div class="card-grid">
+        <div class="mini-card"><strong><code>desktop.ini</code></strong><p>Bewaarinstellingen voor de weergave van een map.</p></div>
+        <div class="mini-card"><strong><code>Thumbs.db</code></strong><p>Cache met miniatuurweergaven van afbeeldingen.</p></div>
+        <div class="mini-card"><strong><code>.lnk</code></strong><p>Een snelkoppeling, niet het doelbestand zelf.</p></div>
+        <div class="mini-card"><strong>Prullenbak</strong><p>Een speciale systeemmap met verwijderde bestanden per schijf.</p></div>
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">2A</div><div><h3>Praktijk: bestand verbergen met <code>attrib</code></h3><p>Je gebruikt voor het eerst een tekstcommando.</p></div></div>
+        <ol>
+          <li>Maak in <code>%USERPROFILE%\ComputerGebruik</code> een tekstbestand <code>verborgen.txt</code>.</li>
+          <li>Klik in de adresbalk van Verkenner, typ <code>cmd</code> en druk <kbd>Enter</kbd>. De opdrachtprompt opent meteen in die map.</li>
+          <li>Voer onderstaande opdrachten één voor één uit.</li>
+        </ol>
+        <div class="terminal">
+          <div class="terminal-title">Opdrachtprompt</div>
+          <button class="copy-button" type="button">Kopieer</button>
+          <pre><code>attrib verborgen.txt
+attrib +h verborgen.txt
+dir /a
+attrib -h verborgen.txt</code></pre>
+        </div>
+        <p><code>+h</code> zet het kenmerk Hidden aan; <code>-h</code> zet het uit. Met <code>dir /a</code> zie je ook bestanden met speciale kenmerken.</p>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="2a"> Opdracht 2A voltooid</label>
+      </div>
+
+      <details>
+        <summary>Controle: mag je <code>desktop.ini</code> of <code>Thumbs.db</code> zomaar verwijderen?</summary>
+        <div>Ze bevatten doorgaans geen persoonlijk document, maar Windows kan ze nodig hebben voor mapweergave of miniaturen en kan ze opnieuw maken. Laat onbekende systeem- en configuratiebestanden staan.</div>
+      </details>
+    </section>
+
+    <section class="lesson" id="les3" aria-labelledby="les3-title">
+      <span class="lesson-number">Les 3</span>
+      <h2 id="les3-title">Paden, gebruikersprofielen en variabelen</h2>
+      <p class="lead">Een pad is het adres van een bestand of map. Windows gebruikt een stationsletter, mappen gescheiden door een backslash en eventueel een bestandsnaam.</p>
+
+      <div class="path" aria-label="Ontleding van een Windows-pad">
+        <span><b>C:</b> schijf</span> \ <span><b>Users</b> map</span> \ <span><b>Sam</b> profiel</span> \ <span><b>Documents</b> map</span> \ <span><b>taak.txt</b> bestand</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Soort pad</th><th>Voorbeeld</th><th>Betekenis</th></tr></thead>
+          <tbody>
+            <tr><td>Absoluut</td><td><code>C:\Users\Sam\Documents\taak.txt</code></td><td>Volledig adres vanaf de schijf.</td></tr>
+            <tr><td>Relatief</td><td><code>oefeningen\taak.txt</code></td><td>Adres vanaf de huidige map.</td></tr>
+            <tr><td>Huidige map</td><td><code>.</code></td><td>De map waarin je nu werkt.</td></tr>
+            <tr><td>Bovenliggende map</td><td><code>..</code></td><td>Eén niveau hoger.</td></tr>
+            <tr><td>Netwerkpad (UNC)</td><td><code>\\server\gedeeld\bestand.pdf</code></td><td>Gedeelde map op een computer of server.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warning">
+        <strong>Spaties in een pad? Gebruik aanhalingstekens.</strong>
+        Typ <code>cd "%USERPROFILE%\Mijn documenten"</code>. Zonder aanhalingstekens ziet CMD elk woord mogelijk als een apart onderdeel.
+      </div>
+
+      <h3>Je gebruikersprofiel</h3>
+      <p>Elke gebruiker heeft normaal een eigen profielmap, bijvoorbeeld <code>C:\Users\Sam</code>. Daarin staan persoonlijke mappen en instellingen. Windows en programma’s bewaren er ook gegevens die je niet dagelijks ziet.</p>
+
+      <h3>Speciale Windows-mappen</h3>
+      <p>Documenten, Bureaublad en Downloads zijn <em>known folders</em>: Windows kent hun functie, niet alleen hun zichtbare naam. Een beheerder of OneDrive kan zo’n map naar een andere locatie omleiden. Een hardgecodeerd pad zoals <code>C:\Users\Sam\Documents</code> is daarom niet altijd betrouwbaar.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Open via <kbd>Windows</kbd> + <kbd>R</kbd></th><th>Speciale locatie</th></tr></thead>
+          <tbody>
+            <tr><td><code>shell:profile</code></td><td>Je gebruikersprofiel</td></tr>
+            <tr><td><code>shell:Personal</code></td><td>Documenten, ook als die map is omgeleid</td></tr>
+            <tr><td><code>shell:Downloads</code></td><td>Downloads</td></tr>
+            <tr><td><code>shell:Desktop</code></td><td>Bureaublad</td></tr>
+            <tr><td><code>shell:Startup</code></td><td>Opstartmap van de huidige gebruiker</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Variabele / map</th><th>Typische waarde</th><th>Gebruik</th></tr></thead>
+          <tbody>
+            <tr><td><code>%USERPROFILE%</code></td><td><code>C:\Users\Sam</code></td><td>Startpunt van het profiel</td></tr>
+            <tr><td><code>%APPDATA%</code></td><td><code>...\AppData\Roaming</code></td><td>Instellingen die met een profiel kunnen meereizen</td></tr>
+            <tr><td><code>%LOCALAPPDATA%</code></td><td><code>...\AppData\Local</code></td><td>Lokale appdata, caches en installaties per gebruiker</td></tr>
+            <tr><td><code>%TEMP%</code></td><td><code>...\AppData\Local\Temp</code></td><td>Tijdelijke bestanden</td></tr>
+            <tr><td><code>%PROGRAMDATA%</code></td><td><code>C:\ProgramData</code></td><td>Appdata voor alle gebruikers</td></tr>
+            <tr><td><code>%SYSTEMROOT%</code></td><td><code>C:\Windows</code></td><td>De Windows-map</td></tr>
+            <tr><td><code>%PROGRAMFILES%</code></td><td><code>C:\Program Files</code></td><td>Geïnstalleerde 64-bits programma’s</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Een <strong>omgevingsvariabele</strong> is een naam met een waarde die processen van Windows kunnen lezen. In CMD schrijf je bijvoorbeeld <code>%USERPROFILE%</code>; in PowerShell schrijf je <code>$env:USERPROFILE</code>.</p>
+
+      <h3>PATH is één bijzondere omgevingsvariabele</h3>
+      <p><code>PATH</code> bevat een lijst met mappen. Als je <code>notepad</code> typt zonder volledig pad, zoekt Windows in die mappen van links naar rechts naar een uitvoerbaar bestand met die naam.</p>
+
+      <div class="terminal">
+        <div class="terminal-title">Opdrachtprompt — variabelen bekijken</div>
+        <button class="copy-button" type="button">Kopieer</button>
+        <pre><code>echo %USERPROFILE%
+echo %APPDATA%
+echo %TEMP%
+echo %PATH%
+where notepad
+set</code></pre>
+      </div>
+
+      <div class="note">
+        <strong>Niet verwarren</strong>
+        Een <em>pad</em> is een adres. <code>PATH</code> is een variabele die meerdere zoekpaden bevat. “Path variable” wordt vaak onnauwkeurig gebruikt voor beide.
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">3A</div><div><h3>Praktijk: dezelfde map, andere gebruiker</h3><p>Maak een opdracht die op iedere schoolcomputer het juiste profiel gebruikt.</p></div></div>
+        <ol>
+          <li>Open CMD.</li>
+          <li>Voer <code>cd /d "%USERPROFILE%\ComputerGebruik"</code> uit.</li>
+          <li>Voer <code>cd</code> uit om het volledige huidige pad te tonen.</li>
+          <li>Voer <code>echo %USERNAME% op %COMPUTERNAME%</code> uit.</li>
+          <li>Leg uit waarom hardcoderen van <code>C:\Users\Sam</code> minder goed is.</li>
+        </ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="3a"> Opdracht 3A voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les4" aria-labelledby="les4-title">
+      <span class="lesson-number">Les 4</span>
+      <h2 id="les4-title">Werken met cmd.exe</h2>
+      <p class="lead"><code>cmd.exe</code> is de klassieke Windows-opdrachtinterpreter. Jij typt een tekstcommando, CMD ontleedt het en start een ingebouwde opdracht of programma.</p>
+
+      <h3>CMD openen</h3>
+      <p>Druk <kbd>Windows</kbd> + <kbd>R</kbd>, typ <code>cmd</code> en druk <kbd>Enter</kbd>. Een prompt zoals <code>C:\Users\Sam&gt;</code> toont je huidige map. Typ alleen wat <em>na</em> het teken <code>&gt;</code> hoort.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Commando</th><th>Doel</th><th>Voorbeeld</th></tr></thead>
+          <tbody>
+            <tr><td><code>help</code></td><td>Toont hulp of beschikbare opdrachten</td><td><code>dir /?</code></td></tr>
+            <tr><td><code>cls</code></td><td>Maakt het scherm leeg</td><td><code>cls</code></td></tr>
+            <tr><td><code>cd</code></td><td>Toont of wijzigt de huidige map</td><td><code>cd /d C:\Temp</code></td></tr>
+            <tr><td><code>dir</code></td><td>Toont de mapinhoud</td><td><code>dir /a</code></td></tr>
+            <tr><td><code>tree</code></td><td>Toont de mappenboom</td><td><code>tree /f</code></td></tr>
+            <tr><td><code>mkdir</code></td><td>Maakt een map</td><td><code>mkdir afbeeldingen</code></td></tr>
+            <tr><td><code>rmdir</code></td><td>Verwijdert een lege map</td><td><code>rmdir oude-map</code></td></tr>
+            <tr><td><code>copy</code></td><td>Kopieert bestand(en)</td><td><code>copy bron.txt kopie.txt</code></td></tr>
+            <tr><td><code>move</code></td><td>Verplaatst bestand(en)</td><td><code>move foto.jpg afbeeldingen</code></td></tr>
+            <tr><td><code>ren</code></td><td>Hernoemt</td><td><code>ren oud.txt nieuw.txt</code></td></tr>
+            <tr><td><code>del</code></td><td>Verwijdert bestand(en)</td><td><code>del kopie.txt</code></td></tr>
+            <tr><td><code>type</code></td><td>Toont de inhoud van een tekstbestand</td><td><code>type logboek.txt</code></td></tr>
+            <tr><td><code>where</code></td><td>Zoekt een uitvoerbaar bestand via PATH</td><td><code>where powershell</code></td></tr>
+            <tr><td><code>whoami</code></td><td>Toont de aangemelde account</td><td><code>whoami</code></td></tr>
+            <tr><td><code>ipconfig</code></td><td>Toont netwerkconfiguratie</td><td><code>ipconfig</code></td></tr>
+            <tr><td><code>ping</code></td><td>Test bereikbaarheid en reactietijd</td><td><code>ping 1.1.1.1</code></td></tr>
+            <tr><td><code>nslookup</code></td><td>Vraagt DNS-informatie op</td><td><code>nslookup example.com</code></td></tr>
+            <tr><td><code>tasklist</code></td><td>Toont actieve processen</td><td><code>tasklist</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Tekst sturen: <code>&gt;</code>, <code>&gt;&gt;</code> en <code>|</code></h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Teken</th><th>Werking</th><th>Voorbeeld</th></tr></thead>
+          <tbody>
+            <tr><td><code>&gt;</code></td><td>Schrijft uitvoer naar een bestand en overschrijft bestaande inhoud.</td><td><code>echo Eerste regel &gt; log.txt</code></td></tr>
+            <tr><td><code>&gt;&gt;</code></td><td>Voegt uitvoer achteraan toe.</td><td><code>echo Tweede regel &gt;&gt; log.txt</code></td></tr>
+            <tr><td><code>|</code></td><td>Stuurt uitvoer van de ene opdracht naar de volgende.</td><td><code>tasklist | findstr chrome</code></td></tr>
+            <tr><td><code>&amp;&amp;</code></td><td>Voert de volgende opdracht alleen uit als de vorige slaagde.</td><td><code>mkdir test &amp;&amp; cd test</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="danger">
+        <strong><code>del</code> gebruikt de Prullenbak niet</strong>
+        Controleer altijd je huidige map met <code>cd</code> en de doelbestanden met <code>dir</code>. Gebruik tijdens de cursus geen jokertekens bij verwijderen en nooit <code>del /s</code> of <code>rmdir /s</code>.
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">4A</div><div><h3>Praktijk: beheer een map zonder Verkenner</h3><p>Voer alles uit in een gewone CMD, niet als administrator.</p></div></div>
+        <div class="terminal">
+          <div class="terminal-title">Opdrachtprompt</div>
+          <button class="copy-button" type="button">Kopieer</button>
+          <pre><code>cd /d "%USERPROFILE%\ComputerGebruik"
+mkdir cmd-oefening
+cd cmd-oefening
+echo Mijn eerste regel&gt;logboek.txt
+echo Tweede regel&gt;&gt;logboek.txt
+type logboek.txt
+copy logboek.txt reservekopie.txt
+mkdir archief
+move reservekopie.txt archief
+tree /f
+dir /a</code></pre>
+        </div>
+        <p>Controleer het resultaat daarna in Verkenner. De mappenstructuur moet twee tekstbestanden bevatten: één in de hoofdmap en één in <code>archief</code>.</p>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="4a"> Opdracht 4A voltooid</label>
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">4B</div><div><h3>Onderzoek: diagnosecommando’s</h3><p>Beantwoord met de uitvoer van een commando.</p></div></div>
+        <ol>
+          <li>Welke gebruiker is aangemeld?</li>
+          <li>Wat is de computernaam?</li>
+          <li>Waar staat <code>notepad.exe</code>?</li>
+          <li>Welke IPv4-adressen zie je?</li>
+          <li>Naar welk IP-adres verwijst <code>example.com</code> volgens DNS?</li>
+        </ol>
+        <details><summary>Toon de geschikte commando’s</summary><div><code>whoami</code>, <code>hostname</code>, <code>where notepad</code>, <code>ipconfig</code> en <code>nslookup example.com</code>.</div></details>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="4b"> Opdracht 4B voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les5" aria-labelledby="les5-title">
+      <span class="lesson-number">Les 5</span>
+      <h2 id="les5-title">Je eerste batchbestand</h2>
+      <p class="lead">Een batchbestand is een tekstbestand met opdrachten voor <code>cmd.exe</code>. De regels worden van boven naar beneden uitgevoerd. Zo kun je een herhaalbare werkwijze automatiseren.</p>
+
+      <h3>Correct opslaan</h3>
+      <ol class="steps">
+        <li>Open Kladblok en plak de code hieronder.</li>
+        <li>Kies <strong>Bestand → Opslaan als</strong>.</li>
+        <li>Kies bij bestandstype <strong>Alle bestanden</strong> en geef de naam <code>startmap.bat</code>.</li>
+        <li>Bewaar het in <code>%USERPROFILE%\ComputerGebruik</code>. Controleer dat het niet <code>startmap.bat.txt</code> heet.</li>
+      </ol>
+
+      <div class="terminal">
+        <div class="terminal-title">startmap.bat</div>
+        <button class="copy-button" type="button">Kopieer</button>
+        <pre><code>@echo off
+setlocal
+title ComputerGebruik
+
+set "WERKMAP=%USERPROFILE%\ComputerGebruik\MijnProject"
+
+if not exist "%WERKMAP%" mkdir "%WERKMAP%"
+echo Welkom, %USERNAME%.
+echo De werkmap is: %WERKMAP%
+echo Gestart op %DATE% om %TIME%&gt;"%WERKMAP%\startlog.txt"
+
+start "" "%WERKMAP%"
+pause</code></pre>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Regel</th><th>Uitleg</th></tr></thead>
+          <tbody>
+            <tr><td><code>@echo off</code></td><td>Verbergt de opdrachten zelf; je ziet alleen relevante uitvoer.</td></tr>
+            <tr><td><code>setlocal</code></td><td>Houdt variabelen lokaal binnen dit batchbestand.</td></tr>
+            <tr><td><code>set "WERKMAP=..."</code></td><td>Maakt een variabele. De veilige aanhalingstekens worden geen deel van de waarde.</td></tr>
+            <tr><td><code>if not exist ...</code></td><td>Voert <code>mkdir</code> alleen uit als de map nog niet bestaat.</td></tr>
+            <tr><td><code>%DATE%</code>, <code>%TIME%</code></td><td>Lezen bestaande omgevingsvariabelen.</td></tr>
+            <tr><td><code>start "" "%WERKMAP%"</code></td><td>Opent de map in Verkenner. Het lege paar aanhalingstekens is de venstertitel.</td></tr>
+            <tr><td><code>pause</code></td><td>Wacht op een toets, zodat het venster niet meteen sluit.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">5A</div><div><h3>Praktijk: uitvoeren, controleren, aanpassen</h3><p>Maak van de voorbeeldcode jouw script.</p></div></div>
+        <ol>
+          <li>Voer <code>startmap.bat</code> uit en controleer de gemaakte map en <code>startlog.txt</code>.</li>
+          <li>Open het batchbestand via rechtermuisknop → <strong>Bewerken</strong>.</li>
+          <li>Laat het ook een lege submap <code>afbeeldingen</code> en <code>documenten</code> maken.</li>
+          <li>Voer het opnieuw uit. Het moet zonder fout blijven werken.</li>
+          <li>Voeg minstens één commentaarregel toe met <code>rem</code>.</li>
+        </ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="5a"> Opdracht 5A voltooid</label>
+      </div>
+
+      <h3>Argumenten gebruiken</h3>
+      <p>Bij <code>maakmap.bat website</code> is <code>website</code> het eerste argument. In het batchbestand lees je dit als <code>%1</code>. Met <code>%~1</code> worden eventuele omringende aanhalingstekens verwijderd.</p>
+
+      <div class="terminal">
+        <div class="terminal-title">maakmap.bat</div>
+        <button class="copy-button" type="button">Kopieer</button>
+        <pre><code>@echo off
+setlocal
+
+if "%~1"=="" (
+  echo Gebruik: maakmap.bat projectnaam
+  exit /b 1
+)
+
+set "DOEL=%USERPROFILE%\ComputerGebruik\%~1"
+mkdir "%DOEL%"
+echo Map gemaakt: %DOEL%</code></pre>
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">5B</div><div><h3>Uitdaging: test beide routes</h3><p>Voer het script eenmaal zonder en eenmaal met argument uit.</p></div></div>
+        <div class="terminal">
+          <div class="terminal-title">Opdrachtprompt</div>
+          <button class="copy-button" type="button">Kopieer</button>
+          <pre><code>maakmap.bat
+maakmap.bat "Mijn website"</code></pre>
+        </div>
+        <p>Leg uit waarom de eerste uitvoering stopt met foutcode <code>1</code> en waarom de tweede aanhalingstekens nodig heeft.</p>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="5b"> Opdracht 5B voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les6" aria-labelledby="les6-title">
+      <span class="lesson-number">Les 6</span>
+      <h2 id="les6-title">Een eerste test met PowerShell</h2>
+      <p class="lead">PowerShell is een moderne shell en scripttaal. CMD verwerkt vooral tekstregels; PowerShell geeft vaak gestructureerde objecten door. Opdrachten hebben meestal de vorm <em>Werkwoord-ZelfstandigNaamwoord</em>.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Doel</th><th>CMD</th><th>PowerShell</th></tr></thead>
+          <tbody>
+            <tr><td>Mapinhoud</td><td><code>dir</code></td><td><code>Get-ChildItem</code></td></tr>
+            <tr><td>Van map veranderen</td><td><code>cd</code></td><td><code>Set-Location</code></td></tr>
+            <tr><td>Map maken</td><td><code>mkdir</code></td><td><code>New-Item -ItemType Directory</code></td></tr>
+            <tr><td>Bestand lezen</td><td><code>type</code></td><td><code>Get-Content</code></td></tr>
+            <tr><td>Zoeken/filteren</td><td><code>findstr</code></td><td><code>Where-Object</code></td></tr>
+            <tr><td>Omgevingsvariabele</td><td><code>%USERPROFILE%</code></td><td><code>$env:USERPROFILE</code></td></tr>
+            <tr><td>Hulp</td><td><code>commando /?</code></td><td><code>Get-Help commando</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Eerst interactief testen</h3>
+      <p>Open het Startmenu, zoek <strong>PowerShell</strong> en open een normaal venster. Voer de volgende opdrachten één voor één uit.</p>
+
+      <div class="terminal">
+        <div class="terminal-title">PowerShell</div>
+        <button class="copy-button" type="button">Kopieer</button>
+        <pre><code>$env:USERNAME
+$env:USERPROFILE
+Get-Location
+Get-ChildItem $env:USERPROFILE
+Get-Process | Sort-Object CPU -Descending | Select-Object -First 5
+Get-Command notepad</code></pre>
+      </div>
+
+      <p>De vijfde opdracht vormt een pijplijn: procesobjecten gaan naar sorteren en daarna worden de eerste vijf geselecteerd. PowerShell geeft geen losse tabeltekst door, maar objecten met eigenschappen zoals <code>Name</code>, <code>Id</code> en <code>CPU</code>.</p>
+
+      <h3>Maak <code>systeemtest.ps1</code></h3>
+      <p>Bewaar onderstaande code met Kladblok als <code>systeemtest.ps1</code> in <code>%USERPROFILE%\ComputerGebruik</code>.</p>
+
+      <div class="terminal">
+        <div class="terminal-title">systeemtest.ps1</div>
+        <button class="copy-button" type="button">Kopieer</button>
+        <pre><code>$werkmap = Join-Path $env:USERPROFILE 'ComputerGebruik'
+$rapport = Join-Path $werkmap 'systeemrapport.txt'
+
+New-Item -ItemType Directory -Path $werkmap -Force | Out-Null
+
+$regels = @(
+    "SYSTEEMRAPPORT"
+    "Datum: $(Get-Date -Format 'dd-MM-yyyy HH:mm')"
+    "Gebruiker: $env:USERNAME"
+    "Computer: $env:COMPUTERNAME"
+    "Windows: $([Environment]::OSVersion.VersionString)"
+    "PowerShell: $($PSVersionTable.PSVersion)"
+    "Vrij op C: $([math]::Round((Get-PSDrive C).Free / 1GB, 1)) GB"
+)
+
+$regels | Set-Content -Path $rapport -Encoding utf8
+Write-Host "Rapport gemaakt: $rapport" -ForegroundColor Green
+Get-Content $rapport</code></pre>
+      </div>
+
+      <h3>Script uitvoeren</h3>
+      <div class="terminal">
+        <div class="terminal-title">PowerShell</div>
+        <button class="copy-button" type="button">Kopieer</button>
+        <pre><code>Set-Location "$env:USERPROFILE\ComputerGebruik"
+.\systeemtest.ps1</code></pre>
+      </div>
+
+      <div class="warning">
+        <strong>Wordt het script door beleid geblokkeerd?</strong>
+        Wijzig de execution policy niet en gebruik geen bypass. Toon de melding aan de leerkracht; op beheerde computers kan scriptuitvoering bewust beperkt zijn. De code kan dan regel voor regel interactief worden getest.
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">6A</div><div><h3>Praktijk: breid het rapport uit</h3><p>Pas de array <code>$regels</code> aan.</p></div></div>
+        <ol>
+          <li>Voeg de waarde van <code>$env:USERPROFILE</code> toe.</li>
+          <li>Voeg de huidige map uit <code>Get-Location</code> toe.</li>
+          <li>Voeg zelf een titelregel met je klas toe.</li>
+          <li>Voer het script opnieuw uit en controleer <code>systeemrapport.txt</code>.</li>
+        </ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="6a"> Opdracht 6A voltooid</label>
+      </div>
+
+      <details>
+        <summary>Waarom staat er <code>$()</code> rond sommige opdrachten?</summary>
+        <div>Binnen een tekst tussen dubbele aanhalingstekens voert <code>$(...)</code> eerst een expressie of opdracht uit. Het resultaat wordt daarna in de tekst geplaatst. Dit heet een subexpressie.</div>
+      </details>
+    </section>
+
+    <section class="lesson" id="eindproef" aria-labelledby="eindproef-title">
+      <span class="lesson-number">Eindproef</span>
+      <h2 id="eindproef-title">Bouw de startmap voor een webapp</h2>
+      <p class="lead">Je maakt nog geen app. Je toont eerst dat je de bestanden, paden en tools begrijpt waarop een ontwikkelomgeving verder bouwt.</p>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">★</div><div><h3>Opdracht</h3><p>Maak uitsluitend met CMD of PowerShell deze structuur in <code>%USERPROFILE%\MijnEersteApp</code>.</p></div></div>
+        <div class="terminal">
+          <div class="terminal-title">Gewenste structuur</div>
+          <pre><code>MijnEersteApp
+│   index.html
+│   style.css
+│   script.js
+│   README.txt
+│
+└───assets</code></pre>
+        </div>
+
+        <p>De inhoud van <code>README.txt</code> bevat je naam, klas, datum en het absolute pad van de projectmap. De andere drie bestanden mogen nog leeg zijn.</p>
+
+        <h4>CMD-route</h4>
+        <div class="terminal">
+          <div class="terminal-title">Opdrachtprompt</div>
+          <button class="copy-button" type="button">Kopieer</button>
+          <pre><code>cd /d "%USERPROFILE%"
+mkdir MijnEersteApp
+cd MijnEersteApp
+mkdir assets
+type nul &gt; index.html
+type nul &gt; style.css
+type nul &gt; script.js
+echo Naam: jouw naam&gt;README.txt
+echo Klas: jouw klas&gt;&gt;README.txt
+echo Datum: %DATE%&gt;&gt;README.txt
+echo Pad: %CD%&gt;&gt;README.txt
+tree /f</code></pre>
+        </div>
+
+        <h4>PowerShell-route</h4>
+        <div class="terminal">
+          <div class="terminal-title">PowerShell</div>
+          <button class="copy-button" type="button">Kopieer</button>
+          <pre><code>$project = Join-Path $env:USERPROFILE 'MijnEersteApp'
+New-Item -ItemType Directory -Path "$project\assets" -Force
+New-Item -ItemType File -Path "$project\index.html" -Force
+New-Item -ItemType File -Path "$project\style.css" -Force
+New-Item -ItemType File -Path "$project\script.js" -Force
+@(
+  'Naam: jouw naam'
+  'Klas: jouw klas'
+  "Datum: $(Get-Date -Format 'dd-MM-yyyy')"
+  "Pad: $project"
+) | Set-Content "$project\README.txt"
+Get-ChildItem $project -Recurse</code></pre>
+        </div>
+
+        <h4>Mondelinge controle</h4>
+        <ol>
+          <li>Toon dat bestandsextensies zichtbaar zijn.</li>
+          <li>Leg uit welk pad absoluut is en geef een relatief pad naar <code>assets</code>.</li>
+          <li>Leg het verschil uit tussen <code>%USERPROFILE%</code> en <code>PATH</code>.</li>
+          <li>Toon verborgen items en voer <code>dir /a</code> of <code>Get-ChildItem -Force</code> uit.</li>
+          <li>Leg uit waarom <code>index.html.txt</code> niet hetzelfde is als <code>index.html</code>.</li>
+        </ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="eindproef"> Eindproef voltooid — klaar voor VS Code</label>
+      </div>
+
+      <div class="success">
+        <strong>Klaar voor de volgende stap</strong>
+        Wie deze structuur kan maken, controleren en uitleggen, is klaar om de map in VS Code te openen en te leren hoe HTML, CSS en JavaScript samen een app vormen.
+      </div>
+    </section>
+
+    <section class="lesson" id="spiekbrief" aria-labelledby="spiekbrief-title">
+      <span class="lesson-number">Naslag</span>
+      <h2 id="spiekbrief-title">Spiekbrief</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Ik wil…</th><th>CMD</th><th>PowerShell</th></tr></thead>
+          <tbody>
+            <tr><td>mijn huidige map zien</td><td><code>cd</code></td><td><code>Get-Location</code></td></tr>
+            <tr><td>naar mijn profiel</td><td><code>cd /d "%USERPROFILE%"</code></td><td><code>Set-Location $env:USERPROFILE</code></td></tr>
+            <tr><td>alle items zien</td><td><code>dir /a</code></td><td><code>Get-ChildItem -Force</code></td></tr>
+            <tr><td>een map maken</td><td><code>mkdir naam</code></td><td><code>New-Item naam -ItemType Directory</code></td></tr>
+            <tr><td>een bestand lezen</td><td><code>type bestand.txt</code></td><td><code>Get-Content bestand.txt</code></td></tr>
+            <tr><td>een programma zoeken</td><td><code>where programma</code></td><td><code>Get-Command programma</code></td></tr>
+            <tr><td>hulp krijgen</td><td><code>commando /?</code></td><td><code>Get-Help commando -Examples</code></td></tr>
+            <tr><td>vorige opdracht herhalen</td><td><kbd>↑</kbd></td><td><kbd>↑</kbd></td></tr>
+            <tr><td>automatisch aanvullen</td><td><kbd>Tab</kbd></td><td><kbd>Tab</kbd></td></tr>
+            <tr><td>een opdracht onderbreken</td><td><kbd>Ctrl</kbd> + <kbd>C</kbd></td><td><kbd>Ctrl</kbd> + <kbd>C</kbd></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Korte zelftest</h3>
+      <form class="quiz" id="quizForm">
+        <p><strong>1. Welke uitspraak is juist?</strong></p>
+        <label><input type="radio" name="q1" value="a"> Een verborgen bestand is versleuteld.</label>
+        <label><input type="radio" name="q1" value="b"> Een extensie hernoemen converteert het bestand.</label>
+        <label><input type="radio" name="q1" value="c"> Een extensie helpt Windows het bestandstype en de standaardapp bepalen.</label>
+
+        <p><strong>2. Welke notatie verwijst in CMD naar je profiel?</strong></p>
+        <label><input type="radio" name="q2" value="a"> <code>$env:USERPROFILE</code></label>
+        <label><input type="radio" name="q2" value="b"> <code>%USERPROFILE%</code></label>
+        <label><input type="radio" name="q2" value="c"> <code>%PATH%\USER</code></label>
+
+        <p><strong>3. Wat doet <code>&gt;&gt;</code>?</strong></p>
+        <label><input type="radio" name="q3" value="a"> Voegt uitvoer achteraan toe aan een bestand.</label>
+        <label><input type="radio" name="q3" value="b"> Gaat twee mappen hoger.</label>
+        <label><input type="radio" name="q3" value="c"> Verwijdert een bestand definitief.</label>
+
+        <p><strong>4. Waarom werkt <code>notepad</code> zonder volledig pad?</strong></p>
+        <label><input type="radio" name="q4" value="a"> CMD zoekt altijd de hele schijf.</label>
+        <label><input type="radio" name="q4" value="b"> Windows zoekt uitvoerbare bestanden via de mappen in PATH.</label>
+        <label><input type="radio" name="q4" value="c"> Kladblok staat altijd in de huidige map.</label>
+
+        <button class="button" type="submit">Controleer antwoorden</button>
+        <div class="quiz-result" id="quizResult" role="status"></div>
+      </form>
+    </section>
+
+    <p class="footer">Computergebruik · 5e middelbaar · voortgang wordt alleen in deze browser bewaard</p>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var checks = Array.from(document.querySelectorAll('.progress-check'));
+      var progressText = document.getElementById('progressText');
+      var progressBar = document.getElementById('progressBar');
+      var storageKey = 'cursus-computergebruik-voortgang-v1';
+
+      function loadProgress() {
+        var saved = {};
+        try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch (error) { saved = {}; }
+        checks.forEach(function (check) { check.checked = Boolean(saved[check.dataset.id]); });
+        updateProgress();
+      }
+
+      function saveProgress() {
+        var saved = {};
+        checks.forEach(function (check) { saved[check.dataset.id] = check.checked; });
+        try { localStorage.setItem(storageKey, JSON.stringify(saved)); } catch (error) { /* voortgang blijft in deze sessie zichtbaar */ }
+        updateProgress();
+      }
+
+      function updateProgress() {
+        var completed = checks.filter(function (check) { return check.checked; }).length;
+        var percentage = checks.length ? Math.round(completed / checks.length * 100) : 0;
+        progressText.textContent = completed + '/' + checks.length;
+        progressBar.style.width = percentage + '%';
+      }
+
+      checks.forEach(function (check) { check.addEventListener('change', saveProgress); });
+      loadProgress();
+
+      function fallbackCopy(text) {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        var copied = document.execCommand('copy');
+        document.body.removeChild(area);
+        return copied;
+      }
+
+      document.querySelectorAll('.copy-button').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var code = button.parentElement.querySelector('code').innerText;
+          var original = button.textContent;
+          var copyAction = navigator.clipboard && window.isSecureContext
+            ? navigator.clipboard.writeText(code).then(function () { return true; })
+            : Promise.resolve(fallbackCopy(code));
+
+          copyAction.then(function (copied) {
+            button.textContent = copied ? 'Gekopieerd' : 'Selecteer handmatig';
+            setTimeout(function () { button.textContent = original; }, 1400);
+          }).catch(function () {
+            button.textContent = fallbackCopy(code) ? 'Gekopieerd' : 'Selecteer handmatig';
+            setTimeout(function () { button.textContent = original; }, 1400);
+          });
+        });
+      });
+
+      document.getElementById('quizForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var answers = { q1: 'c', q2: 'b', q3: 'a', q4: 'b' };
+        var score = 0;
+        var completed = true;
+
+        Object.keys(answers).forEach(function (question) {
+          var selected = document.querySelector('input[name="' + question + '"]:checked');
+          if (!selected) completed = false;
+          if (selected && selected.value === answers[question]) score += 1;
+        });
+
+        var result = document.getElementById('quizResult');
+        if (!completed) {
+          result.textContent = 'Beantwoord eerst alle vier vragen.';
+          result.style.color = 'var(--danger)';
+          return;
+        }
+
+        result.textContent = score + '/4 juist' + (score === 4 ? ' — klaar voor VS Code.' : ' — herbekijk de betrokken lesblokken.');
+        result.style.color = score === 4 ? 'var(--success)' : 'var(--warning)';
+      });
+    }());
+  </script>
+</body>
+</html>
