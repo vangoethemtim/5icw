@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toets A — Computergebruik</title>
+<style>
+:root{--primary:#1565c0;--dark:#0d47a1;--accent:#ffb300;--ink:#17212b;--muted:#5f6b76;--line:#d9e0e7;--bg:#f4f7fa;--surface:#fff;--soft:#e8f1fb;--danger:#b42318;--danger-soft:#ffebe9;--success:#18794e;--success-soft:#e8f7ef;--code:#102235}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55}main{max-width:980px;margin:auto;padding:30px 20px 70px}.hero{padding:42px;border-radius:18px;color:white;background:linear-gradient(135deg,var(--primary),#0d3d70);box-shadow:0 4px 18px rgba(23,33,43,.10)}.eyebrow{margin:0 0 8px;font-size:.82rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#dcecff}.hero h1{margin:0;font-size:clamp(2.2rem,6vw,4rem);line-height:1}.hero p{max-width:720px;color:#e7f1fb;font-size:1.08rem}.card{margin-top:22px;padding:28px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 2px 10px rgba(23,33,43,.05)}h2{margin:0 0 12px;font-size:1.65rem}h3{margin:26px 0 8px}p{margin:.55rem 0 1rem}code,kbd,pre{font-family:"Cascadia Code",Consolas,monospace}code{padding:.08rem .3rem;border-radius:4px;background:#edf3f8;color:#0b4d86}.rule{padding:15px 17px;border-left:5px solid var(--accent);border-radius:8px;background:#fff5dc}.important{padding:15px 17px;border-left:5px solid var(--danger);border-radius:8px;background:var(--danger-soft)}.success{padding:15px 17px;border-left:5px solid var(--success);border-radius:8px;background:var(--success-soft)}ol{padding-left:24px}li{margin:8px 0}.task{margin:16px 0;padding:18px;border:2px solid #bad0e5;border-radius:11px;background:#f8fbfe}.points{float:right;padding:3px 9px;border-radius:999px;background:var(--soft);color:var(--dark);font-weight:800;font-size:.85rem}.terminal{margin:16px 0;border-radius:10px;overflow:hidden;background:var(--code);color:#e8eef5}.terminal-title{padding:8px 14px;background:#0b1a29;color:#9fb4c8;font-size:.8rem}pre{margin:0;padding:17px;overflow:auto;line-height:1.5}.check{width:100%;border-collapse:collapse}.check th,.check td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.check th{background:#f1f5f8}.small{color:var(--muted);font-size:.92rem}.name-row{display:grid;grid-template-columns:1fr 180px;gap:14px;margin-top:20px}.field{padding:10px 0;border-bottom:1px solid #78909c}.total{font-size:1.15rem;font-weight:800;text-align:right}.footer{margin-top:20px;text-align:center;color:var(--muted);font-size:.86rem}@media(max-width:650px){.hero{padding:28px}.card{padding:20px}.name-row{grid-template-columns:1fr}}@media print{@page{size:A4;margin:14mm}body{background:white;font-size:10.5pt}main{max-width:none;padding:0}.hero{padding:12mm;box-shadow:none}.card{box-shadow:none;break-inside:avoid}.footer{display:none}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+<p class="eyebrow">Computergebruik · 5e middelbaar</p>
+<h1>Toets A</h1>
+<p>Praktijktoets over bestanden, paden, omgevingsvariabelen, CMD en batchbestanden.</p>
+<div class="name-row"><div class="field">Naam:</div><div class="field">Klas:</div></div>
+</header>
+
+<section class="card">
+<h2>Opdracht</h2>
+<div class="important"><strong>Je levert precies één bestand in: <code>toets-a.bat</code>.</strong><br>Na het starten van dit bestand moet alles hieronder automatisch gebeuren. Je maakt dus geen mappen of bestanden handmatig nadat je batchbestand gestart is.</div>
+<p>Gebruik uitsluitend commando's en technieken uit de cursus. Het batchbestand moet werken vanuit eender welke map en voor eender welke Windows-gebruiker.</p>
+<div class="rule"><strong>Belangrijk:</strong> gebruik geen hardgecodeerde gebruikersnaam zoals <code>C:\Users\Jan</code>. Gebruik omgevingsvariabelen en correcte aanhalingstekens waar nodig.</div>
+</section>
+
+<section class="card">
+<h2>Wat moet <code>toets-a.bat</code> doen?</h2>
+
+<div class="task"><span class="points">4 p</span><h3>1. Werkmap en identiteit</h3>
+<ol>
+<li>Maak een variabele <code>WERKMAP</code> met als waarde <code>%USERPROFILE%\ComputerGebruik\ToetsA</code>.</li>
+<li>Maak de werkmap alleen als ze nog niet bestaat.</li>
+<li>Ga met CMD naar die werkmap.</li>
+<li>Maak een bestand <code>controle.txt</code> en schrijf daarin minstens: je naam, je klas, <code>%USERNAME%</code>, <code>%COMPUTERNAME%</code>, <code>%USERPROFILE%</code> en het huidige pad.</li>
+</ol></div>
+
+<div class="task"><span class="points">4 p</span><h3>2. Mappenstructuur</h3>
+<p>Maak via het batchbestand exact deze mappen:</p>
+<div class="terminal"><div class="terminal-title">Verwachte structuur</div><pre>ToetsA
+├── documentatie
+├── archief
+└── systeem</pre></div>
+<p>Gebruik voor minstens één bewerking een relatief pad.</p></div>
+
+<div class="task"><span class="points">4 p</span><h3>3. Tekstbestand maken en bewerken</h3>
+<ol>
+<li>Maak in <code>documentatie</code> een bestand <code>concept.txt</code>.</li>
+<li>Schrijf met <code>&gt;</code> de regel <code>Computergebruik - Toets A</code>.</li>
+<li>Voeg met <code>&gt;&gt;</code> je Windows-gebruikersnaam en computernaam toe.</li>
+<li>Hernoem <code>concept.txt</code> daarna naar <code>verslag.txt</code>.</li>
+<li>Laat het batchbestand de inhoud van <code>verslag.txt</code> ook toevoegen aan <code>controle.txt</code>.</li>
+</ol></div>
+
+<div class="task"><span class="points">3 p</span><h3>4. Kopiëren en verplaatsen</h3>
+<ol>
+<li>Maak eerst een kopie van <code>documentatie\verslag.txt</code>.</li>
+<li>De kopie moet uiteindelijk als <code>archief\reservekopie.txt</code> bestaan.</li>
+<li>Het originele <code>documentatie\verslag.txt</code> moet blijven bestaan.</li>
+</ol></div>
+
+<div class="task"><span class="points">2 p</span><h3>5. Verborgen bestand</h3>
+<ol>
+<li>Maak <code>systeem\intern.txt</code> met de inhoud <code>Dit bestand is verborgen.</code>.</li>
+<li>Zet het kenmerk <strong>Verborgen</strong> aan met <code>attrib</code>.</li>
+<li>Voeg de uitvoer van <code>attrib</code> voor dit bestand toe aan <code>controle.txt</code>.</li>
+</ol></div>
+
+<div class="task"><span class="points">3 p</span><h3>6. Automatische controle</h3>
+<p>Voeg onderaan <code>controle.txt</code> automatisch toe:</p>
+<ol>
+<li>de uitvoer van <code>whoami</code>;</li>
+<li>de locatie van <code>notepad.exe</code> via <code>where</code>;</li>
+<li>de volledige mappenboom met bestanden via <code>tree /f</code>;</li>
+<li>een lijst waarbij verborgen items zichtbaar zijn met <code>dir /a</code>.</li>
+</ol>
+<p>Laat op het einde <code>controle.txt</code> in het CMD-venster zien.</p></div>
+
+<p class="total">Totaal: 20 punten</p>
+</section>
+
+<section class="card">
+<h2>Eindresultaat</h2>
+<p>Na uitvoering moet minstens deze structuur bestaan:</p>
+<div class="terminal"><div class="terminal-title">Te controleren resultaat</div><pre>ToetsA
+│   controle.txt
+│
+├───archief
+│       reservekopie.txt
+│
+├───documentatie
+│       verslag.txt
+│
+└───systeem
+        intern.txt   ← verborgen</pre></div>
+<div class="success"><strong>Verifieerbaar:</strong> de docent kan het batchbestand openen om de gebruikte commando's te controleren en het daarna uitvoeren om de structuur, bestandsinhoud, kenmerken en <code>controle.txt</code> te controleren.</div>
+</section>
+
+<section class="card">
+<h2>Controlelijst docent</h2>
+<table class="check"><thead><tr><th>Onderdeel</th><th>Punten</th><th>Controle</th></tr></thead><tbody>
+<tr><td><code>WERKMAP</code>, variabelen, juiste huidige map, identificatie in <code>controle.txt</code></td><td>4</td><td>□</td></tr>
+<tr><td>Correcte mappenstructuur + minstens één relatief pad</td><td>4</td><td>□</td></tr>
+<tr><td><code>&gt;</code>, <code>&gt;&gt;</code>, hernoemen, inhoud toegevoegd aan controlebestand</td><td>4</td><td>□</td></tr>
+<tr><td>Kopie behouden + kopie correct in <code>archief</code></td><td>3</td><td>□</td></tr>
+<tr><td><code>intern.txt</code> bestaat en heeft kenmerk Hidden</td><td>2</td><td>□</td></tr>
+<tr><td><code>whoami</code>, <code>where</code>, <code>tree /f</code>, <code>dir /a</code> in controlebestand</td><td>3</td><td>□</td></tr>
+</tbody></table>
+<p class="small">Voor een zuivere hertest kan de map <code>%USERPROFILE%\ComputerGebruik\ToetsA</code> vooraf verwijderd worden.</p>
+</section>
+<p class="footer">Computergebruik · Toets A · 20 punten</p>
+</main>
+</body>
+</html>
