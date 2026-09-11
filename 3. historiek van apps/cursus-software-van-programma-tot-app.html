@@ -1,0 +1,1377 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cursus over de evolutie van software: van lokaal programma en service tot webapp, API en moderne smartphone-app.">
+  <title>Software — van programma tot smartphone-app</title>
+  <style>
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0d47a1;
+      --primary-soft: #e8f1fb;
+      --accent: #ffb300;
+      --ink: #17212b;
+      --muted: #5f6b76;
+      --line: #d9e0e7;
+      --surface: #ffffff;
+      --background: #f4f7fa;
+      --success: #18794e;
+      --success-soft: #e8f7ef;
+      --warning: #9a5b00;
+      --warning-soft: #fff5dc;
+      --danger: #b42318;
+      --danger-soft: #ffebe9;
+      --purple: #6a1b9a;
+      --purple-soft: #f5eafa;
+      --code: #102235;
+      --shadow: 0 4px 18px rgba(23, 33, 43, .09);
+      --radius: 14px;
+      --nav-width: 285px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--background);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.58;
+    }
+
+    button, input { font: inherit; }
+    a { color: var(--primary); }
+    code, kbd, pre { font-family: "Cascadia Code", Consolas, monospace; }
+    code {
+      padding: .08rem .32rem;
+      border-radius: 5px;
+      color: #0b4d86;
+      background: #edf3f8;
+    }
+    kbd {
+      display: inline-block;
+      min-width: 1.8em;
+      margin: 0 .08em;
+      padding: .08em .42em;
+      border: 1px solid #aeb8c2;
+      border-bottom-width: 3px;
+      border-radius: 5px;
+      color: #253341;
+      background: #fff;
+      font-size: .9em;
+      text-align: center;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: -60px;
+      left: 16px;
+      padding: 10px 14px;
+      color: #fff;
+      background: var(--primary-dark);
+      border-radius: 0 0 8px 8px;
+    }
+    .skip-link:focus { top: 0; }
+
+    .sidebar {
+      position: fixed;
+      z-index: 20;
+      inset: 0 auto 0 0;
+      width: var(--nav-width);
+      padding: 24px 18px;
+      overflow-y: auto;
+      color: #fff;
+      background: linear-gradient(175deg, #0d47a1 0%, #12324f 100%);
+    }
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .brand-mark {
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--primary-dark);
+      background: #fff;
+      font-weight: 900;
+    }
+    .brand strong, .brand small { display: block; }
+    .brand small { color: #cfe1f5; }
+    .sidebar nav a {
+      display: block;
+      margin: 3px 0;
+      padding: 9px 11px;
+      border-radius: 8px;
+      color: #e5f0fc;
+      text-decoration: none;
+      font-size: .92rem;
+    }
+    .sidebar nav a:hover,
+    .sidebar nav a:focus {
+      color: #fff;
+      background: rgba(255, 255, 255, .12);
+      outline: none;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      color: #d7e8f8;
+      font-size: .82rem;
+    }
+    .progress-track {
+      height: 7px;
+      margin-top: 6px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .18);
+    }
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: var(--accent);
+      transition: width .25s ease;
+    }
+
+    main {
+      width: min(1150px, calc(100% - var(--nav-width)));
+      margin-left: var(--nav-width);
+      padding: 32px clamp(20px, 4vw, 62px) 80px;
+    }
+    .hero {
+      position: relative;
+      min-height: 390px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 26px;
+      padding: clamp(32px, 6vw, 72px);
+      overflow: hidden;
+      border-radius: 22px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(255, 179, 0, .95) 0 7%, transparent 7.3%),
+        radial-gradient(circle at 92% 62%, rgba(255, 255, 255, .12) 0 18%, transparent 18.3%),
+        linear-gradient(135deg, #1565c0, #0d3d70 72%);
+      box-shadow: var(--shadow);
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #dcecff;
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      max-width: 800px;
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+    .hero p:not(.eyebrow) {
+      max-width: 760px;
+      margin: 20px 0 0;
+      color: #e7f1fb;
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+    .button {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      min-height: 42px;
+      padding: 9px 15px;
+      border: 0;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button:hover { filter: brightness(.95); }
+    .button.light { color: var(--primary-dark); background: #fff; }
+    .button.ghost { border: 1px solid rgba(255,255,255,.45); background: transparent; }
+
+    .lesson {
+      margin: 26px 0;
+      padding: clamp(22px, 4vw, 42px);
+      scroll-margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 2px 10px rgba(23, 33, 43, .055);
+    }
+    .lesson-number {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    h2 {
+      margin: 10px 0 8px;
+      font-size: clamp(1.65rem, 3vw, 2.3rem);
+      line-height: 1.15;
+      letter-spacing: -.025em;
+    }
+    h3 { margin: 30px 0 8px; font-size: 1.25rem; }
+    h4 { margin: 20px 0 5px; font-size: 1rem; }
+    p { margin: .55rem 0 1rem; }
+    .lead { max-width: 850px; color: var(--muted); font-size: 1.08rem; }
+
+    .goal-grid, .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+    .mini-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfcfd;
+    }
+    .mini-card strong { display: block; margin-bottom: 3px; }
+    .mini-card p { margin: 0; color: var(--muted); }
+
+    .note, .warning, .danger, .success, .concept {
+      margin: 18px 0;
+      padding: 14px 16px;
+      border-left: 5px solid var(--primary);
+      border-radius: 8px;
+      background: var(--primary-soft);
+    }
+    .warning { border-color: var(--accent); background: var(--warning-soft); }
+    .danger { border-color: var(--danger); background: var(--danger-soft); }
+    .success { border-color: var(--success); background: var(--success-soft); }
+    .concept { border-color: var(--purple); background: var(--purple-soft); }
+    .note strong, .warning strong, .danger strong, .success strong, .concept strong { display: block; }
+
+    .table-wrap { margin: 18px 0; overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .94rem;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { color: #334251; background: #f1f5f8; }
+    tr:last-child td { border-bottom: 0; }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin: 22px 0;
+    }
+    .timeline div {
+      position: relative;
+      min-height: 94px;
+      padding: 12px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fbfcfd;
+      font-size: .84rem;
+    }
+    .timeline strong { display: block; color: var(--primary-dark); margin-bottom: 4px; }
+
+    .terminal, .diagram {
+      position: relative;
+      margin: 16px 0;
+      overflow: hidden;
+      border-radius: 10px;
+      color: #e8eef5;
+      background: var(--code);
+      box-shadow: 0 4px 12px rgba(7, 20, 32, .2);
+    }
+    .terminal-title {
+      padding: 8px 14px;
+      color: #9fb4c8;
+      background: #0b1a29;
+      font-size: .78rem;
+    }
+    pre {
+      margin: 0;
+      padding: 18px 55px 18px 18px;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.52;
+    }
+    pre code { padding: 0; color: inherit; background: transparent; }
+    .copy-button {
+      position: absolute;
+      top: 42px;
+      right: 10px;
+      padding: 6px 9px;
+      border: 1px solid #50677d;
+      border-radius: 6px;
+      color: #dce8f4;
+      background: #1e3850;
+      font-size: .76rem;
+      cursor: pointer;
+    }
+
+    .task {
+      margin: 22px 0;
+      padding: 19px;
+      border: 2px solid #bad0e5;
+      border-radius: 12px;
+      background: #f8fbfe;
+    }
+    .task-head {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .task-icon {
+      display: grid;
+      flex: 0 0 38px;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 9px;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 900;
+    }
+    .task h3, .task h4 { margin-top: 2px; }
+    .done-row {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--success);
+      font-weight: 700;
+    }
+    .done-row input { width: 19px; height: 19px; accent-color: var(--success); }
+
+    details {
+      margin: 14px 0;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
+    }
+    summary {
+      padding: 13px 15px;
+      color: var(--primary-dark);
+      font-weight: 750;
+      cursor: pointer;
+    }
+    details > div { padding: 0 15px 15px; }
+    details.teacher { border-left: 5px solid #7b1fa2; }
+    details.teacher summary { color: #6a1b9a; }
+
+    .checklist { padding-left: 0; list-style: none; }
+    .checklist li { margin: 8px 0; padding-left: 28px; }
+    .checklist li::before {
+      float: left;
+      margin-left: -28px;
+      color: var(--success);
+      font-weight: 900;
+      content: "✓";
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 18px 0;
+      padding: 15px;
+      border-radius: 10px;
+      background: #edf3f8;
+    }
+    .flow span {
+      padding: 8px 11px;
+      border: 1px solid #cedbe7;
+      border-radius: 8px;
+      background: #fff;
+      font-weight: 700;
+    }
+    .flow b { color: var(--primary); }
+
+    .quiz label {
+      display: block;
+      margin: 7px 0;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    .quiz label:hover { background: #f4f8fb; }
+    .quiz input { margin-right: 8px; accent-color: var(--primary); }
+    .quiz-result { min-height: 1.4em; margin-top: 12px; font-weight: 800; }
+
+    .footer {
+      padding: 28px 8px 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: .88rem;
+    }
+    .sources a { word-break: break-word; }
+
+    @media (max-width: 980px) {
+      .timeline { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 880px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        max-height: none;
+        padding: 15px 18px;
+      }
+      .sidebar nav {
+        display: flex;
+        gap: 3px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+      }
+      .sidebar nav a { flex: 0 0 auto; white-space: nowrap; }
+      .brand { margin-bottom: 8px; }
+      .progress-label, .progress-track { display: none; }
+      main { width: 100%; margin: 0; padding: 18px 14px 60px; }
+      .hero { min-height: 350px; border-radius: 14px; }
+    }
+    @media (max-width: 600px) {
+      .goal-grid, .card-grid { grid-template-columns: 1fr; }
+      .timeline { grid-template-columns: repeat(2, 1fr); }
+      .lesson { padding: 22px 17px; }
+      th, td { padding: 9px; }
+      pre { font-size: .82rem; }
+    }
+    @media print {
+      @page { size: A4; margin: 15mm; }
+      body { color: #000; background: #fff; font-size: 10.5pt; }
+      .sidebar, .hero-actions, .copy-button, .done-row, .quiz button, .footer { display: none !important; }
+      main { width: 100%; margin: 0; padding: 0; }
+      .hero { min-height: 0; margin: 0 0 10mm; padding: 14mm; color: #fff; box-shadow: none; }
+      .lesson { margin: 0 0 9mm; padding: 0; border: 0; box-shadow: none; break-before: page; }
+      .lesson:first-of-type { break-before: auto; }
+      .task, .note, .warning, .danger, .success, .concept, .terminal, .diagram, table, details { break-inside: avoid; }
+      details > div { display: block; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#inhoud">Ga naar de cursus</a>
+
+  <aside class="sidebar" aria-label="Cursusnavigatie">
+    <div class="brand">
+      <div class="brand-mark">&lt;/&gt;</div>
+      <div><strong>Software &amp; apps</strong><small>5e middelbaar</small></div>
+    </div>
+    <nav>
+      <a href="#start">Start</a>
+      <a href="#les1">1. Programma, proces, service</a>
+      <a href="#les2">2. Client en server</a>
+      <a href="#les3">3. Webapp en API</a>
+      <a href="#les4">4. Van server tot cloud</a>
+      <a href="#les5">5. Smartphone-apps</a>
+      <a href="#les6">6. Manieren om apps te bouwen</a>
+      <a href="#les7">7. Vite + PWA + Capacitor</a>
+      <a href="#eindproef">Eindproef</a>
+      <a href="#spiekbrief">Spiekbrief</a>
+    </nav>
+    <div class="progress-label"><span>Mijn oefeningen</span><strong id="progressText">0/0</strong></div>
+    <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+  </aside>
+
+  <main id="inhoud">
+    <header class="hero" id="start">
+      <p class="eyebrow">Van executable tot app in je broekzak</p>
+      <h1>Hoe werd een programma een moderne app?</h1>
+      <p>Een smartphone-app lijkt iets totaal anders dan een oud programma op een pc. Onder de motorkap zijn dezelfde basisideeën nog altijd aanwezig: code draait in processen, processen praten via netwerken, services verwerken requests en data wordt ergens opgeslagen.</p>
+      <div class="hero-actions">
+        <a class="button light" href="#les1">Start de cursus</a>
+        <button class="button ghost" type="button" onclick="window.print()">Afdrukken / pdf</button>
+      </div>
+    </header>
+
+    <section class="lesson" aria-labelledby="route-title">
+      <span class="lesson-number">Overzicht</span>
+      <h2 id="route-title">Het verhaal in één lijn</h2>
+      <p class="lead">De evolutie is geen reeks technologieën die elkaar volledig vervangen. Nieuwe lagen kwamen boven op bestaande ideeën.</p>
+
+      <div class="timeline">
+        <div><strong>Programma</strong>Code draait lokaal op één computer.</div>
+        <div><strong>Service</strong>Een programma blijft draaien en wacht op werk.</div>
+        <div><strong>Client/server</strong>Programma's communiceren over een netwerk.</div>
+        <div><strong>Web</strong>De browser wordt een universele client.</div>
+        <div><strong>API</strong>Frontend en backend wisselen data uit.</div>
+        <div><strong>App</strong>Een lokale client gebruikt internet- en toestelservices.</div>
+      </div>
+
+      <div class="goal-grid">
+        <div class="mini-card"><strong>Architectuur herkennen</strong><p>Programma, proces, service, client, server, frontend, backend en database uit elkaar houden.</p></div>
+        <div class="mini-card"><strong>HTTP en API begrijpen</strong><p>Kunnen uitleggen hoe een request van een app naar een backend en terug gaat.</p></div>
+        <div class="mini-card"><strong>App-technologie kiezen</strong><p>Native, Flutter, React Native, Capacitor en PWA op hoofdlijnen vergelijken.</p></div>
+        <div class="mini-card"><strong>Onze stack plaatsen</strong><p>Begrijpen wat Vite, een PWA en Capacitor elk afzonderlijk doen.</p></div>
+      </div>
+
+      <details class="teacher">
+        <summary>Docentfiche: voorgestelde timing</summary>
+        <div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Lesblok</th><th>Inhoud</th><th>Resultaat</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Programma, proces en service</td><td>Leerling kan lokale software en achtergrondsoftware onderscheiden.</td></tr>
+                <tr><td>2</td><td>Client/server en netwerk</td><td>Leerling kan request, protocol, poort, client en server plaatsen.</td></tr>
+                <tr><td>3</td><td>Web, frontend, backend, API en JSON</td><td>Leerling kan de route van browser tot database schetsen.</td></tr>
+                <tr><td>4</td><td>Monolith, services en cloud</td><td>Leerling begrijpt dat “de server” uit meerdere onderdelen kan bestaan.</td></tr>
+                <tr><td>5</td><td>Moderne smartphone-app</td><td>Leerling kan lokale en server-side onderdelen van een app benoemen.</td></tr>
+                <tr><td>6-7</td><td>Technologiekeuze + Vite/PWA/Capacitor</td><td>Leerling kan voor een scenario een geschikte aanpak motiveren.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="lesson" id="les1" aria-labelledby="les1-title">
+      <span class="lesson-number">Les 1</span>
+      <h2 id="les1-title">Programma, proces en service</h2>
+      <p class="lead">Alles begint met code. Maar code op een schijf doet niets. Pas wanneer het besturingssysteem die code laadt en uitvoert, ontstaat een proces.</p>
+
+      <h3>Een programma is code op opslag</h3>
+      <p>Een klassiek programma bestaat uit uitvoerbare code en vaak extra bestanden. Op Windows kan dat bijvoorbeeld een <code>.exe</code> zijn. Op Linux hoeft een uitvoerbaar bestand geen extensie te hebben.</p>
+
+      <div class="diagram">
+        <div class="terminal-title">Van bestand naar actief proces</div>
+        <pre><code>opslag                     geheugen / CPU
+
+programma.exe  --start--&gt;  proces
+                              |
+                              +-- instructies uitvoeren
+                              +-- geheugen gebruiken
+                              +-- bestanden openen
+                              +-- vensters tonen</code></pre>
+      </div>
+
+      <div class="concept">
+        <strong>Programma ≠ proces</strong>
+        Het programma is de opgeslagen code. Een proces is een draaiende instantie van die code. Je kunt hetzelfde programma meerdere keren starten en dus meerdere processen hebben.
+      </div>
+
+      <h3>De eerste toepassingen deden bijna alles lokaal</h3>
+      <div class="diagram">
+        <div class="terminal-title">Klassiek lokaal programma</div>
+        <pre><code>+------------------------+
+| tekstverwerker         |
+|                        |
+| gebruikersinterface    |
+| logica                 |
+| bestanden lezen/schrijven
++-----------+------------+
+            |
+            v
+      document.doc</code></pre>
+      </div>
+
+      <p>De applicatie, de logica en de gegevens zaten dicht bij elkaar op dezelfde computer. Een netwerk was niet noodzakelijk.</p>
+
+      <h3>Dan komt het achtergrondprogramma</h3>
+      <p>Sommige programma's moeten niet alleen draaien wanneer iemand op een icoon klikt. Ze moeten beschikbaar blijven. Op Windows noemen we zulke achtergrondprogramma's vaak <strong>services</strong>; op Unix/Linux kom je ook het woord <strong>daemon</strong> tegen.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Service</th><th>Taak</th><th>Wacht bijvoorbeeld op</th></tr></thead>
+          <tbody>
+            <tr><td><code>sshd</code></td><td>Externe terminalverbindingen</td><td>Een SSH-verbinding</td></tr>
+            <tr><td>webserver</td><td>Webpagina's of API-antwoorden leveren</td><td>HTTP-requests</td></tr>
+            <tr><td>database-server</td><td>Gegevens opslaan en opvragen</td><td>Databasequeries</td></tr>
+            <tr><td>printservice</td><td>Printopdrachten beheren</td><td>Nieuwe printjobs</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <strong>Een service is nog altijd gewoon software</strong>
+        Het bijzondere is vooral dat ze langdurig op de achtergrond draait en een functie aanbiedt aan andere processen of computers.
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">1A</div><div><h3>Praktijk: zoek draaiende software</h3><p>Maak het verschil tussen programma, proces en service zichtbaar.</p></div></div>
+        <ol>
+          <li>Open Windows <strong>Taakbeheer</strong>.</li>
+          <li>Zoek een programma dat je zelf hebt geopend, bijvoorbeeld een browser.</li>
+          <li>Bekijk hoeveel processen erbij horen.</li>
+          <li>Open het onderdeel <strong>Services</strong> en zoek drie services die draaien zonder zichtbaar venster.</li>
+          <li>Leg in één zin uit waarom een service geen apart zichtbaar venster nodig heeft.</li>
+        </ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="1a"> Opdracht 1A voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les2" aria-labelledby="les2-title">
+      <span class="lesson-number">Les 2</span>
+      <h2 id="les2-title">Van één computer naar client en server</h2>
+      <p class="lead">Zodra meerdere computers dezelfde gegevens of functies nodig hebben, wordt het interessant om een deel centraal te laten draaien.</p>
+
+      <h3>De client vraagt, de server antwoordt</h3>
+      <div class="diagram">
+        <div class="terminal-title">Client/server</div>
+        <pre><code>CLIENT                                  SERVER
+
+boekhouding.exe  ---- request -------&gt;  boekhouding-service
+                 &lt;--- response -------          |
+                                                v
+                                             database</code></pre>
+      </div>
+
+      <p><strong>Client</strong> en <strong>server</strong> beschrijven een rol. Een client start meestal een aanvraag. Een server luistert en behandelt aanvragen. Eén computer kan tegelijk client én server zijn voor verschillende toepassingen.</p>
+
+      <h3>Hoe vinden ze elkaar?</h3>
+      <p>Op een netwerk zijn enkele begrippen belangrijk:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Begrip</th><th>Betekenis</th><th>Voorbeeld</th></tr></thead>
+          <tbody>
+            <tr><td>IP-adres</td><td>Adres van een netwerkinterface</td><td><code>192.168.1.20</code></td></tr>
+            <tr><td>DNS</td><td>Zet een naam om naar een IP-adres</td><td><code>api.school.be</code></td></tr>
+            <tr><td>Protocol</td><td>Afspraken over de communicatie</td><td>HTTP, SSH, DNS</td></tr>
+            <tr><td>Poort</td><td>Logisch nummer waarop een netwerkservice luistert</td><td>HTTPS gebruikt typisch TCP 443</td></tr>
+            <tr><td>Request</td><td>Vraag van client naar server</td><td>“Geef leerling 123”</td></tr>
+            <tr><td>Response</td><td>Antwoord van server naar client</td><td>Naam, klas, status...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flow">
+        <span>app</span><b>→</b><span>DNS</span><b>→</b><span>IP-adres</span><b>→</b><span>TCP/HTTPS</span><b>→</b><span>service</span>
+      </div>
+
+      <h3>Voorbeeld: SSH</h3>
+      <div class="diagram">
+        <div class="terminal-title">Een netwerkservice</div>
+        <pre><code>SSH-client
+    |
+    | TCP
+    v
+   sshd
+    |
+    v
+shell op de server</code></pre>
+      </div>
+
+      <p>De SSH-client en de SSH-server zijn twee verschillende programma's die samen één toepassing mogelijk maken.</p>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">2A</div><div><h3>Praktijk: herken de rollen</h3><p>Bepaal per situatie wat client en server is.</p></div></div>
+        <ol>
+          <li>Je browser opent <code>https://example.com</code>.</li>
+          <li>Een mailprogramma haalt berichten op van een mailserver.</li>
+          <li>Een app vraagt leerlinggegevens op via een school-API.</li>
+          <li>Een pc stuurt een printjob naar een centrale printserver.</li>
+        </ol>
+        <details><summary>Controle</summary><div>In alle vier situaties is het programma dat de aanvraag start de client. De webserver, mailserver, API-service en printserver leveren elk een service aan die client.</div></details>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="2a"> Opdracht 2A voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les3" aria-labelledby="les3-title">
+      <span class="lesson-number">Les 3</span>
+      <h2 id="les3-title">De browser wordt een applicatieplatform</h2>
+      <p class="lead">Met het web hoefde niet langer voor elke toepassing een aparte client geïnstalleerd te worden. De browser werd een universele client die HTTP spreekt.</p>
+
+      <h3>De klassieke website</h3>
+      <div class="diagram">
+        <div class="terminal-title">Server stuurt HTML</div>
+        <pre><code>browser
+   |
+   | GET /leerlingen
+   v
+webserver / backend
+   |
+   | maakt HTML
+   v
+&lt;html&gt;...leerlingen...&lt;/html&gt;</code></pre>
+      </div>
+
+      <p>Bij een klassieke server-rendered website bouwt de server de HTML en stuurt die naar de browser. Frameworks zoals Laravel, Django en Rails kunnen zo werken.</p>
+
+      <h3>HTML, CSS en JavaScript</h3>
+      <div class="card-grid">
+        <div class="mini-card"><strong>HTML</strong><p>Structuur en inhoud van de pagina.</p></div>
+        <div class="mini-card"><strong>CSS</strong><p>Uiterlijk, layout en responsive gedrag.</p></div>
+        <div class="mini-card"><strong>JavaScript</strong><p>Gedrag en programmatische logica in de browser.</p></div>
+        <div class="mini-card"><strong>Browser APIs</strong><p>Functies zoals opslag, netwerk, camera en notificaties, voor zover het platform ze toelaat.</p></div>
+      </div>
+
+      <p>JavaScript maakte van de browser steeds meer een runtime voor echte applicaties. De frontend kon zelf schermen bijwerken zonder voor elke actie een volledige nieuwe HTML-pagina op te vragen.</p>
+
+      <h3>Frontend en backend worden losser gekoppeld</h3>
+      <div class="diagram">
+        <div class="terminal-title">Moderne webapp</div>
+        <pre><code>FRONTEND                         BACKEND
+
+HTML/CSS/JavaScript
+       |
+       | HTTPS
+       | request
+       v
+                         API / applicatielogica
+                                  |
+                                  v
+                               database
+       ^
+       | JSON response
+       |
+browser toont resultaat</code></pre>
+      </div>
+
+      <h3>Wat is een API?</h3>
+      <p>Een <strong>API</strong> is een afgesproken interface waarmee software andere software kan aanspreken. Bij webapps bedoelen we vaak een HTTP-API.</p>
+
+      <div class="terminal">
+        <div class="terminal-title">Voorbeeld HTTP-request</div>
+        <button class="copy-button" type="button">Kopieer</button>
+        <pre><code>GET /api/students/123 HTTP/1.1
+Host: school.example</code></pre>
+      </div>
+
+      <div class="terminal">
+        <div class="terminal-title">Voorbeeld JSON-response</div>
+        <button class="copy-button" type="button">Kopieer</button>
+        <pre><code>{
+  "id": 123,
+  "name": "Jan",
+  "class": "5ICW"
+}</code></pre>
+      </div>
+
+      <div class="warning">
+        <strong>JSON is geen JavaScript-object</strong>
+        JSON is tekst in een afgesproken formaat. <code>JSON.parse(tekst)</code> maakt er in JavaScript gegevens van; <code>JSON.stringify(object)</code> maakt JSON-tekst.
+      </div>
+
+      <h3>Veelgebruikte HTTP-methoden</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Methode</th><th>Typisch doel</th><th>Voorbeeld</th></tr></thead>
+          <tbody>
+            <tr><td><code>GET</code></td><td>Gegevens lezen</td><td><code>GET /students/123</code></td></tr>
+            <tr><td><code>POST</code></td><td>Nieuwe actie/resource starten of maken</td><td><code>POST /students</code></td></tr>
+            <tr><td><code>PUT</code></td><td>Resource volledig vervangen</td><td><code>PUT /students/123</code></td></tr>
+            <tr><td><code>PATCH</code></td><td>Resource gedeeltelijk aanpassen</td><td><code>PATCH /students/123</code></td></tr>
+            <tr><td><code>DELETE</code></td><td>Resource verwijderen</td><td><code>DELETE /students/123</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">3A</div><div><h3>Praktijk: volg een request in DevTools</h3><p>Bekijk dat een webpagina tijdens het gebruik netwerkrequests uitvoert.</p></div></div>
+        <ol>
+          <li>Open een moderne website in Chrome of Edge.</li>
+          <li>Open Developer Tools met <kbd>F12</kbd>.</li>
+          <li>Ga naar <strong>Network</strong> en herlaad de pagina.</li>
+          <li>Zoek minstens één request naar een document, JavaScript-bestand en afbeelding.</li>
+          <li>Open een request en zoek methode, statuscode en response headers.</li>
+        </ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="3a"> Opdracht 3A voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les4" aria-labelledby="les4-title">
+      <span class="lesson-number">Les 4</span>
+      <h2 id="les4-title">“De server” wordt een heel systeem</h2>
+      <p class="lead">Voor een kleine toepassing kan één backendprogramma perfect voldoende zijn. Grotere systemen worden soms opgesplitst in meerdere services met elk een eigen verantwoordelijkheid.</p>
+
+      <h3>Eerst: de monolith</h3>
+      <div class="diagram">
+        <div class="terminal-title">Eén applicatie</div>
+        <pre><code>+--------------------------------+
+| SCHOOLAPP                      |
+|--------------------------------|
+| gebruikers                     |
+| leerlingen                     |
+| punten                         |
+| berichten                      |
+| betalingen                     |
++---------------+----------------+
+                |
+                v
+             database</code></pre>
+      </div>
+
+      <p>Een monolith is niet “slecht”. Voor kleine en middelgrote toepassingen is één duidelijke applicatie vaak eenvoudiger te ontwikkelen, testen en beheren.</p>
+
+      <h3>Opsplitsen in services</h3>
+      <div class="diagram">
+        <div class="terminal-title">Meerdere services</div>
+        <pre><code>                 +-- user service
+                 |
+app ---- API ----+-- student service
+                 |
+                 +-- notification service
+                 |
+                 +-- payment service</code></pre>
+      </div>
+
+      <p>Wanneer services zeer klein en onafhankelijk worden opgezet, spreken we vaak over <strong>microservices</strong>. Dat kan schaalbaarheid en teamautonomie helpen, maar brengt ook extra netwerkverkeer, monitoring, deployment en foutafhandeling mee.</p>
+
+      <div class="concept">
+        <strong>Meer services is niet automatisch moderner of beter</strong>
+        Architectuur is een keuze op basis van schaal, team, betrouwbaarheid en complexiteit. KISS blijft een geldige ontwerpregel.
+      </div>
+
+      <h3>En dan: cloud</h3>
+      <p>“Cloud” betekent niet dat de server verdwenen is. De software draait nog altijd op echte computers, maar infrastructuur wordt als dienst aangeboden en kan makkelijker worden geautomatiseerd of opgeschaald.</p>
+
+      <div class="diagram">
+        <div class="terminal-title">Mogelijke cloudonderdelen</div>
+        <pre><code>cloud
+ |
+ +-- virtual machines
+ +-- containers
+ +-- managed databases
+ +-- object storage
+ +-- queues
+ +-- serverless functions
+ +-- CDN</code></pre>
+      </div>
+
+      <p>Voor de client blijft het vaak verrassend eenvoudig:</p>
+
+      <div class="diagram">
+        <div class="terminal-title">De client ziet vooral een adres</div>
+        <pre><code>app
+ |
+ | HTTPS
+ v
+api.example.com</code></pre>
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">4A</div><div><h3>Denkopdracht: ontwerp KISS</h3><p>Je bouwt een fluo-app voor één school.</p></div></div>
+        <p>De app bewaart leerlingen en maandelijkse scores. Kies:</p>
+        <ol>
+          <li>één backend met één database, of</li>
+          <li>aparte user-, student-, score- en notification-services.</li>
+        </ol>
+        <p>Schrijf in twee zinnen welke aanpak je kiest en waarom.</p>
+        <details><summary>Modelantwoord</summary><div>Voor een kleine schoolapp is één backend met één database meestal de eenvoudigste start. Splits pas op wanneer een concrete nood dat rechtvaardigt.</div></details>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="4a"> Opdracht 4A voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les5" aria-labelledby="les5-title">
+      <span class="lesson-number">Les 5</span>
+      <h2 id="les5-title">De moderne smartphone-app</h2>
+      <p class="lead">Een smartphone-app lijkt opnieuw op een klassiek lokaal programma: je installeert software op een toestel. Maar de meeste apps zijn tegelijk clients van online services.</p>
+
+      <div class="diagram">
+        <div class="terminal-title">Een moderne app is vaak maar het zichtbare deel</div>
+        <pre><code>SMARTPHONE
++-------------------------+
+| app / frontend          |
+|-------------------------|
+| schermen                |
+| knoppen                 |
+| lokale opslag           |
+| camera / gps / biometrie|
++------------+------------+
+             |
+             | HTTPS / JSON
+             v
+INTERNET
+             |
+             v
++-------------------------+
+| backend / API           |
+|-------------------------|
+| login                   |
+| business logic          |
+| synchronisatie          |
+| notificaties            |
++------------+------------+
+             |
+             v
++-------------------------+
+| database / storage      |
++-------------------------+</code></pre>
+      </div>
+
+      <p>De app op je telefoon bevat dus vaak niet “de hele dienst”. Ze bevat vooral de gebruikersinterface, een deel van de logica, lokale data en toegang tot toestelhardware. Accounts, gedeelde gegevens, aanbevelingen en synchronisatie kunnen op servers draaien.</p>
+
+      <h3>Wat kan lokaal en wat staat centraal?</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Op het toestel</th><th>Op de backend</th></tr></thead>
+          <tbody>
+            <tr><td>UI en navigatie</td><td>Accounts en authenticatie</td></tr>
+            <tr><td>Camera/GPS/Bluetooth aanroepen</td><td>Gedeelde gegevens tussen gebruikers</td></tr>
+            <tr><td>Cache en offline opslag</td><td>Business rules en autorisatie</td></tr>
+            <tr><td>Sommige validatie</td><td>Database en centrale opslag</td></tr>
+            <tr><td>Lokale notificaties</td><td>Pushberichten initiëren</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <strong>“App” is geen nieuwe soort computerprogramma</strong>
+        App is een verkorting van application. Een mobiele app is nog altijd software die door een besturingssysteem wordt uitgevoerd.
+      </div>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">5A</div><div><h3>Praktijk: ontleed een bekende app</h3><p>Kies bijvoorbeeld een chat-, bank- of schoolapp.</p></div></div>
+        <ol>
+          <li>Noem drie onderdelen die zeker lokaal op de smartphone zitten.</li>
+          <li>Noem drie gegevens of functies die waarschijnlijk op een server zitten.</li>
+          <li>Wat kan de app nog doen zonder internet?</li>
+          <li>Wat kan onmogelijk volledig lokaal werken als meerdere gebruikers dezelfde gegevens moeten zien?</li>
+        </ol>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="5a"> Opdracht 5A voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les6" aria-labelledby="les6-title">
+      <span class="lesson-number">Les 6</span>
+      <h2 id="les6-title">Hoe kun je vandaag een app bouwen?</h2>
+      <p class="lead">“Een app bouwen” zegt nog niet met welke techniek. Verschillende aanpakken delen code op een andere manier en geven een andere verhouding tussen webtechnologie, native UI en platform-API's.</p>
+
+      <h3>Hoofdcategorieën</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Categorie</th><th>Kern</th><th>Voorbeelden</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Native</strong></td><td>Per platform de officiële taal, UI en SDK gebruiken.</td><td>Swift/SwiftUI, Kotlin/Jetpack Compose</td></tr>
+            <tr><td><strong>Cross-platform gecompileerd</strong></td><td>Veel code delen en voor meerdere platformen bouwen.</td><td>Flutter, .NET MAUI</td></tr>
+            <tr><td><strong>Shared native / platform-backed</strong></td><td>Gedeelde logica of componenten met toegang tot native platformmogelijkheden.</td><td>React Native, Kotlin Multiplatform</td></tr>
+            <tr><td><strong>WebView-hybride</strong></td><td>Een webapp draait in een native container en gebruikt plugins voor native functies.</td><td>Capacitor, Cordova</td></tr>
+            <tr><td><strong>Web / PWA</strong></td><td>De browser is de runtime; installatie via browser/home screen is mogelijk.</td><td>Vite + PWA, SvelteKit, Next.js</td></tr>
+            <tr><td><strong>Desktop-shell</strong></td><td>Webfrontend verpakt als desktopapp.</td><td>Electron, Tauri, Wails</td></tr>
+            <tr><td><strong>Server-rendered</strong></td><td>De server genereert vooral HTML.</td><td>Laravel, Django, Rails</td></tr>
+            <tr><td><strong>Low/no-code</strong></td><td>Visuele builder genereert of configureert de toepassing.</td><td>FlutterFlow, Bubble, AppSheet</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warning">
+        <strong>Categorieën zijn vereenvoudigingen</strong>
+        Moderne frameworks passen niet altijd perfect in één vakje. Kotlin Multiplatform kan bijvoorbeeld alleen businesslogica delen óf ook UI delen. React Native gebruikt tegenwoordig zijn New Architecture en is dus niet simpelweg de oude “JavaScript bridge”.
+      </div>
+
+      <h3>Vergelijking op hoofdlijnen</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Aanpak</th><th>Typische taal</th><th>Native API-toegang</th><th>UI/performance</th><th>Store</th><th>Update van app-code</th><th>Leercurve</th></tr></thead>
+          <tbody>
+            <tr><td>Native iOS</td><td>Swift</td><td>Direct / volledig</td><td>Zeer sterk</td><td>Ja</td><td>Nieuwe release</td><td>Hoog</td></tr>
+            <tr><td>Native Android</td><td>Kotlin</td><td>Direct / volledig</td><td>Zeer sterk</td><td>Ja</td><td>Nieuwe release</td><td>Hoog</td></tr>
+            <tr><td>Flutter</td><td>Dart</td><td>Via platformintegratie/plugins</td><td>Zeer sterk</td><td>Ja</td><td>Nieuwe release</td><td>Midden</td></tr>
+            <tr><td>React Native</td><td>JS/TS</td><td>Via native modules/APIs</td><td>Sterk</td><td>Ja</td><td>Meestal release; OTA afhankelijk van gekozen systeem en beleid</td><td>Midden</td></tr>
+            <tr><td>.NET MAUI</td><td>C#</td><td>Via platform-API's</td><td>Sterk</td><td>Ja</td><td>Nieuwe release</td><td>Midden</td></tr>
+            <tr><td>Capacitor</td><td>HTML/CSS/JS/TS</td><td>Via plugins / eigen native code</td><td>Goed voor gewone app-UI</td><td>Ja</td><td>Gebundelde app-code via release; serverdata/content kan apart wijzigen</td><td>Laag bij webkennis</td></tr>
+            <tr><td>PWA</td><td>HTML/CSS/JS/TS</td><td>Via beschikbare Web APIs</td><td>Goed</td><td>Niet vereist</td><td>Direct via webdeploy</td><td>Laag</td></tr>
+            <tr><td>Electron</td><td>JS/TS</td><td>Desktop via Node/Electron APIs</td><td>Goed, maar relatief zwaar</td><td>Nee voor klassieke desktopdistributie</td><td>Eigen updater/distributie</td><td>Laag bij webkennis</td></tr>
+            <tr><td>Tauri</td><td>Web + Rust</td><td>Desktop/mobile via Tauri/native integratie</td><td>Sterk en compact</td><td>Afhankelijk van platform</td><td>Eigen distributie/store</td><td>Midden</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Toegang tot toestelhardware</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Eigenschap</th><th>Native</th><th>Flutter / RN</th><th>Capacitor</th><th>PWA</th></tr></thead>
+          <tbody>
+            <tr><td>Offline opslag</td><td>Ruim en volledig</td><td>Ruim</td><td>Ruim via web/native opslag</td><td>Mogelijk, maar browserregels en quota gelden</td></tr>
+            <tr><td>Pushnotificaties</td><td>Ja</td><td>Ja</td><td>Ja via native plugin</td><td>Ja waar Web Push wordt ondersteund; op iOS voor Home Screen-webapps sinds 16.4</td></tr>
+            <tr><td>Achtergrondtaken</td><td>Beste controle binnen OS-regels</td><td>Goed met platformintegratie</td><td>Plugin/native integratie</td><td>Beperkter</td></tr>
+            <tr><td>Bluetooth/NFC</td><td>Volledig</td><td>Via packages/native code</td><td>Via plugin/native code</td><td>Afhankelijk van browser/platform, veel beperkter</td></tr>
+            <tr><td>Camera/bestanden</td><td>Volledig</td><td>Ja</td><td>Ja via plugins</td><td>Basis tot behoorlijk, afhankelijk van browser</td></tr>
+            <tr><td>Biometrie</td><td>Volledig</td><td>Ja</td><td>Plugin/native integratie</td><td>Indirect via onder andere WebAuthn/passkeys</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Storekosten</h3>
+      <p>Voor distributie via de App Store kost het Apple Developer Program momenteel <strong>99 USD per jaar</strong>. Voor Google Play geldt voor een ontwikkelaarsaccount een <strong>eenmalige registratiekost van 25 USD</strong>. Een gewone PWA kan zonder app-storeaccount via het web worden aangeboden.</p>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">6A</div><div><h3>Keuze-oefening</h3><p>Kies per scenario een aanpak en motiveer met één technisch argument.</p></div></div>
+        <ol>
+          <li>Interne schooltool voor laptop én smartphone.</li>
+          <li>3D-game met zware graphics.</li>
+          <li>Bestaande webapp die ook in App Store en Play Store moet.</li>
+          <li>App die continu BLE-apparaten moet uitlezen en complexe achtergrondtaken heeft.</li>
+          <li>Kleine app die vooral formulieren, lijsten en een REST-API gebruikt.</li>
+        </ol>
+        <details><summary>Mogelijke keuzes</summary><div>1: PWA, eventueel later Capacitor. 2: gespecialiseerde game-engine of native/sterk grafisch framework. 3: Capacitor is logisch wanneer de webapp behouden moet blijven. 4: native of een cross-platform framework met sterke native integratie. 5: PWA/Capacitor is vaak voldoende.</div></details>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="6a"> Opdracht 6A voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="les7" aria-labelledby="les7-title">
+      <span class="lesson-number">Les 7</span>
+      <h2 id="les7-title">Onze combinatie: Vite + PWA + Capacitor</h2>
+      <p class="lead">Deze combinatie vertrekt bewust vanuit webtechnologie. Eerst maken we een gewone webapp. Daarna voegen we installatiemogelijkheden en native verpakking toe.</p>
+
+      <h3>Elke laag heeft één taak</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Laag</th><th>Rol</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Vite</strong></td><td>Ontwikkel- en buildtool. <code>vite build</code> maakt een productie-bundle van de webapp.</td></tr>
+            <tr><td><strong>Framework</strong></td><td>Optioneel: React, Vue, Svelte... of gewoon vanilla JavaScript. Dit staat los van Vite/PWA/Capacitor.</td></tr>
+            <tr><td><strong>PWA</strong></td><td>Manifest + service worker + caching zodat de webapp installeerbaar/offlinevriendelijker kan worden.</td></tr>
+            <tr><td><strong>Capacitor</strong></td><td>Plaatst dezelfde webapp in een native project/container voor iOS en Android.</td></tr>
+            <tr><td><strong>Capacitor plugins</strong></td><td>Geven JavaScript toegang tot native functies zoals camera, filesystem, preferences en push.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="diagram">
+        <div class="terminal-title">Eén webcodebase, meerdere doelen</div>
+        <pre><code>                 HTML / CSS / JS
+                        |
+                       Vite
+                        |
+                 productie-build
+                        |
+          +-------------+-------------+
+          |                           |
+          v                           v
+       WEB / PWA                  CAPACITOR
+                                      |
+                              +-------+-------+
+                              |               |
+                              v               v
+                           Android           iOS
+                              |               |
+                       native plugins   native plugins</code></pre>
+      </div>
+
+      <h3>Minimale werkwijze</h3>
+      <div class="terminal">
+        <div class="terminal-title">Terminal</div>
+        <button class="copy-button" type="button">Kopieer</button>
+        <pre><code>npm create vite@latest
+cd mijn-app
+npm install
+npm run dev</code></pre>
+      </div>
+
+      <p>Daarna voeg je PWA-functionaliteit en Capacitor toe wanneer de webapp zelf werkt.</p>
+
+      <div class="terminal">
+        <div class="terminal-title">PWA en Capacitor toevoegen</div>
+        <button class="copy-button" type="button">Kopieer</button>
+        <pre><code>npm install -D vite-plugin-pwa
+npm install @capacitor/core @capacitor/cli
+npx cap init
+
+npm run build
+npx cap add android
+npx cap sync</code></pre>
+      </div>
+
+      <div class="note">
+        <strong>Belangrijk: Vite is geen app-framework</strong>
+        Vite helpt je project ontwikkelen en bouwen. React, Vue of Svelte bepalen eventueel hoe je UI-code structureert. Capacitor verpakt het uiteindelijke webresultaat.
+      </div>
+
+      <h3>Sterke punten</h3>
+      <ul class="checklist">
+        <li>Dezelfde HTML/CSS/JavaScript-basis kan web, PWA, Android en iOS bedienen.</li>
+        <li>Bestaande webkennis blijft bruikbaar.</li>
+        <li>Een interne tool kan eerst gewoon als PWA worden uitgerold.</li>
+        <li>Native functies kunnen later gericht met Capacitor-plugins worden toegevoegd.</li>
+        <li>De backend blijft dezelfde API gebruiken ongeacht de client.</li>
+      </ul>
+
+      <h3>Beperkingen</h3>
+      <ul>
+        <li>De UI blijft in hoofdzaak webtechnologie in een WebView en voelt niet automatisch identiek aan een volledig native UI.</li>
+        <li>Voor zeer zware animaties, games of complexe grafische interfaces kan een andere aanpak beter passen.</li>
+        <li>Voor diepe achtergrondintegratie of zeldzame hardwarefuncties kan eigen native code nodig zijn.</li>
+        <li>Voor een iOS-build blijft Apple-tooling nodig; praktisch betekent dit Xcode op macOS.</li>
+        <li>Een Capacitor-app in een store blijft onder de distributie- en reviewregels van die store vallen.</li>
+      </ul>
+
+      <h3>Waarom dit voor onze kleine schoolapps vaak logisch is</h3>
+      <div class="flow">
+        <span>KISS</span><b>→</b><span>webapp</span><b>→</b><span>PWA</span><b>→</b><span>pas indien nodig Capacitor</span>
+      </div>
+
+      <p>Voor een eenvoudige schooltool met formulieren, lijsten, een backend-API en beperkte hardware-integratie hoeft een native app niet de eerste stap te zijn.</p>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">7A</div><div><h3>Architectuuroefening</h3><p>Schets onze fluo-app in vijf blokken.</p></div></div>
+        <p>Gebruik minstens deze onderdelen: <strong>smartphone/PWA</strong>, <strong>frontend</strong>, <strong>HTTP API</strong>, <strong>backend</strong> en <strong>database</strong>. Zet pijlen in de richting van requests en responses.</p>
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="7a"> Opdracht 7A voltooid</label>
+      </div>
+    </section>
+
+    <section class="lesson" id="eindproef" aria-labelledby="eindproef-title">
+      <span class="lesson-number">Eindproef</span>
+      <h2 id="eindproef-title">Ontwerp een eenvoudige schoolapp</h2>
+      <p class="lead">Je schrijft nog geen code. Je toont dat je de architectuur en technologiekeuze begrijpt.</p>
+
+      <div class="task">
+        <div class="task-head"><div class="task-icon">★</div><div><h3>Scenario</h3><p>De school wil een app waarmee een leerkracht één keer per maand helm en fluo per leerling aanduidt.</p></div></div>
+
+        <h4>1. Teken de architectuur</h4>
+        <p>Gebruik minimaal:</p>
+        <div class="diagram">
+          <div class="terminal-title">Startpunt</div>
+          <pre><code>gebruiker
+   |
+   v
+frontend
+   |
+   | HTTP / JSON
+   v
+backend
+   |
+   v
+database</code></pre>
+        </div>
+
+        <h4>2. Noteer per blok de verantwoordelijkheid</h4>
+        <p>Bijvoorbeeld: de frontend toont leerlingen; de backend valideert en bewaart scores; de database bewaart gegevens permanent.</p>
+
+        <h4>3. Kies technologie</h4>
+        <p>Kies tussen native, Flutter/React Native, Capacitor of PWA. Motiveer je keuze met minstens drie argumenten.</p>
+
+        <h4>4. Uitbreiding</h4>
+        <p>De directie vraagt later pushnotificaties en publicatie in de app stores. Leg uit wat je aan de gekozen architectuur zou veranderen.</p>
+
+        <label class="done-row"><input class="progress-check" type="checkbox" data-id="eindproef"> Eindproef voltooid</label>
+      </div>
+
+      <div class="success">
+        <strong>De kern</strong>
+        Je hoeft niet eerst een programmeertaal te kiezen. Begin bij het probleem, bepaal welke onderdelen lokaal en centraal moeten draaien, kies de architectuur en pas daarna de technologie.
+      </div>
+    </section>
+
+    <section class="lesson" id="spiekbrief" aria-labelledby="spiekbrief-title">
+      <span class="lesson-number">Naslag</span>
+      <h2 id="spiekbrief-title">Spiekbrief</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Term</th><th>Kort</th></tr></thead>
+          <tbody>
+            <tr><td>Programma</td><td>Opgeslagen uitvoerbare code.</td></tr>
+            <tr><td>Proces</td><td>Een draaiende instantie van een programma.</td></tr>
+            <tr><td>Service / daemon</td><td>Achtergrondproces dat langdurig een functie aanbiedt.</td></tr>
+            <tr><td>Client</td><td>Software die een aanvraag naar een server start.</td></tr>
+            <tr><td>Server</td><td>Software die requests ontvangt en een dienst levert.</td></tr>
+            <tr><td>Frontend</td><td>Het zichtbare/interactieve deel waarmee de gebruiker werkt.</td></tr>
+            <tr><td>Backend</td><td>Server-side applicatielogica.</td></tr>
+            <tr><td>API</td><td>Afgesproken interface tussen softwareonderdelen.</td></tr>
+            <tr><td>HTTP</td><td>Veelgebruikt request/response-protocol voor web en API's.</td></tr>
+            <tr><td>JSON</td><td>Tekstformaat voor gestructureerde gegevens.</td></tr>
+            <tr><td>Database</td><td>Systeem voor persistent opslaan en opvragen van gegevens.</td></tr>
+            <tr><td>PWA</td><td>Webapp met extra webapp-eigenschappen zoals manifest, service worker en installatie.</td></tr>
+            <tr><td>Capacitor</td><td>Native runtime/container rond een webapp, met plugin-toegang tot native functies.</td></tr>
+            <tr><td>Vite</td><td>Tooling voor ontwikkeling en productiebuild van moderne webapps.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>De hele keten</h3>
+      <div class="diagram">
+        <div class="terminal-title">Van tap tot database en terug</div>
+        <pre><code>gebruiker tikt
+      |
+      v
+smartphone-app / browser
+      |
+      | HTTPS request
+      v
+API / backend
+      |
+      | query
+      v
+database
+      |
+      | resultaat
+      v
+backend
+      |
+      | JSON response
+      v
+frontend
+      |
+      v
+scherm wordt bijgewerkt</code></pre>
+      </div>
+
+      <h3>Korte zelftest</h3>
+      <form class="quiz" id="quizForm">
+        <p><strong>1. Wat is het verschil tussen een programma en een proces?</strong></p>
+        <label><input type="radio" name="q1" value="a"> Er is geen verschil.</label>
+        <label><input type="radio" name="q1" value="b"> Een programma is opgeslagen code; een proces is een draaiende instantie.</label>
+        <label><input type="radio" name="q1" value="c"> Een proces staat altijd op een server.</label>
+
+        <p><strong>2. Wat doet een client meestal?</strong></p>
+        <label><input type="radio" name="q2" value="a"> Een request starten naar een server.</label>
+        <label><input type="radio" name="q2" value="b"> Altijd gegevens permanent bewaren.</label>
+        <label><input type="radio" name="q2" value="c"> Alleen HTML genereren.</label>
+
+        <p><strong>3. Wat stuurt een moderne API vaak terug?</strong></p>
+        <label><input type="radio" name="q3" value="a"> Alleen een screenshot.</label>
+        <label><input type="radio" name="q3" value="b"> Alleen een executable.</label>
+        <label><input type="radio" name="q3" value="c"> Gestructureerde data, bijvoorbeeld JSON.</label>
+
+        <p><strong>4. Welke uitspraak over een moderne smartphone-app is het best?</strong></p>
+        <label><input type="radio" name="q4" value="a"> Alle data en logica moeten op de telefoon staan.</label>
+        <label><input type="radio" name="q4" value="b"> De app is vaak een lokale client die online services gebruikt.</label>
+        <label><input type="radio" name="q4" value="c"> Een smartphone-app gebruikt geen processen.</label>
+
+        <p><strong>5. Wat doet Capacitor?</strong></p>
+        <label><input type="radio" name="q5" value="a"> Het vervangt HTML door Dart.</label>
+        <label><input type="radio" name="q5" value="b"> Het verpakt een webapp in een native runtime en biedt plugins voor native functies.</label>
+        <label><input type="radio" name="q5" value="c"> Het is een database.</label>
+
+        <p><strong>6. Wat doet Vite?</strong></p>
+        <label><input type="radio" name="q6" value="a"> Het is tooling voor ontwikkelen en bouwen van een webproject.</label>
+        <label><input type="radio" name="q6" value="b"> Het is het iOS-besturingssysteem.</label>
+        <label><input type="radio" name="q6" value="c"> Het is een native Bluetooth-driver.</label>
+
+        <button class="button" type="submit">Controleer antwoorden</button>
+        <div class="quiz-result" id="quizResult" role="status"></div>
+      </form>
+
+      <details class="teacher sources">
+        <summary>Docent: technische bronnen en actualiteit</summary>
+        <div>
+          <p>Voor onderdelen die snel veranderen zijn officiële documentatiebronnen gebruikt. Controleer deze opnieuw wanneer de cursus later wordt hergebruikt.</p>
+          <ul>
+            <li><a href="https://vite.dev/guide/build/">Vite — Building for Production</a></li>
+            <li><a href="https://capacitorjs.com/docs">Capacitor Documentation</a></li>
+            <li><a href="https://flutter.dev/">Flutter</a></li>
+            <li><a href="https://reactnative.dev/docs/intro-react-native-components">React Native — Native Components</a></li>
+            <li><a href="https://kotlinlang.org/docs/multiplatform/kmp-overview.html">Kotlin Multiplatform</a></li>
+            <li><a href="https://learn.microsoft.com/dotnet/maui/what-is-maui">.NET MAUI</a></li>
+            <li><a href="https://developer.apple.com/documentation/usernotifications/sending-web-push-notifications-in-web-apps-and-browsers">Apple — Web Push</a></li>
+            <li><a href="https://developer.apple.com/programs/whats-included/">Apple Developer Program</a></li>
+            <li><a href="https://support.google.com/googleplay/android-developer/answer/6112435">Google Play Console registration</a></li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <p class="footer">Software &amp; apps · 5e middelbaar · voortgang wordt alleen in deze browser bewaard</p>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var checks = Array.from(document.querySelectorAll('.progress-check'));
+      var progressText = document.getElementById('progressText');
+      var progressBar = document.getElementById('progressBar');
+      var storageKey = 'cursus-software-apps-voortgang-v1';
+
+      function loadProgress() {
+        var saved = {};
+        try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch (error) { saved = {}; }
+        checks.forEach(function (check) { check.checked = Boolean(saved[check.dataset.id]); });
+        updateProgress();
+      }
+
+      function saveProgress() {
+        var saved = {};
+        checks.forEach(function (check) { saved[check.dataset.id] = check.checked; });
+        try { localStorage.setItem(storageKey, JSON.stringify(saved)); } catch (error) {}
+        updateProgress();
+      }
+
+      function updateProgress() {
+        var completed = checks.filter(function (check) { return check.checked; }).length;
+        var percentage = checks.length ? Math.round(completed / checks.length * 100) : 0;
+        progressText.textContent = completed + '/' + checks.length;
+        progressBar.style.width = percentage + '%';
+      }
+
+      checks.forEach(function (check) { check.addEventListener('change', saveProgress); });
+      loadProgress();
+
+      function fallbackCopy(text) {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        var copied = document.execCommand('copy');
+        document.body.removeChild(area);
+        return copied;
+      }
+
+      document.querySelectorAll('.copy-button').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var code = button.parentElement.querySelector('code').innerText;
+          var original = button.textContent;
+          var copyAction = navigator.clipboard && window.isSecureContext
+            ? navigator.clipboard.writeText(code).then(function () { return true; })
+            : Promise.resolve(fallbackCopy(code));
+
+          copyAction.then(function (copied) {
+            button.textContent = copied ? 'Gekopieerd' : 'Selecteer handmatig';
+            setTimeout(function () { button.textContent = original; }, 1400);
+          }).catch(function () {
+            button.textContent = fallbackCopy(code) ? 'Gekopieerd' : 'Selecteer handmatig';
+            setTimeout(function () { button.textContent = original; }, 1400);
+          });
+        });
+      });
+
+      document.getElementById('quizForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var answers = { q1: 'b', q2: 'a', q3: 'c', q4: 'b', q5: 'b', q6: 'a' };
+        var score = 0;
+        var completed = true;
+
+        Object.keys(answers).forEach(function (question) {
+          var selected = document.querySelector('input[name="' + question + '"]:checked');
+          if (!selected) completed = false;
+          if (selected && selected.value === answers[question]) score += 1;
+        });
+
+        var result = document.getElementById('quizResult');
+        if (!completed) {
+          result.textContent = 'Beantwoord eerst alle zes vragen.';
+          result.style.color = 'var(--danger)';
+          return;
+        }
+
+        result.textContent = score + '/6 juist' + (score === 6 ? ' — architectuur begrepen.' : ' — herbekijk de betrokken lesblokken.');
+        result.style.color = score === 6 ? 'var(--success)' : 'var(--warning)';
+      });
+    }());
+  </script>
+</body>
+</html>
