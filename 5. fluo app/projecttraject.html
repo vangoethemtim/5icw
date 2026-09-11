@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICW – Projecttraject Fluo-app</title>
+<style>
+:root{
+  --primary:#1976d2;--primary-dark:#0d47a1;--accent:#ffc107;--bg:#eeeeee;
+  --card:#ffffff;--text:rgba(0,0,0,.87);--secondary:rgba(0,0,0,.60);
+  --divider:rgba(0,0,0,.12);--good:#2e7d32;--warn:#ef6c00;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:Roboto,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+.appbar{background:var(--primary);color:#fff;padding:28px 20px 24px;box-shadow:0 2px 5px rgba(0,0,0,.28)}
+.appbar .wrap,main,footer .wrap{max-width:1100px;margin:auto}
+h1{margin:0 0 4px;font-size:2rem;font-weight:500}.subtitle{opacity:.92}
+main{max-width:1100px;margin:auto;padding:20px}
+.card{background:#fff;border-radius:2px;padding:20px;margin:0 0 16px;box-shadow:0 1px 3px rgba(0,0,0,.24)}
+h2{margin:0 0 12px;color:var(--primary-dark);font-size:1.45rem;font-weight:500}
+h3{margin:18px 0 6px;font-size:1.05rem}p{margin:8px 0}
+code{background:#eceff1;padding:1px 4px;border-radius:2px;font-family:Consolas,Monaco,monospace}
+pre{background:#263238;color:#eceff1;border-radius:2px;padding:14px;overflow:auto;line-height:1.45}
+pre code{background:transparent;padding:0;color:inherit}
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th,td{border-bottom:1px solid var(--divider);padding:10px 8px;text-align:left;vertical-align:top}
+th{color:var(--secondary);font-size:.83rem;text-transform:uppercase;letter-spacing:.04em}
+.tag{display:inline-block;padding:2px 7px;margin:2px 3px 2px 0;border-radius:2px;font-size:.82rem;background:#e3f2fd;color:var(--primary-dark)}
+.step{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:start}
+.number{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--primary);color:#fff;font-size:1.1rem;font-weight:500;box-shadow:0 2px 3px rgba(0,0,0,.2)}
+.output{border-left:4px solid var(--good);background:#f1f8e9;padding:10px 12px;margin-top:12px}
+.exercise{border-left:4px solid var(--accent);background:#fff8e1;padding:10px 12px;margin-top:10px}
+.scope{border-left:4px solid var(--primary);background:#e3f2fd;padding:12px}
+.outscope{border-left:4px solid var(--warn);background:#fff3e0;padding:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;padding:8px 0}
+.flow span{background:#e3f2fd;color:var(--primary-dark);padding:8px 10px;border-radius:2px}
+.flow .arrow{background:transparent;color:var(--secondary);font-size:1.2rem;padding:0}
+.small{font-size:.9rem;color:var(--secondary)}.checklist td:first-child{width:36px;text-align:center}
+footer{padding:10px 20px 28px;color:var(--secondary)}
+@media(max-width:760px){main{padding:10px}.card{padding:16px}.grid2{grid-template-columns:1fr}.step{grid-template-columns:42px 1fr}.number{width:36px;height:36px}h1{font-size:1.55rem}}
+@media print{body{background:#fff}.appbar{background:#fff;color:#000;box-shadow:none;border-bottom:2px solid #000}.card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <h1>ICW – Van idee tot werkende app</h1>
+    <div class="subtitle">Een compact softwareproject met de Fluo-app als rode draad</div>
+  </div>
+</header>
+
+<main>
+
+<section class="card">
+  <h2>Wat gaan we leren?</h2>
+  <p>We bouwen niet alleen een app. We doorlopen ook kort de stappen die bij een echt softwareproject horen: van probleem en eisen tot ontwerp, programmeren, testen en opleveren.</p>
+  <p>We houden het bewust <strong>KISS</strong>: van elke stap begrijpen we het doel en maken we één klein resultaat. Geen rapport van 50 pagina's en geen volledig UML-model.</p>
+  <div class="flow">
+    <span>Idee</span><span class="arrow">→</span><span>Vooranalyse</span><span class="arrow">→</span>
+    <span>Eisen</span><span class="arrow">→</span><span>Analyse</span><span class="arrow">→</span>
+    <span>Ontwerp</span><span class="arrow">→</span><span>Bouwen</span><span class="arrow">→</span>
+    <span>Testen</span><span class="arrow">→</span><span>Opleveren</span>
+  </div>
+</section>
+
+<section class="card">
+  <h2>De opdracht</h2>
+  <p>De school wil maandelijks registreren of leerlingen met een <strong>helm</strong> en/of <strong>fluovest</strong> naar school komen.</p>
+  <div class="grid2">
+    <div class="scope"><strong>In scope</strong><p>Leerling zoeken op klas, familienaam of voornaam; helm/fluo aantikken; maandscore bewaren; individuele punten en klastotaal tonen; data tussen toestellen synchroniseren.</p></div>
+    <div class="outscope"><strong>Buiten scope</strong><p>Winnaars trekken, uitgebreide statistieken en rapportering. Dat wordt eventueel later een aparte beheerapp.</p></div>
+  </div>
+</section>
+
+<section class="card step"><div class="number">1</div><div>
+<h2>Probleemverkenning / vooranalyse</h2>
+<p>Eerst begrijpen we <strong>waarom</strong> de app nodig is. Nog geen database, API of code.</p>
+<h3>Vragen</h3><p>Wie gebruikt de app? Wat doen ze vandaag? Wat gaat moeilijk? Wanneer wordt de app gebruikt? Op welke toestellen? Hoe snel moet invoer kunnen gebeuren?</p>
+<h3>Voor de Fluo-app</h3><p>Een medewerker staat 's morgens aan de schoolpoort en moet heel snel een leerling kunnen zoeken en helm/fluo registreren. Veel klikken of schermen zijn dus ongewenst.</p>
+<div class="exercise"><strong>Werk:</strong> schrijf in maximaal vijf zinnen het probleem en het doel van de app.</div>
+<div class="output"><strong>Resultaat:</strong> probleemstelling + doelstelling.</div>
+</div></section>
+
+<section class="card step"><div class="number">2</div><div>
+<h2>Stakeholders en actors</h2>
+<p>Een <strong>stakeholder</strong> heeft belang bij het project. Een <strong>actor</strong> gebruikt het systeem of communiceert ermee.</p>
+<table><tr><th>Wie?</th><th>Rol</th><th>Verwachting</th></tr>
+<tr><td>Leerkracht / medewerker</td><td>Actor</td><td>Snel leerlingen zoeken en registreren</td></tr>
+<tr><td>ICT-beheerder</td><td>Stakeholder / beheer</td><td>Eenvoudig onderhoud en centrale data</td></tr>
+<tr><td>School</td><td>Stakeholder</td><td>Betrouwbare tellingen</td></tr>
+<tr><td>Leerling</td><td>Betrokkene</td><td>Correcte registratie</td></tr></table>
+<div class="exercise"><strong>Werk:</strong> duid de primaire actor aan en noteer twee andere stakeholders.</div>
+<div class="output"><strong>Resultaat:</strong> kleine actor/stakeholdertabel.</div>
+</div></section>
+
+<section class="card step"><div class="number">3</div><div>
+<h2>Scope bepalen</h2>
+<p>Scope zegt wat het systeem <strong>wel</strong> en <strong>niet</strong> zal doen. Zo voorkomen we dat het project steeds groter wordt.</p>
+<p><span class="tag">zoeken</span><span class="tag">filteren</span><span class="tag">helm</span><span class="tag">fluo</span><span class="tag">maandscore</span><span class="tag">leerlingpunten</span><span class="tag">klastotaal</span><span class="tag">centrale opslag</span></p>
+<p>Een <strong>MVP</strong> is de kleinste versie die het echte probleem al oplost.</p>
+<div class="exercise"><strong>Werk:</strong> maak twee kolommen: "moet nu" en "misschien later".</div>
+<div class="output"><strong>Resultaat:</strong> afgebakende MVP.</div>
+</div></section>
+
+<section class="card step"><div class="number">4</div><div>
+<h2>Functionele eisen</h2>
+<p>Functionele eisen beschrijven <strong>wat het systeem moet kunnen doen</strong>.</p>
+<table><tr><th>ID</th><th>Eis</th></tr>
+<tr><td>F01</td><td>De gebruiker kan leerlingen zoeken op klas, familienaam en voornaam.</td></tr>
+<tr><td>F02</td><td>Resultaten worden gesorteerd op totaalpunten, hoogste eerst.</td></tr>
+<tr><td>F03</td><td>De gebruiker kan helm voor de huidige maand aan- of uitzetten.</td></tr>
+<tr><td>F04</td><td>De gebruiker kan fluo voor de huidige maand aan- of uitzetten.</td></tr>
+<tr><td>F05</td><td>De app toont het totaal aantal punten van de leerling.</td></tr>
+<tr><td>F06</td><td>De app toont het totaal aantal punten van de klas.</td></tr>
+<tr><td>F07</td><td>Een wijziging wordt centraal opgeslagen.</td></tr></table>
+<div class="exercise"><strong>Werk:</strong> controleer of elke eis objectief testbaar is.</div>
+<div class="output"><strong>Resultaat:</strong> ongeveer 5–10 functionele eisen.</div>
+</div></section>
+
+<section class="card step"><div class="number">5</div><div>
+<h2>Niet-functionele eisen</h2>
+<p>Niet-functionele eisen beschrijven <strong>hoe goed</strong> het systeem moet werken of welke beperkingen gelden.</p>
+<table><tr><th>ID</th><th>Eis</th></tr>
+<tr><td>NF01</td><td>De app moet bruikbaar zijn op smartphone en tablet.</td></tr>
+<tr><td>NF02</td><td>Zoeken moet onmiddellijk reageren tijdens het typen.</td></tr>
+<tr><td>NF03</td><td>Een telling moet met zo weinig mogelijk handelingen gebeuren.</td></tr>
+<tr><td>NF04</td><td>Dezelfde gegevens moeten zichtbaar zijn op verschillende toestellen.</td></tr>
+<tr><td>NF05</td><td>De interface moet op een klein scherm duidelijk blijven.</td></tr>
+<tr><td>NF06</td><td>Code en database moeten eenvoudig te begrijpen en onderhouden zijn.</td></tr></table>
+<div class="output"><strong>Resultaat:</strong> ongeveer 4–6 niet-functionele eisen.</div>
+</div></section>
+
+<section class="card step"><div class="number">6</div><div>
+<h2>User stories en use cases</h2>
+<p>Nu bekijken we het systeem vanuit de gebruiker.</p>
+<h3>User story</h3><p><code>Als leerkracht wil ik een leerling snel kunnen zoeken, zodat ik aan de schoolpoort niet door volledige klassenlijsten moet bladeren.</code></p>
+<h3>Mini-use-case: fluo registreren</h3>
+<table><tr><th>Onderdeel</th><th>Beschrijving</th></tr>
+<tr><td>Actor</td><td>Leerkracht</td></tr>
+<tr><td>Start</td><td>Leerling staat in de gefilterde lijst</td></tr>
+<tr><td>Actie</td><td>Gebruiker tikt op het fluo-icoon</td></tr>
+<tr><td>Systeem</td><td>Past maandscore aan en bewaart deze</td></tr>
+<tr><td>Einde</td><td>Icoon krijgt kleur en punten worden herberekend</td></tr></table>
+<div class="exercise"><strong>Werk:</strong> schrijf drie user stories en werk één uit als mini-use-case.</div>
+<div class="output"><strong>Resultaat:</strong> 3 user stories + 1 use case.</div>
+</div></section>
+
+<section class="card step"><div class="number">7</div><div>
+<h2>Interface ontwerpen</h2>
+<p>Voor we programmeren tekenen we hoe de app ongeveer werkt. Papier is voldoende.</p>
+<pre><code>┌─────────────────────────────────────┐
+│ FLUO                    september   │
+├─────────────────────────────────────┤
+│ zoeken:  3A PEE                     │
+├─────────────────────────────────────┤
+│ Peeters Jan      14 pt   🦺   ⛑    │
+│ Peeters Lina     12 pt   🦺   ⛑    │
+├─────────────────────────────────────┤
+│       vast AZERTY toetsenbord       │
+└─────────────────────────────────────┘</code></pre>
+<p>Geen reeks detailpagina's: de belangrijkste actie gebeurt rechtstreeks vanuit de lijst.</p>
+<div class="exercise"><strong>Werk:</strong> maak één wireframe en noteer waarom elk element nodig is.</div>
+<div class="output"><strong>Resultaat:</strong> 1 wireframe.</div>
+</div></section>
+
+<section class="card step"><div class="number">8</div><div>
+<h2>Data-analyse</h2>
+<p>Welke informatie moet werkelijk bewaard worden? We slaan zo weinig mogelijk afgeleide informatie op.</p>
+<pre><code>leerling
+--------
+id
+klas
+familienaam
+voornaam
+jan feb mrt apr mei jun
+jul aug sep okt nov dec</code></pre>
+<table><tr><th>Waarde</th><th>Betekenis</th><th>Punten</th></tr>
+<tr><td>0</td><td>Niets</td><td>0</td></tr>
+<tr><td>1</td><td>Helm</td><td>1</td></tr>
+<tr><td>3</td><td>Fluo</td><td>1</td></tr>
+<tr><td>5</td><td>Helm + fluo</td><td>2</td></tr></table>
+<p>Het totaal aantal punten bewaren we <strong>niet</strong>; dat rekenen we uit.</p>
+<div class="exercise"><strong>Werk:</strong> bepaal datatype per veld en duid berekende gegevens aan.</div>
+<div class="output"><strong>Resultaat:</strong> eenvoudig datamodel.</div>
+</div></section>
+
+<section class="card step"><div class="number">9</div><div>
+<h2>Technische architectuur</h2>
+<p>Nu beslissen we welke technische onderdelen nodig zijn.</p>
+<pre><code>Browser / PWA / Android
+        │
+        │ HTTPS + JSON
+        ▼
+      PHP API
+        │
+        ▼
+      MySQL</code></pre>
+<table><tr><th>Endpoint</th><th>Doel</th></tr>
+<tr><td><code>GET /api/leerlingen.php</code></td><td>Leerlingen en scores ophalen</td></tr>
+<tr><td><code>POST /api/score.php</code></td><td>Score van één leerling aanpassen</td></tr></table>
+<div class="output"><strong>Resultaat:</strong> architectuurschets + API-lijst.</div>
+</div></section>
+
+<section class="card step"><div class="number">10</div><div>
+<h2>Prototypen</h2>
+<p>We bouwen eerst versies die nog niet alles kunnen.</p>
+<table><tr><th>Versie</th><th>Toevoeging</th></tr>
+<tr><td>0.1</td><td>HTML met fictieve leerlingen</td></tr>
+<tr><td>0.2</td><td>Filter + vast AZERTY-toetsenbord</td></tr>
+<tr><td>0.3</td><td>Helm/fluo toggelen in JavaScript</td></tr>
+<tr><td>0.4</td><td>Leerlingen laden uit JSON</td></tr>
+<tr><td>0.5</td><td>Punten en klastotalen berekenen</td></tr></table>
+<p>Pas wanneer dit goed werkt, vervangen we mockdata door een echte API.</p>
+<div class="output"><strong>Resultaat:</strong> werkende frontendmockup.</div>
+</div></section>
+
+<section class="card step"><div class="number">11</div><div>
+<h2>Implementatie</h2>
+<p>Nu bouwen we het echte systeem stap voor stap.</p>
+<p><strong>Volgorde:</strong> HTML/CSS → JavaScript-filter → scorelogica → JSON → API lezen → database → API schrijven → synchronisatie → Vite → PWA → Cordova.</p>
+<pre><code>git add .
+git commit -m "filter leerlingen op naam en klas"
+git push</code></pre>
+<div class="exercise"><strong>Werk:</strong> maak telkens één kleine werkende wijziging en commit daarna.</div>
+<div class="output"><strong>Resultaat:</strong> applicatie + Gitgeschiedenis.</div>
+</div></section>
+
+<section class="card step"><div class="number">12</div><div>
+<h2>Testen</h2>
+<p>We schrijven vooraf wat er hoort te gebeuren.</p>
+<table><tr><th>Test</th><th>Actie</th><th>Verwacht resultaat</th></tr>
+<tr><td>T01</td><td>Typ <code>3A</code></td><td>Alleen leerlingen uit 3A</td></tr>
+<tr><td>T02</td><td>Typ <code>PEE</code></td><td>Peeters verschijnt</td></tr>
+<tr><td>T03</td><td>Alleen helm aan</td><td>Maandscore = 1</td></tr>
+<tr><td>T04</td><td>Alleen fluo aan</td><td>Maandscore = 3</td></tr>
+<tr><td>T05</td><td>Beide aan</td><td>Maandscore = 5 en 2 punten</td></tr>
+<tr><td>T06</td><td>Wijzig op toestel A</td><td>Toestel B ziet dezelfde data</td></tr></table>
+<div class="exercise"><strong>Werk:</strong> schrijf minstens vijf tests en voer ze uit.</div>
+<div class="output"><strong>Resultaat:</strong> kleine testtabel.</div>
+</div></section>
+
+<section class="card step"><div class="number">13</div><div>
+<h2>Security en privacy</h2>
+<p>We gaan niet diep, maar elk echt project moet deze stap bevatten.</p>
+<p><span class="tag">HTTPS</span><span class="tag">input valideren</span><span class="tag">prepared statements</span><span class="tag">geen wachtwoorden in code</span><span class="tag">minimale persoonsgegevens</span></p>
+<p>Een leerlingnaam is persoonsinformatie. Sla dus niets extra op dat de app niet nodig heeft.</p>
+<div class="output"><strong>Resultaat:</strong> korte security/privacy-checklist.</div>
+</div></section>
+
+<section class="card step"><div class="number">14</div><div>
+<h2>Opleveren en deployen</h2>
+<p>Een toepassing op je eigen laptop is nog geen opgeleverd product.</p>
+<p>Controleer productie-URL, HTTPS, database, API, smartphoneweergave, PWA-installatie en Android-build.</p>
+<pre><code>npm run build</code></pre>
+<div class="output"><strong>Resultaat:</strong> bruikbare productieversie.</div>
+</div></section>
+
+<section class="card step"><div class="number">15</div><div>
+<h2>Evalueren en onderhouden</h2>
+<p>Na gebruik bekijken we of onze oorspronkelijke aannames klopten.</p>
+<p>Gaat invoeren snel genoeg? Is zoeken handig? Worden verkeerde leerlingen aangeklikt? Is het vaste toetsenbord praktisch? Welke functie missen gebruikers echt?</p>
+<p>Nieuwe wensen gaan opnieuw door: probleem → eis → ontwerp → bouw → test.</p>
+<div class="output"><strong>Resultaat:</strong> lijst "behouden / verbeteren / later".</div>
+</div></section>
+
+<section class="card">
+<h2>Wat lever je uiteindelijk in?</h2>
+<table class="checklist">
+<tr><td>☐</td><td>Probleemstelling en doel</td></tr>
+<tr><td>☐</td><td>Stakeholders en actor</td></tr>
+<tr><td>☐</td><td>Scope / MVP</td></tr>
+<tr><td>☐</td><td>Functionele eisen</td></tr>
+<tr><td>☐</td><td>Niet-functionele eisen</td></tr>
+<tr><td>☐</td><td>3 user stories + 1 mini-use-case</td></tr>
+<tr><td>☐</td><td>1 wireframe</td></tr>
+<tr><td>☐</td><td>Eenvoudig datamodel</td></tr>
+<tr><td>☐</td><td>Architectuurschets + API-endpoints</td></tr>
+<tr><td>☐</td><td>Werkende applicatie in Git</td></tr>
+<tr><td>☐</td><td>Minstens 5 tests</td></tr>
+<tr><td>☐</td><td>Security/privacy-check</td></tr>
+<tr><td>☐</td><td>Korte reflectie na oplevering</td></tr>
+</table>
+<p><strong>Belangrijk:</strong> elk onderdeel mag kort zijn. Het doel is het volledige traject eens doorlopen en begrijpen waarom elke stap bestaat.</p>
+</section>
+
+<section class="card">
+<h2>Voorstel planning</h2>
+<table>
+<tr><th>Les</th><th>Onderwerp</th><th>Resultaat</th></tr>
+<tr><td>1</td><td>Vooranalyse, actors, scope</td><td>Projectfiche</td></tr>
+<tr><td>2</td><td>Functionele + niet-functionele eisen</td><td>Eisenlijst</td></tr>
+<tr><td>3</td><td>User stories, use case, wireframe</td><td>Analyse + schermontwerp</td></tr>
+<tr><td>4</td><td>Data + architectuur</td><td>Datamodel + API-plan</td></tr>
+<tr><td>5–8</td><td>Frontend incrementeel bouwen</td><td>Mockup met JSON</td></tr>
+<tr><td>9–11</td><td>API + database + synchronisatie</td><td>Werkende centrale app</td></tr>
+<tr><td>12</td><td>Testen + security</td><td>Testverslag</td></tr>
+<tr><td>13</td><td>Vite + PWA</td><td>Installeerbare webapp</td></tr>
+<tr><td>14</td><td>Cordova / Android</td><td>Android-build</td></tr>
+<tr><td>15</td><td>Demo + evaluatie</td><td>Eindpresentatie</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2>Samengevat</h2>
+<p>We gebruiken geen zwaar proces. We willen vooral ervaren dat softwareontwikkeling méér is dan programmeren:</p>
+<p><strong>begrijpen → afbakenen → beschrijven → ontwerpen → bouwen → testen → opleveren → verbeteren.</strong></p>
+</section>
+
+</main>
+<footer><div class="wrap small">ICW – Projecttraject Fluo-app</div></footer>
+</body>
+</html>
