@@ -1,0 +1,580 @@
+<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Praktische cursus veilig internet: URL, domeinen, DNS, hosts, poorten, HTTPS, MITM, firewall, VPN, phishing en userscripts."><title>Veilig internet | ICT-basis</title><style>
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0d47a1;
+      --primary-soft: #e8f1fb;
+      --accent: #ffb300;
+      --ink: #17212b;
+      --muted: #5f6b76;
+      --line: #d9e0e7;
+      --surface: #ffffff;
+      --background: #f4f7fa;
+      --success: #18794e;
+      --success-soft: #e8f7ef;
+      --warning: #9a5b00;
+      --warning-soft: #fff5dc;
+      --danger: #b42318;
+      --danger-soft: #ffebe9;
+      --code: #102235;
+      --shadow: 0 4px 18px rgba(23, 33, 43, .09);
+      --radius: 14px;
+      --nav-width: 270px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--background);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.58;
+    }
+
+    button, input { font: inherit; }
+    a { color: var(--primary); }
+    code, kbd, pre { font-family: "Cascadia Code", Consolas, monospace; }
+    code {
+      padding: .08rem .32rem;
+      border-radius: 5px;
+      color: #0b4d86;
+      background: #edf3f8;
+    }
+    kbd {
+      display: inline-block;
+      min-width: 1.8em;
+      margin: 0 .08em;
+      padding: .08em .42em;
+      border: 1px solid #aeb8c2;
+      border-bottom-width: 3px;
+      border-radius: 5px;
+      color: #253341;
+      background: #fff;
+      font-size: .9em;
+      text-align: center;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: -60px;
+      left: 16px;
+      padding: 10px 14px;
+      color: #fff;
+      background: var(--primary-dark);
+      border-radius: 0 0 8px 8px;
+    }
+    .skip-link:focus { top: 0; }
+
+    .sidebar {
+      position: fixed;
+      z-index: 20;
+      inset: 0 auto 0 0;
+      width: var(--nav-width);
+      padding: 24px 18px;
+      overflow-y: auto;
+      color: #fff;
+      background: linear-gradient(175deg, #0d47a1 0%, #12324f 100%);
+    }
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .brand-mark {
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--primary-dark);
+      background: #fff;
+      font-weight: 900;
+    }
+    .brand strong, .brand small { display: block; }
+    .brand small { color: #cfe1f5; }
+    .sidebar nav a {
+      display: block;
+      margin: 3px 0;
+      padding: 9px 11px;
+      border-radius: 8px;
+      color: #e5f0fc;
+      text-decoration: none;
+      font-size: .94rem;
+    }
+    .sidebar nav a:hover,
+    .sidebar nav a:focus {
+      color: #fff;
+      background: rgba(255, 255, 255, .12);
+      outline: none;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      color: #d7e8f8;
+      font-size: .82rem;
+    }
+    .progress-track {
+      height: 7px;
+      margin-top: 6px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .18);
+    }
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: var(--accent);
+      transition: width .25s ease;
+    }
+
+    main {
+      width: min(1100px, calc(100% - var(--nav-width)));
+      margin-left: var(--nav-width);
+      padding: 32px clamp(20px, 4vw, 62px) 80px;
+    }
+    .hero {
+      position: relative;
+      min-height: 390px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 26px;
+      padding: clamp(32px, 6vw, 72px);
+      overflow: hidden;
+      border-radius: 22px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(255, 179, 0, .95) 0 7%, transparent 7.3%),
+        radial-gradient(circle at 92% 62%, rgba(255, 255, 255, .12) 0 18%, transparent 18.3%),
+        linear-gradient(135deg, #1565c0, #0d3d70 72%);
+      box-shadow: var(--shadow);
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #dcecff;
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+    .hero p:not(.eyebrow) {
+      max-width: 700px;
+      margin: 20px 0 0;
+      color: #e7f1fb;
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+    .button {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      min-height: 42px;
+      padding: 9px 15px;
+      border: 0;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button:hover { filter: brightness(.95); }
+    .button.light { color: var(--primary-dark); background: #fff; }
+    .button.ghost { border: 1px solid rgba(255,255,255,.45); background: transparent; }
+
+    .lesson {
+      margin: 26px 0;
+      padding: clamp(22px, 4vw, 42px);
+      scroll-margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 2px 10px rgba(23, 33, 43, .055);
+    }
+    .lesson-number {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    h2 {
+      margin: 10px 0 8px;
+      font-size: clamp(1.65rem, 3vw, 2.3rem);
+      line-height: 1.15;
+      letter-spacing: -.025em;
+    }
+    h3 { margin: 30px 0 8px; font-size: 1.25rem; }
+    h4 { margin: 20px 0 5px; font-size: 1rem; }
+    p { margin: .55rem 0 1rem; }
+    .lead { max-width: 820px; color: var(--muted); font-size: 1.08rem; }
+
+    .goal-grid, .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+    .mini-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfcfd;
+    }
+    .mini-card strong { display: block; margin-bottom: 3px; }
+    .mini-card p { margin: 0; color: var(--muted); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin: 24px 0;
+    }
+    .flow-box {
+      min-height: 104px;
+      display: grid;
+      place-content: center;
+      padding: 14px;
+      border: 2px solid #bdd2e7;
+      border-radius: 12px;
+      background: #f7fbff;
+      text-align: center;
+    }
+    .flow-box strong { display: block; color: var(--primary-dark); }
+    .flow-arrow { color: var(--primary); font-size: 1.7rem; font-weight: 900; }
+
+    .note, .warning, .danger, .success {
+      margin: 18px 0;
+      padding: 14px 16px;
+      border-left: 5px solid var(--primary);
+      border-radius: 8px;
+      background: var(--primary-soft);
+    }
+    .warning { border-color: var(--accent); background: var(--warning-soft); }
+    .danger { border-color: var(--danger); background: var(--danger-soft); }
+    .success { border-color: var(--success); background: var(--success-soft); }
+    .note strong, .warning strong, .danger strong, .success strong { display: block; }
+
+    .table-wrap { margin: 18px 0; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { color: #334251; background: #f1f5f8; }
+    tr:last-child td { border-bottom: 0; }
+
+    .steps { margin: 16px 0; padding: 0; counter-reset: steps; list-style: none; }
+    .steps li {
+      position: relative;
+      min-height: 42px;
+      margin: 10px 0;
+      padding-left: 50px;
+      counter-increment: steps;
+    }
+    .steps li::before {
+      position: absolute;
+      top: -2px;
+      left: 0;
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 800;
+      content: counter(steps);
+    }
+
+    .terminal {
+      position: relative;
+      margin: 16px 0;
+      overflow: hidden;
+      border-radius: 10px;
+      color: #e8eef5;
+      background: var(--code);
+      box-shadow: 0 4px 12px rgba(7, 20, 32, .2);
+    }
+    .terminal-title {
+      padding: 8px 14px;
+      color: #9fb4c8;
+      background: #0b1a29;
+      font-size: .78rem;
+    }
+    pre { margin: 0; padding: 18px 55px 18px 18px; overflow-x: auto; white-space: pre; line-height: 1.52; }
+    pre code { padding: 0; color: inherit; background: transparent; }
+    .copy-button {
+      position: absolute;
+      top: 42px;
+      right: 10px;
+      padding: 6px 9px;
+      border: 1px solid #50677d;
+      border-radius: 6px;
+      color: #dce8f4;
+      background: #1e3850;
+      font-size: .76rem;
+      cursor: pointer;
+    }
+
+    .task {
+      margin: 22px 0;
+      padding: 19px;
+      border: 2px solid #bad0e5;
+      border-radius: 12px;
+      background: #f8fbfe;
+    }
+    .task-head { display: flex; gap: 12px; align-items: flex-start; }
+    .task-icon {
+      display: grid;
+      flex: 0 0 38px;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 9px;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 900;
+    }
+    .task h3, .task h4 { margin-top: 2px; }
+    .done-row {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--success);
+      font-weight: 700;
+    }
+    .done-row input { width: 19px; height: 19px; accent-color: var(--success); }
+
+    details { margin: 14px 0; border: 1px solid var(--line); border-radius: 9px; background: #fff; }
+    summary { padding: 13px 15px; color: var(--primary-dark); font-weight: 750; cursor: pointer; }
+    details > div { padding: 0 15px 15px; }
+    details.teacher { border-left: 5px solid #7b1fa2; }
+    details.teacher summary { color: #6a1b9a; }
+
+    .checklist { padding-left: 0; list-style: none; }
+    .checklist li { margin: 8px 0; padding-left: 28px; }
+    .checklist li::before {
+      float: left;
+      margin-left: -28px;
+      color: var(--success);
+      font-weight: 900;
+      content: "✓";
+    }
+
+    .quiz label {
+      display: block;
+      margin: 7px 0;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    .quiz label:hover { background: #f4f8fb; }
+    .quiz input { margin-right: 8px; accent-color: var(--primary); }
+    .quiz-result { min-height: 1.4em; margin-top: 12px; font-weight: 800; }
+    .footer { padding: 28px 8px 0; color: var(--muted); text-align: center; font-size: .88rem; }
+
+    @media (max-width: 880px) {
+      .sidebar { position: static; width: 100%; max-height: none; padding: 15px 18px; }
+      .sidebar nav { display: flex; gap: 3px; overflow-x: auto; padding-bottom: 5px; }
+      .sidebar nav a { flex: 0 0 auto; white-space: nowrap; }
+      .brand { margin-bottom: 8px; }
+      .progress-label, .progress-track { display: none; }
+      main { width: 100%; margin: 0; padding: 18px 14px 60px; }
+      .hero { min-height: 350px; border-radius: 14px; }
+    }
+    @media (max-width: 680px) {
+      .goal-grid, .card-grid { grid-template-columns: 1fr; }
+      .lesson { padding: 22px 17px; }
+      .flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); text-align: center; }
+      th, td { padding: 9px; }
+      pre { font-size: .82rem; }
+    }
+    @media print {
+      @page { size: A4; margin: 15mm; }
+      body { color: #000; background: #fff; font-size: 10.5pt; }
+      .sidebar, .hero-actions, .copy-button, .done-row, .quiz button, .footer { display: none !important; }
+      main { width: 100%; margin: 0; padding: 0; }
+      .hero { min-height: 0; margin: 0 0 10mm; padding: 14mm; color: #fff; box-shadow: none; }
+      .lesson { margin: 0 0 9mm; padding: 0; border: 0; box-shadow: none; break-before: page; }
+      .lesson:first-of-type { break-before: auto; }
+      .task, .note, .warning, .danger, .success, .terminal, table, details, .flow { break-inside: avoid; }
+      details > div { display: block; }
+      a { color: inherit; text-decoration: none; }
+    }
+  
+.lab {margin:22px 0;padding:20px;border:1px solid #bad0e5;border-radius:12px;background:#f8fbfe}
+.lab label {display:block;font-weight:700;margin-bottom:6px}
+.lab input[type=text], .lab select {width:100%;padding:10px;border:1px solid #8d9ba8;border-radius:7px;background:white;color:var(--ink)}
+.controls {display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.controls button{font-size:.9rem}
+.readout{padding:14px;border-radius:8px;background:white;border:1px solid var(--line);overflow-wrap:anywhere}
+.url-text{display:block;overflow-wrap:anywhere;word-break:break-word;font-family:Consolas,monospace;font-size:1rem}
+.url-text code{white-space:normal}.highlight{background:#fff1bc;padding:3px 5px;border-radius:5px}
+.result-grid{display:grid;grid-template-columns:150px 1fr;gap:0;margin:12px 0}.result-grid dt,.result-grid dd{padding:8px 0;border-bottom:1px solid var(--line);margin:0;overflow-wrap:anywhere}.result-grid dt{font-weight:700}.result-grid dd code{overflow-wrap:anywhere}
+.route-map{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}.node{border:1px solid #bdd2e7;background:white;border-radius:10px;padding:15px}.node strong{display:block;color:var(--primary-dark)}.node p{margin:6px 0 0}.node.active{border:2px solid var(--primary);background:var(--primary-soft)}
+.status-label{font-weight:800;color:var(--primary-dark);margin:10px 0}.demo-page{background:white;padding:18px;border:1px solid #aeb8c2;border-radius:10px}.demo-page h4{margin:0 0 12px}.demo-value{padding:10px;background:#eef5fb;font-weight:700}.fake-link{font-weight:700;color:var(--primary);text-decoration:underline}.mail{background:white;border:1px solid var(--line);border-radius:10px;padding:18px}.mail .meta{font-size:.88rem;color:var(--muted)}.mail .subject{font-weight:800;font-size:1.15rem}.feedback{margin-top:10px;min-height:24px}.quiz-feedback{font-weight:400}.source-list li{margin:8px 0}.sidebar nav a.active{background:rgba(255,255,255,.18);color:white}.sidebar nav a[aria-current]{font-weight:800}
+.hero h1{font-size:clamp(2.5rem,5vw,4.4rem)}.hero{min-height:370px}.button:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ffb300;outline-offset:3px}.quiz fieldset{border:0;border-bottom:1px solid var(--line);padding:14px 0}.quiz legend{font-weight:750;padding-top:10px}.quiz label{font-weight:400}.quiz .correct{border-color:var(--success);background:var(--success-soft)}.quiz .wrong{border-color:var(--danger);background:var(--danger-soft)}
+@media(max-width:680px){.route-map{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr}.result-grid dt{border:0;padding-bottom:0}.result-grid dd{padding-top:2px}.lab{padding:14px}.sidebar nav{scrollbar-width:thin}.hero{padding:28px 22px}.task-head{gap:9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+@media print{.lab{background:white}.controls,.lab input,.lab select{display:none}.lab{break-inside:avoid}.hero{color:#000;background:#e8f1fb;min-height:0;padding:10mm}.hero p,.eyebrow{color:#333!important}.node.active{background:white}.quiz-feedback{display:block}.terminal{background:#eef2f6;color:#000;box-shadow:none}.terminal-title{background:#dfe6ec;color:#333}.lesson{break-before:page}.quiz fieldset{break-inside:avoid}.source-list{font-size:9pt}}
+</style></head><body><a class="skip-link" href="#inhoud">Ga naar de cursus</a><aside class="sidebar" aria-label="Cursusnavigatie"><div class="brand"><div class="brand-mark">WEB</div><div><strong>Veilig internet</strong><small>ICT-basis · Sint-Franciscus Evergem</small></div></div><nav><a href="#route">Overzicht: Weet waar je naartoe gaat.</a><a href="#url">Les 1: Een URL is meer dan een domeinnaam.</a><a href="#domein">Les 2: Lees de hostname van rechts naar links.</a><a href="#ip-poorten">Les 3: IP zoekt het toestel, de poort zoekt de dienst.</a><a href="#dns">Les 4: DNS vertaalt namen naar netwerkgegevens.</a><a href="#hosts">Les 5: Het Windows-hostsbestand: een lokale namenlijst.</a><a href="#ddns">Les 6: DDNS houdt een naam bij een veranderend IP.</a><a href="#https">Les 7: HTTPS beschermt het transport.</a><a href="#mitm-firewall">Les 8: MITM, valse wifi en rogue firewalls.</a><a href="#proxy-vpn">Les 9: Proxy en VPN: waar loopt je verkeer langs?</a><a href="#email">Les 10: De tekst van een link is niet de bestemming.</a><a href="#scripts">Les 11: Tampermonkey en scripts draaien op jouw toestel.</a><a href="#toepassen">Les 12: Onderzoek per laag en reageer doelgericht.</a><a href="#spiekbrief">Naslag: De kern op één blad.</a><a href="#zelftest">Zelftest: Controleer of je het kunt toepassen.</a><a href="#bronnen">Bronnen: Technische documentatie.</a></nav><div class="progress-label"><span>Mijn oefeningen</span><strong id="progressText">0/0</strong></div><div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div></aside><main id="inhoud"><header class="hero" id="start"><p class="eyebrow">Praktische basiscursus ICT</p><h1>Lees het adres.<br>Begrijp de verbinding.</h1><p>Van URL en DNS tot HTTPS, phishing en scripts: ontdek waar je gegevens naartoe gaan, wie ze kan zien en welke controles je helpen.</p><div class="hero-actions"><a class="button light" href="#url">Start de cursus</a><button class="button ghost" id="printBtn" type="button">Afdrukken / pdf</button></div></header><section class="lesson" id="route" aria-labelledby="route-title"><span class="lesson-number">Overzicht</span><h2 id="route-title">Weet waar je naartoe gaat.</h2><p class="lead">Een logo, een hangslot of een bekende naam in een link is geen bewijs dat je op de juiste website zit. Je leert eerst het adres lezen en daarna de verbinding begrijpen.</p>
+<div class="goal-grid"><div class="mini-card"><strong>Adressen ontleden</strong><p>Protocol, hostname, domein, TLD, poort, pad en parameters herkennen.</p></div><div class="mini-card"><strong>Verbindingen begrijpen</strong><p>IP, DNS, hosts, DDNS, HTTPS, firewall, proxy en VPN uit elkaar houden.</p></div><div class="mini-card"><strong>Misleiding herkennen</strong><p>Phishinglinks, valse wifi, certificaatwaarschuwingen en riskante scripts beoordelen.</p></div><div class="mini-card"><strong>Technisch onderzoeken</strong><p>Met Windows-commando’s naamresolutie en bereikbaarheid apart testen.</p></div></div>
+<div class="note"><strong>Zo gebruik je de cursus</strong>Lees de uitleg, probeer de lokale demonstraties en maak de opdrachten. De oefenadressen met <code>.example</code> zijn fictief en hoeven niet te worden geopend. De interactieve demonstraties versturen geen gegevens. Je oefenvoortgang wordt alleen in deze browser bewaard.</div>
+<details class="teacher"><summary>Docentfiche: 4 tot 5 lesuren van 50 minuten</summary><div><p>Doelgroep: secundair onderwijs, ICT/STEM. Voorkennis: browsergebruik en basisbegrip van bestanden; de scriptopdracht vraagt alleen dat leerlingen eenvoudige code kunnen lezen.</p><div class="table-wrap"><table><tr><th>Lesuur</th><th>Onderdelen</th><th>Werkvorm</th></tr><tr><td>1</td><td>1–3: URL, domeinen, IP en poorten</td><td>Adresontleder + duo-opdrachten</td></tr><tr><td>2</td><td>4–6: DNS, hosts en DDNS</td><td>Lokale simulatie + Windows-onderzoek</td></tr><tr><td>3</td><td>7–9: HTTPS, MITM, firewall, proxy en VPN</td><td>Demonstratie + verklaren van scenario’s</td></tr><tr><td>4</td><td>10–11: e-mail en scripts</td><td>Phishingmail analyseren + code beoordelen</td></tr><tr><td>5 of huiswerk</td><td>12: incidentaanpak, eindopdracht en zelftest</td><td>Individueel toepassen en nabespreken</td></tr></table></div><p>Beoordeel vooral de redenering: kan de leerling de bestemming aanwijzen, de beschermingsgrens uitleggen en een passende actie kiezen? Een leerling hoeft geen poortlijst uit het hoofd te leren. Netwerkcommando’s zijn bedoeld voor de eigen computer en de opgegeven website.</p></div></details>
+</section><section class="lesson" id="url" aria-labelledby="url-title"><span class="lesson-number">Les 1</span><h2 id="url-title">Een URL is meer dan een domeinnaam.</h2><p class="lead">URL betekent Uniform Resource Locator: het adres van een bron. De tekens rond de hostname bepalen welke informatie bij de bestemming hoort.</p>
+<div class="terminal"><div class="terminal-title">Een volledig voorbeeld, fictief</div><pre><code>https://leerling.school.example:8443/cursus/veilig?klas=5ICW#dns</code></pre></div>
+<div class="table-wrap"><table><thead><tr><th>Deel</th><th>Voorbeeld</th><th>Functie</th></tr></thead><tbody><tr><td>Schema / protocol</td><td><code>https:</code></td><td>Hoe de browser de bron benadert; hier HTTP over een beveiligde verbinding.</td></tr><tr><td>Hostname</td><td><code>leerling.school.example</code></td><td>De naam van de bestemming. Een URL kan hier ook een IP-adres hebben.</td></tr><tr><td>Poort</td><td><code>:8443</code></td><td>Welke netwerkdienst je benadert.</td></tr><tr><td>Pad</td><td><code>/cursus/veilig</code></td><td>Welke bron je op die server vraagt.</td></tr><tr><td>Query</td><td><code>?klas=5ICW</code></td><td>Parameters voor de aanvraag. <code>&amp;</code> scheidt meerdere parameters.</td></tr><tr><td>Fragment</td><td><code>#dns</code></td><td>Een verwijzing binnen de bron. Niet meegestuurd in het HTTP-request; scripts in de pagina kunnen het wel lezen.</td></tr></tbody></table></div>
+<p>Bij een gewone web-URL staat de hostname na <code>://</code> en vóór een eventuele poort, <code>/</code>, <code>?</code> of <code>#</code>. Maar er bestaat een belangrijke valkuil: informatie vóór <code>@</code> in dit gedeelte is gebruikersinformatie, niet de hostname.</p>
+<div class="danger"><strong>Het @-trucje</strong><span class="url-text">https://school.example@aanvaller.example/inloggen</span>De bestemming is <code>aanvaller.example</code>. De vertrouwde naam vóór <code>@</code> verandert dat niet. Een browser kan zulke URL’s blokkeren of anders tonen; beoordeel de betekenis van het adres.</div>
+<div class="lab"><h3>URL-ontleder</h3><p>Plak een volledig webadres. Dit hulpmiddel leest het adres lokaal en opent de bestemming niet.</p><label for="urlInput">Webadres</label><input id="urlInput" type="text" spellcheck="false" value="https://leerling.school.example:8443/cursus/veilig?klas=5ICW#dns"><div class="controls"><button class="button" id="parseUrl" type="button">Ontleed</button><button class="button" data-url="https://school.example@aanvaller.example/inloggen" type="button">@-truc</button><button class="button" data-url="https://school.example.aanvaller.example/inloggen" type="button">Subdomeintruc</button><button class="button" data-url="https://portaal.school.co.uk/les" type="button">co.uk</button></div><div id="urlResult" class="readout" aria-live="polite"></div><p><small>Dit is geen veiligheidschecker. De suffixherkenning bevat alleen een kleine lijst voor lesvoorbeelden, inclusief <code>co.uk</code> en <code>github.io</code>. Voor willekeurige domeinen is een actuele Public Suffix List nodig.</small></p></div>
+<div class="note"><strong>Wat is een origin?</strong>Een web-origin bestaat uit schema + hostname + effectieve poort. <code>https://school.example</code> en <code>https://school.example:443</code> hebben dezelfde origin. <code>http://school.example</code> en <code>https://school.example:8443</code> hebben een andere origin. Browsers gebruiken dit onderscheid bij beveiliging van gegevens tussen websites.</div>
+<div class="task"><div class="task-head"><div class="task-icon">1A</div><div><h3>Splits het adres op</h3></div></div><p>Ontleed <code>https://files.school.example:9443/rapport.pdf?leerling=42#pagina2</code>. Welk deel bepaalt de server? Welk deel is alleen voor de browser?</p><details><summary>Oplossing en uitleg</summary><div><p>Schema: HTTPS. Hostname: <code>files.school.example</code>. Poort: 9443. Pad: <code>/rapport.pdf</code>. Query: <code>leerling=42</code>. Fragment: <code>pagina2</code>. De hostname bepaalt welke naam wordt opgezocht; de poort selecteert de dienst. Het fragment wordt niet in het HTTP-request verstuurd.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="1A">Opdracht 1A voltooid</label></div></section><section class="lesson" id="domein" aria-labelledby="domein-title"><span class="lesson-number">Les 2</span><h2 id="domein-title">Lees de hostname van rechts naar links.</h2><p class="lead">Een hostname heeft een hiërarchie. Een vertrouwde merknaam ergens in die naam is onvoldoende: kijk waar het registreerbare domein begint en eindigt.</p>
+<div class="table-wrap"><table><thead><tr><th>Begrip</th><th>Voorbeeld</th><th>Uitleg</th></tr></thead><tbody><tr><td>TLD</td><td><code>be</code>, <code>nl</code>, <code>com</code>, <code>org</code></td><td>Top-Level Domain: het meest rechtse label.</td></tr><tr><td>Registreerbaar domein</td><td><code>sfevergem.be</code></td><td>Naam die onder deze suffix geregistreerd kan worden.</td></tr><tr><td>Subdomein</td><td><code>www</code> in <code>www.sfevergem.be</code></td><td>Een naam binnen het domein. Meerdere niveaus zijn mogelijk.</td></tr><tr><td>Volledige hostname</td><td><code>www.sfevergem.be</code></td><td>De volledige naam in deze web-URL.</td></tr><tr><td>Lokale computernaam</td><td><code>LT-KLAS-01</code></td><td>Toestelnaam; op een netwerk eventueel aangevuld met een DNS-suffix.</td></tr><tr><td>FQDN</td><td><code>www.sfevergem.be.</code></td><td>Fully Qualified Domain Name. De laatste punt verwijst naar de DNS-root en wordt meestal weggelaten.</td></tr></tbody></table></div>
+<h3>Welk deel doet ertoe?</h3><p>Voor het controleren van de organisatie is het <strong>registreerbare domein</strong> een belangrijk aanknopingspunt. Controleer ook de volledige hostname: een subdomein kan een andere dienst of gedelegeerde omgeving zijn. De juiste naam is noodzakelijk, maar een website of account kan alsnog gehackt zijn.</p>
+<div class="table-wrap"><table><thead><tr><th>Hostname / adres</th><th>Registreerbaar domein</th><th>Redenering</th></tr></thead><tbody><tr><td><code>www.sfevergem.be</code></td><td><code>sfevergem.be</code></td><td><code>www</code> is een subdomein.</td></tr><tr><td><code>sfevergem.smartschool.be</code></td><td><code>smartschool.be</code></td><td>De schoolnaam is hier een subdomein van de dienst Smartschool.</td></tr><tr><td><code>school.example.aanvaller.example</code></td><td><code>aanvaller.example</code></td><td><code>school.example</code> staat links en is hier geen zelfstandig bestemmingsdomein.</td></tr><tr><td><code>school-login.example</code></td><td><code>school-login.example</code></td><td>Een koppelteken scheidt geen domeinniveaus; het hoort bij hetzelfde label.</td></tr><tr><td><code>aanvaller.example/school.example</code></td><td><code>aanvaller.example</code></td><td>De schoolnaam staat in het pad en bepaalt de bestemming niet.</td></tr><tr><td><code>portaal.school.co.uk</code></td><td><code>school.co.uk</code></td><td><code>uk</code> is de TLD; <code>co.uk</code> is een public suffix.</td></tr></tbody></table></div>
+<div class="warning"><strong>“De laatste twee stukken” werkt niet altijd</strong>Bij <code>co.uk</code> heb je voor het registreerbare domein drie labels nodig. Publieke hosting kan ook eigen grenzen hebben: in de Public Suffix List is bijvoorbeeld <code>github.io</code> een suffix. <code>leerling.github.io</code> kan een aparte gebruikerssite zijn. Dit maakt zo’n site niet automatisch goed of slecht.</div>
+<h3>Andere naamtrucs</h3><p><code>sfevergcm.be</code> lijkt op <code>sfevergem.be</code>, maar is een andere naam. Ook letters uit verschillende alfabetten kunnen sterk op elkaar lijken. Internationale domeinnamen kunnen als <code>xn--...</code> verschijnen: dat heet punycode en is op zichzelf geen bewijs van fraude. Een TLD zoals <code>.be</code> bewijst evenmin dat een site betrouwbaar of Belgisch beheerd is.</p>
+<p><code>www</code> is niet verplicht en bewijst niets. <code>sfevergem.be</code> en <code>www.sfevergem.be</code> zijn verschillende hostnames; de beheerder kan ze naar dezelfde site laten leiden. Logo’s, merknamen in een pad en woorden zoals <code>secure</code> of <code>login</code> zijn vrij te kiezen.</p>
+<div class="task"><div class="task-head"><div class="task-icon">2A</div><div><h3>Zoek de echte bestemming</h3></div></div><p>Bepaal het registreerbare domein bij <code>login.school.example</code>, <code>school.example.login-hulp.example</code>, <code>login-school.example</code> en <code>https://login-hulp.example/?next=school.example</code>.</p><details><summary>Oplossing en uitleg</summary><div><p>Respectievelijk <code>school.example</code>, <code>login-hulp.example</code>, <code>login-school.example</code> en <code>login-hulp.example</code>. In het laatste adres is de schoolnaam alleen een parameter. Een parameter kan later wel een redirect veroorzaken; controleer daarom ook de uiteindelijke pagina.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="2A">Opdracht 2A voltooid</label></div></section><section class="lesson" id="ip-poorten" aria-labelledby="ip-poorten-title"><span class="lesson-number">Les 3</span><h2 id="ip-poorten-title">IP zoekt het toestel, de poort zoekt de dienst.</h2><p class="lead">Een IP-adres is een netwerkadres. Eén toestel kan meerdere netwerkdiensten aanbieden, elk bereikbaar via een protocol en poort.</p>
+<div class="card-grid"><div class="mini-card"><strong>IPv4</strong><p>Vier getallen, bijvoorbeeld <code>192.168.1.25</code>. Elk deel ligt tussen 0 en 255.</p></div><div class="mini-card"><strong>IPv6</strong><p>Hexadecimale groepen, bijvoorbeeld <code>2001:db8::25</code>. Dit adres is gereserveerd voor documentatie. In een URL staat IPv6 tussen blokhaken: <code>https://[2001:db8::25]/</code>.</p></div></div>
+<h3>Privé, publiek en loopback</h3><p>IPv4-reeksen <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code> en <code>192.168.0.0/16</code> zijn privé: ze worden op interne netwerken gebruikt en zijn niet rechtstreeks via het publieke internet gerouteerd. Een router vertaalt vaak lokale IPv4-verbindingen met NAT naar een publiek adres. Andere woningen kunnen hetzelfde privé-adres gebruiken.</p><p><code>127.0.0.1</code> is IPv4-loopback; <code>::1</code> is IPv6-loopback. Ze verwijzen naar de eigen computer. <code>localhost</code> is de bijbehorende lokale naam. Een publiek IP-adres kan bij een router, proxy of CDN horen en bewijst geen identiteit.</p>
+<h3>Een poort is geen kabelgat</h3><p>Een netwerkpoort is een nummer van 0 tot en met 65535; poort 0 is gereserveerd. TCP en UDP hebben aparte poortruimtes. Een dienst moet luisteren en het netwerk moet verkeer doorlaten. Een open poort zegt dat een dienst bereikbaar is, niet dat die dienst veilig is.</p>
+<div class="table-wrap"><table><thead><tr><th>Gebruikelijke poort</th><th>Dienst</th><th>Betekenis</th></tr></thead><tbody><tr><td>80/TCP</td><td>HTTP</td><td>Webverkeer zonder TLS.</td></tr><tr><td>443/TCP</td><td>HTTPS</td><td>Webverkeer over TLS. HTTP/3 gebruikt meestal 443/UDP via QUIC.</td></tr><tr><td>53/UDP en TCP</td><td>DNS</td><td>Klassieke DNS-vragen en antwoorden.</td></tr><tr><td>22/TCP</td><td>SSH</td><td>Beveiligd beheer op afstand.</td></tr><tr><td>3389/TCP en UDP</td><td>RDP</td><td>Windows-bureaublad op afstand.</td></tr><tr><td>8080 / 8443</td><td>Vaak alternatieve webpoorten</td><td>De poort alleen garandeert het protocol niet.</td></tr></tbody></table></div>
+<div class="note"><strong>Waarom zie je :443 meestal niet?</strong>De browser kiest bij <code>https://</code> standaard 443 en bij <code>http://</code> standaard 80. Een afwijkende poort moet in het adres staan. <code>http://school.example:443</code> wordt niet automatisch HTTPS: het schema bepaalt de verwachte verbinding.</div>
+<div class="task"><div class="task-head"><div class="task-icon">3A</div><div><h3>Eén server, twee diensten</h3></div></div><p>Een testserver heeft IP <code>192.168.1.50</code>. Een website luistert op 8080 en SSH op 22. Schrijf het HTTP-adres van de website. Waarom is <code>http://192.168.1.50:22</code> geen SSH-client?</p><details><summary>Oplossing en uitleg</summary><div><p>De website is <code>http://192.168.1.50:8080/</code>. De browser probeert op poort 22 HTTP te spreken, terwijl SSH een ander protocol verwacht. Een juist IP en een open poort zijn dus niet genoeg: ook het protocol moet kloppen.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="3A">Opdracht 3A voltooid</label></div></section><section class="lesson" id="dns" aria-labelledby="dns-title"><span class="lesson-number">Les 4</span><h2 id="dns-title">DNS vertaalt namen naar netwerkgegevens.</h2><p class="lead">DNS betekent Domain Name System. Zonder een naamomzetting weet je computer meestal niet naar welk IP-adres hij voor een hostname moet verbinden.</p>
+<p>Een DNS-resolver zoekt antwoorden voor je computer. Dat kan de resolver van je provider, school of een gekozen dienst zijn. Bij een ontbrekend cacheantwoord volgt hij de DNS-hiërarchie: rootservers verwijzen naar de juiste TLD-servers, die verwijzen naar de autoritatieve nameservers. Die beheren de records voor het domein.</p>
+<div class="table-wrap"><table><tr><th>Record</th><th>Wat staat erin?</th><th>Voorbeeld, fictief</th></tr><tr><td>A</td><td>Een IPv4-adres</td><td><code>www.school.example → 192.0.2.25</code></td></tr><tr><td>AAAA</td><td>Een IPv6-adres</td><td><code>www.school.example → 2001:db8::25</code></td></tr><tr><td>CNAME</td><td>Een alias naar een andere naam</td><td><code>files.school.example → server.school.example</code></td></tr><tr><td>MX</td><td>Mailservers voor het domein</td><td>Waar inkomende e-mail afgeleverd moet worden.</td></tr><tr><td>TXT</td><td>Tekstgegevens</td><td>Onder meer domeinverificatie en mailbeleid.</td></tr><tr><td>NS</td><td>Autoritatieve nameservers</td><td>Welke nameservers de zone bedienen.</td></tr></table></div>
+<p>DNS-caches bewaren antwoorden tijdelijk. De <strong>TTL</strong>, Time To Live, geeft de bewaartijd van een record aan. Daardoor kan een DNS-wijziging bij de ene gebruiker al zichtbaar zijn en bij de andere nog niet. Eén hostname kan meerdere IP-adressen krijgen; meerdere hostnames kunnen ook hetzelfde IP gebruiken.</p>
+<div class="lab"><h3>Volg één DNS-opzoeking</h3><p>Vereenvoudigde simulatie voor <code>www.school.example</code>, zonder bestaande cache. Alle adressen zijn oefengegevens.</p><div class="route-map"><div class="node" id="dnsClient"><strong>Computer</strong><p>Vraagt het adres.</p></div><div class="node" id="dnsResolver"><strong>Resolver</strong><p>Zoekt het antwoord.</p></div><div class="node" id="dnsAuthority"><strong>DNS-hiërarchie</strong><p>Root → TLD → autoritatief.</p></div></div><p id="dnsStatus" class="status-label" aria-live="polite"></p><div class="controls"><button class="button" id="dnsNext" type="button">Volgende stap</button><button class="button" id="dnsReset" type="button">Opnieuw</button></div><p>Dit model toont de logica, geen volledige netwerkcapture. Een browser of resolver kan antwoorden uit een cache gebruiken.</p></div>
+<div class="warning"><strong>DNS is geen HTTPS-controle</strong>Een vals DNS-antwoord kan je naar een verkeerd IP sturen. Bij HTTPS moet die server nog steeds een geldig, vertrouwd certificaat voor de aangevraagde hostname bewijzen. DNS-over-HTTPS of DNS-over-TLS versleutelt het traject naar de gekozen resolver. DNSSEC controleert ondertekende DNS-gegevens; het versleutelt geen webpagina’s.</div>
+<div class="terminal"><div class="terminal-title">Windows: DNS onderzoeken</div><button class="copy-button" type="button">Kopieer</button><pre><code>nslookup www.sfevergem.be
+nslookup -type=MX sfevergem.be</code></pre></div><div class="task"><div class="task-head"><div class="task-icon">4A</div><div><h3>Waarom verschillende antwoorden?</h3></div></div><p>Voer de eerste DNS-opdracht uit op je eigen computer. Noteer de gebruikte DNS-server en de gevonden adressen. Leg uit waarom een klasgenoot andere adressen kan zien.</p><details><summary>Oplossing en uitleg</summary><div><p>Let op: het serveradres bovenaan is de DNS-resolver, niet het webserveradres in het antwoord. Verschillen kunnen komen door caches, meerdere adressen, IPv4/IPv6 of geografische verdeling via een CDN. Dat bewijst op zichzelf geen aanval. De records kunnen veranderen; daarom staat hier geen vaste actuele uitkomst.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="4A">Opdracht 4A voltooid</label></div></section><section class="lesson" id="hosts" aria-labelledby="hosts-title"><span class="lesson-number">Les 5</span><h2 id="hosts-title">Het Windows-hostsbestand: een lokale namenlijst.</h2><p class="lead">Een hostsbestand kan op één computer een vaste naam-IP-koppeling instellen. Het verandert geen openbare DNS-records en geen instellingen op andere computers.</p>
+<p>Het bestand staat op <code>C:\Windows\System32\drivers\etc\hosts</code>, zonder extensie. Een regel bevat eerst het IP-adres, daarna de hostname. Regels die met <code>#</code> beginnen zijn commentaar.</p>
+<div class="terminal"><div class="terminal-title">Voorbeeld van hostsregels, alleen oefennamen</div><button class="copy-button" type="button">Kopieer</button><pre><code># Een lokale testnaam
+127.0.0.1 les-test.example
+# Een interne testserver
+192.168.1.50 testserver.school.example</code></pre></div>
+<p>Windows gebruikt bij zijn normale naamresolutie lokale cache- en hostsgegevens voordat een gewone DNS-query nodig is. Browsers kunnen eigen caches, beveiligde DNS en proxygedrag hebben. Daarom is “hosts wint altijd in elke toepassing” te absoluut.</p>
+<div class="note"><strong>Wat hosts niet doet</strong>Het bestand bevat geen URL’s, paden, poorten of algemene wildcardregels. <code>les-test.example</code> en <code>www.les-test.example</code> zijn aparte namen. De hostname in de adresbalk blijft staan: alleen de gevonden IP-bestemming verandert. Ook de HTTPS-certificaatcontrole blijft gelden.</div>
+<div class="terminal"><div class="terminal-title">Windows PowerShell: alleen lezen</div><button class="copy-button" type="button">Kopieer</button><pre><code>Get-Content &quot;$env:SystemRoot\System32\drivers\etc\hosts&quot;
+Resolve-DnsName les-test.example
+nslookup les-test.example</code></pre></div>
+<p><code>nslookup</code> bevraagt DNS en gebruikt niet de lokale hostsregels zoals de normale Windows-resolver. Bij een hostsregel kunnen <code>Resolve-DnsName</code> en <code>nslookup</code> dus verschillende uitkomsten geven.</p>
+<div class="lab"><h3>Simuleer een hostsregel</h3><p>De fictieve openbare DNS geeft <code>192.0.2.25</code>. Schakel een lokale regel in en bekijk wat een vereenvoudigde Windows-resolver kiest.</p><label><input id="hostsToggle" type="checkbox"> Gebruik <code>127.0.0.1 les-test.example</code></label><div id="hostsResult" class="readout" aria-live="polite"></div></div>
+<div class="task"><div class="task-head"><div class="task-icon">5A</div><div><h3>Lees zonder te wijzigen</h3></div></div><p>Lees het hostsbestand met <code>Get-Content</code>. Zoek echte koppelingen, los van commentaar. Waarom kan een onverwachte regel een loginprobleem veroorzaken?</p><details><summary>Oplossing en uitleg</summary><div><p>Een koppeling kan een hostname naar een verkeerde of onbereikbare server sturen. Bij HTTPS kan dat daarnaast een certificaatfout veroorzaken. Verwijder onbekende regels op een beheerd toestel niet op eigen initiatief; leg de regel aan ICT voor. Een lege lijst van actieve regels is normaal.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="5A">Opdracht 5A voltooid</label></div>
+<details class="teacher"><summary>Extra praktijk in een test-VM: eigen hostsregel</summary><div><ol><li>Maak een back-up van het hostsbestand en open het oorspronkelijke bestand als administrator in Kladblok. Lees eerst de bestaande inhoud.</li><li>Voeg alleen <code>127.0.0.1 les-test.example</code> toe, sla op als <code>hosts</code> zonder <code>.txt</code> en voer <code>ipconfig /flushdns</code> uit.</li><li>Vergelijk <code>Resolve-DnsName les-test.example</code> met <code>nslookup les-test.example</code>. De eerste kan de lokale koppeling tonen; openbare DNS kent deze oefennaam niet. Er wordt geen webserver gestart.</li><li>Verwijder uitsluitend je eigen testregel en voer opnieuw <code>ipconfig /flushdns</code> uit. Controleer dat de oorspronkelijke inhoud behouden is.</li></ol><p>Een naam naar 127.0.0.1 laten wijzen maakt geen website. Er moet nog steeds een lokale dienst luisteren. Een hostsregel voor een echte bank- of schoolsite hoort niet bij deze oefening.</p></div></details>
+</section><section class="lesson" id="ddns" aria-labelledby="ddns-title"><span class="lesson-number">Les 6</span><h2 id="ddns-title">DDNS houdt een naam bij een veranderend IP.</h2><p class="lead">Dynamic DNS, afgekort DDNS, werkt een DNS-record bij wanneer het IP-adres van een verbinding verandert. DynDNS is ook een bekende dienstnaam.</p>
+<p>Stel dat je thuis een kleine server hebt. Vandaag heeft je router publiek IP <code>198.51.100.20</code> en later <code>198.51.100.88</code>. Dit zijn documentatieadressen. Met een updater op je router of computer blijft <code>thuis.school.example</code> naar het nieuwe adres wijzen. Je onthoudt de naam in plaats van het wisselende getal.</p>
+<div class="card-grid"><div class="mini-card"><strong>DNS</strong><p>De verzameling namen en records.</p></div><div class="mini-card"><strong>DDNS</strong><p>De automatische update van zo’n record wanneer het IP verandert.</p></div></div>
+<div class="warning"><strong>Een naam maakt een server niet bereikbaar</strong>DDNS opent geen poorten, schakelt geen firewall uit en lost CGNAT niet vanzelf op. CGNAT betekent dat meerdere klanten een publiek IPv4-adres bij de provider delen. Voor toegang tot interne diensten gebruik je een doordachte oplossing zoals een beheerde VPN; je publiceert geen beheerpoort alleen omdat je nu een naam hebt.</div>
+<p>Ook DDNS-records hebben caches en TTL’s. De nieuwe bestemming kan dus even op zich laten wachten. De naam en het HTTPS-certificaat kunnen gelijk blijven terwijl het IP verandert.</p>
+<div class="task"><div class="task-head"><div class="task-icon">6A</div><div><h3>Naam gevonden, dienst toch onbereikbaar</h3></div></div><p>Een DDNS-naam geeft het juiste publieke IP terug, maar de thuisserver is van buitenaf onbereikbaar. Geef twee mogelijke oorzaken. Welke laag werkt aantoonbaar al?</p><details><summary>Oplossing en uitleg</summary><div><p>De naamomzetting werkt. Mogelijke oorzaken: de dienst luistert niet, firewall blokkeert, er is geen passende NAT-regel, de provider gebruikt CGNAT of de route faalt. Een DNS-antwoord bewijst geen succesvolle verbinding.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="6A">Opdracht 6A voltooid</label></div></section><section class="lesson" id="https" aria-labelledby="https-title"><span class="lesson-number">Les 7</span><h2 id="https-title">HTTPS beschermt het transport.</h2><p class="lead">HTTP wisselt webaanvragen en antwoorden uit. HTTPS beveiligt die verbinding met TLS, Transport Layer Security.</p>
+<div class="goal-grid"><div class="mini-card"><strong>Vertrouwelijkheid</strong><p>Een afluisteraar op de route kan de inhoud van de beveiligde verbinding niet gewoon meelezen.</p></div><div class="mini-card"><strong>Integriteit</strong><p>Een tussenpersoon kan gegevens niet ongemerkt aanpassen.</p></div><div class="mini-card"><strong>Authenticatie van de server</strong><p>Het certificaat en de bijbehorende sleutel bewijzen de aangevraagde hostname binnen het vertrouwensmodel van de browser.</p></div><div class="mini-card"><strong>Een duidelijke grens</strong><p>De browser en de server verwerken de ontsleutelde inhoud. Schadelijke software op zo’n eindpunt wordt door TLS niet gestopt.</p></div></div>
+<h3>Waarom een certificaat?</h3><p>Bij het opzetten van de verbinding controleert de browser onder meer de hostname, geldigheid en vertrouwensketen van het certificaat. De server moet bewijzen dat hij de bijbehorende sleutel bezit. Een vertrouwde certificaatautoriteit, CA, staat aan de basis van die keten. Veel certificaten bevestigen domeincontrole, geen morele betrouwbaarheid van de eigenaar.</p>
+<div class="danger"><strong>Ook een phishingpagina kan HTTPS hebben</strong><code>https://bank-aanmelden.example</code> kan een beveiligde verbinding naar precies die verkeerde site zijn. Controleer eerst de hostname en daarna de verbinding. Een hangslot of verbindingsicoon beoordeelt de verbinding, niet de eerlijkheid van de pagina.</div>
+<h3>Wat ziet een tussenpersoon nog?</h3><p>Bij HTTPS zijn het pad, de query en de pagina-inhoud onderweg binnen TLS versleuteld. Een tussenpersoon ziet wel onder meer bestemmings-IP’s, timing en verkeersvolume. De hostname kan via gewone DNS of TLS-metadata zichtbaar zijn; versleutelde DNS en ECH kunnen dat deels beperken. Op je eigen toestel kunnen geschiedenis, scripts of logging het volledige adres kennen. De website zelf ziet de inhoud van je aanvraag.</p>
+<div class="warning"><strong>Certificaatwaarschuwing = stop en onderzoek</strong>Een verkeerde naam, verlopen certificaat, onjuiste klok of onbekende CA kan de fout veroorzaken. Een aanvaller is ook mogelijk. Ga niet blind verder en installeer geen nieuw rootcertificaat omdat een onverwachte pagina dat vraagt. Vraag ICT bij een beheerd toestel.</div>
+<p>HSTS, HTTP Strict Transport Security, laat een browser voor een hostname HTTPS afdwingen. Een gewone redirect van HTTP naar HTTPS beschermt de eerste onversleutelde aanvraag niet vanzelf. Ook onderdelen zoals scripts moeten veilig geladen worden; HTTP-inhoud binnen HTTPS heet mixed content.</p>
+<div class="task"><div class="task-head"><div class="task-icon">7A</div><div><h3>Wat bewijst HTTPS?</h3></div></div><p>Een e-mail leidt naar <code>https://school.example.aanvaller.example</code>. De verbinding heeft geen certificaatfout. Mag je je schoolwachtwoord invullen? Onderbouw met twee controles.</p><details><summary>Oplossing en uitleg</summary><div><p>Nee. Het registreerbare domein is <code>aanvaller.example</code>. HTTPS kan de verbinding naar die hostname correct beveiligen. Dat bewijst niet dat de school die pagina beheert. Open de bekende schooldienst via je eigen bladwijzer.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="7A">Opdracht 7A voltooid</label></div></section><section class="lesson" id="mitm-firewall" aria-labelledby="mitm-firewall-title"><span class="lesson-number">Les 8</span><h2 id="mitm-firewall-title">MITM, valse wifi en rogue firewalls.</h2><p class="lead">Bij man in the middle, MITM, zit een aanvaller op het communicatiepad. Hij probeert verkeer te lezen, om te leiden of te wijzigen.</p>
+<h3>Een tussenpositie is niet automatisch een aanval</h3><p>Routers, firewalls en proxies staan normaal op de route. Een MITM-aanval ontstaat wanneer een partij die positie misbruikt. Een valse hotspot met dezelfde of een geloofwaardige naam heet vaak een <strong>evil twin</strong>. Alleen dezelfde wifinaam zien bewijst niet dat je bij het echte access point zit.</p>
+<h3>Wat doet een firewall?</h3><p>Een firewall laat netwerkverkeer door of blokkeert het volgens regels, bijvoorbeeld op protocol, poort, adres, toepassing of verbindingsstatus. Hij kan op je computer of tussen netwerken staan. Een open 443-regel betekent alleen dat bepaald verkeer door mag; ook een kwaadaardige website kan HTTPS aanbieden.</p>
+<div class="note"><strong>Wat bedoelen we met “rogue firewall”?</strong>Dat is geen scherp afgebakende standaardterm. In deze les bedoelen we een ongeautoriseerd of overgenomen apparaat op de route dat verkeer beïnvloedt. Daarnaast bestaat nepsoftware die zich als firewall of antivirus voordoet. Een evil-twinhotspot is weer een andere techniek; de begrippen zijn verwant, maar niet identiek.</div>
+<div class="lab"><h3>Wat kan de partij op de route lezen?</h3><label for="mitmMode">Scenario</label><select id="mitmMode"><option value="http">HTTP via een kwaadwillende hotspot</option><option value="https">HTTPS met correcte certificaatcontrole</option><option value="root">HTTPS via een inspectieproxy met vertrouwde root-CA</option><option value="endpoint">HTTPS met een schadelijk script in de browser</option></select><div class="route-map"><div class="node"><strong>Browser</strong><p>Fictieve inhoud: klas = 5ICW</p></div><div class="node" id="middleNode"><strong>Partij op de route</strong><p id="mitmRead"></p></div><div class="node"><strong>Webserver</strong><p>Verwerkt de aanvraag.</p></div></div><div id="mitmResult" class="readout" aria-live="polite"></div></div>
+<h3>Hoe kan HTTPS-inspectie dan werken?</h3><p>Een beheerde inspectieproxy kan TLS beëindigen en een nieuwe verbinding naar de echte server maken. De browser vertrouwt de proxy als zijn root-CA op het toestel vertrouwd is. Er zijn dan twee beveiligde trajecten met een partij die tussendoor de inhoud ziet. Sommige toepassingen weigeren zo’n constructie. Op een beheerd toestel kan dit gepland beleid zijn; een onverwacht verzoek om een root-CA te installeren moet je laten controleren.</p>
+<div class="warning"><strong>Valse DNS of wifi breekt TLS niet vanzelf</strong>Zonder een passend, vertrouwd certificaat en sleutel kan de tussenpersoon een correct gecontroleerde HTTPS-verbinding niet zomaar lezen. Hij kan wel blokkeren, naar een ander domein lokken of de gebruiker verleiden om controles uit te schakelen.</div>
+<div class="task"><div class="task-head"><div class="task-icon">8A</div><div><h3>De hotspot vraagt een certificaat</h3></div></div><p>Een “School Gratis Wifi”-pagina vraagt je een certificaat te installeren “om internet veilig te maken”. Je verwacht dit niet. Wat doe je en waarom?</p><details><summary>Oplossing en uitleg</summary><div><p>Installeer het niet, verbreek die verbinding en controleer het netwerk en het verzoek bij ICT via een bekend kanaal. Een vertrouwde root-CA kan invloed geven op welke certificaten je toestel accepteert. Een aantrekkelijk netwerklabel is geen bewijs van eigendom.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="8A">Opdracht 8A voltooid</label></div></section><section class="lesson" id="proxy-vpn" aria-labelledby="proxy-vpn-title"><span class="lesson-number">Les 9</span><h2 id="proxy-vpn-title">Proxy en VPN: waar loopt je verkeer langs?</h2><p class="lead">Beide kunnen een tussenserver gebruiken. Het verschil zit in welke verbindingen erdoor lopen en waar de beveiliging begint en eindigt.</p>
+<div class="table-wrap"><table><thead><tr><th>Techniek</th><th>Werking</th><th>Wat je moet controleren</th></tr></thead><tbody><tr><td>Forward proxy</td><td>Handelt aanvragen af namens de client. Vaak ingesteld per app of via systeeminstellingen.</td><td>Welke apps gebruiken hem? Is de verbinding naar de proxy versleuteld? Is TLS-inspectie actief?</td></tr><tr><td>Reverse proxy</td><td>Staat vóór servers en stuurt aanvragen naar interne diensten.</td><td>Waar eindigt TLS? Wordt het traject naar de achterliggende server ook beveiligd?</td></tr><tr><td>VPN</td><td>Maakt een beveiligde tunnel van toestel naar VPN-eindpunt en routeert geselecteerd verkeer erdoor.</td><td>Welke routes en DNS gaan door de tunnel? Vertrouw je de beheerder?</td></tr><tr><td>HTTPS</td><td>Beveiligt de webverbinding tot de TLS-eindpartij.</td><td>Klopt de hostname en accepteert de browser het certificaat zonder fout?</td></tr></tbody></table></div>
+<p>Een forward proxy is geen automatische garantie op versleuteling. Een HTTPS-verbinding kan via een gewone tunnelproxy lopen zonder dat die proxy de webinhoud kan lezen. Bij TLS-inspectie is dat anders. Een reverse proxy kan de TLS-eindpartij van de website zijn.</p>
+<h3>Een VPN verschuift vertrouwen</h3><p>Een VPN beschermt het verkeer dat door de tunnel loopt tussen jouw toestel en het VPN-eindpunt. De lokale hotspot ziet dan vooral de tunnel en verkeerskenmerken. Voor verkeer dat daarna het internet opgaat kan de website het uitgaande IP van de VPN zien. De VPN-beheerder krijgt zicht op verbindingen; correct HTTPS blijft de webinhoud beschermen tegen een gewone tussenpositie.</p><p>Bij een <strong>full tunnel</strong> loopt in principe al het gerouteerde verkeer door de VPN. Bij een <strong>split tunnel</strong> alleen geselecteerde netwerken of toepassingen. De exacte DNS-route en uitzonderingen hangen van de configuratie af. Een school-VPN kan bijvoorbeeld toegang tot een interne fileserver geven zonder al je internetverkeer om te leiden.</p>
+<div class="danger"><strong>Een VPN maakt phishing niet onschadelijk</strong>Je kunt via een perfect beveiligde tunnel je wachtwoord aan een verkeerde website geven. Accounts, cookies en browserkenmerken kunnen je nog steeds identificeren. Een VPN verwijdert ook geen schadelijke extensie op je toestel.</div>
+<div class="task"><div class="task-head"><div class="task-icon">9A</div><div><h3>Drie beschermingsgrenzen</h3></div></div><p>Je gebruikt een full-tunnel-VPN en bezoekt een HTTP-pagina. Welk stuk is versleuteld? Wat verandert wanneer je dezelfde pagina via HTTPS bezoekt?</p><details><summary>Oplossing en uitleg</summary><div><p>De VPN versleutelt van je toestel tot het VPN-eindpunt. Zonder HTTPS kan de inhoud op het traject daarna als HTTP leesbaar zijn. Met correct HTTPS blijft de webverbinding ook buiten de VPN beveiligd tot de TLS-eindpartij van de site. DNS, routes en inspectie hangen van de configuratie af.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="9A">Opdracht 9A voltooid</label></div></section><section class="lesson" id="email" aria-labelledby="email-title"><span class="lesson-number">Les 10</span><h2 id="email-title">De tekst van een link is niet de bestemming.</h2><p class="lead">Een e-mail kan “Smartschool” tonen terwijl de onderliggende link naar een ander domein wijst. Controleer het echte doel vóór je gegevens invult.</p>
+<div class="mail"><p class="meta">Van: “SFE ICT” &lt;helpdesk@account-hulp.example&gt;</p><p class="subject">Je schoolaccount wordt binnen 15 minuten afgesloten</p><p>Beste leerling, je moet dringend je wachtwoord bevestigen. Anders verdwijnen je opdrachten.</p><p><a href="https://sfevergem.smartschool.be.account-hulp.example/inloggen" class="fake-link" id="mailLink">https://sfevergem.smartschool.be</a></p><p class="meta">Dit is een fictieve oefenmail. Klikken wordt lokaal tegengehouden.</p></div>
+<div class="lab"><h3>Hover, focus of tik</h3><p>Beweeg de muis over de link of bereik hem met Tab. Op een echte browser zie je de bestemming doorgaans in de statusbalk. Op een telefoon: houd een link ingedrukt om het doel te bekijken; open hem nog niet.</p><div id="mailTarget" class="readout" aria-live="polite">Doel nog niet getoond.</div><div class="controls"><button class="button" id="revealLink" type="button">Toon bestemming</button></div></div>
+<h3>Controleer in deze volgorde</h3><ol class="steps"><li><strong>Bekijk de context en afzender.</strong> Verwacht je dit bericht? Kijk naar het volledige e-mailadres en een afwijkend reply-to, niet alleen de weergavenaam.</li><li><strong>Bekijk de echte URL.</strong> Zoek hostname en registreerbaar domein. Let op @, typefouten, subdomeinen en namen in het pad.</li><li><strong>Open de dienst via je bekende route.</strong> Gebruik een bladwijzer of zelf ingetikt adres. Controleer daar of er werkelijk een melding staat.</li><li><strong>Controleer de uiteindelijke loginpagina.</strong> Verkorte links en redirects kunnen de bestemming veranderen. Geef nooit zomaar een MFA-code of goedkeuring door.</li></ol>
+<p>Een hovercontrole is een goede eerste controle, maar geen garantie. Een link kan eerst naar een legitieme redirectdienst gaan en pas daarna elders eindigen. Bij trackinglinks en verkorte links blijft het uiteindelijke doel onduidelijk. Een QR-code verbergt het adres tot je scanner de inhoud toont. Bekijk die URL vóór het openen.</p>
+<div class="warning"><strong>Een bekende afzender kan ook misbruikt worden</strong>Een weergavenaam kan vervalst zijn en een echt account kan zijn overgenomen. Ook een onverwachte MFA-push, documentbijlage of verzoek om in de console code te plakken vraagt controle via een onafhankelijk, bekend kanaal.</div>
+<div class="task"><div class="task-head"><div class="task-icon">10A</div><div><h3>Ontleed de oefenmail</h3></div></div><p>Noem drie signalen van misleiding. Wat is het registreerbare bestemmingsdomein? Waarom is de zichtbare linktekst onvoldoende?</p><details><summary>Oplossing en uitleg</summary><div><p>De afzender gebruikt <code>account-hulp.example</code>, het bericht zet druk met een deadline en het vraagt om een wachtwoordbevestiging. Het bestemmingsdomein is ook <code>account-hulp.example</code>. De schoolnaam staat links als subdomein. De weergegeven tekst is vrij gekozen en verschilt hier van het echte <code>href</code>.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="10A">Opdracht 10A voltooid</label></div><div class="task"><div class="task-head"><div class="task-icon">10B</div><div><h3>Een goede redirect of een valse login?</h3></div></div><p>Een schooldienst stuurt je naar een Microsoft-loginpagina. Is elke verandering van domein phishing? Leg uit hoe je controleert zonder blind op de e-maillink te vertrouwen.</p><details><summary>Oplossing en uitleg</summary><div><p>Nee. Federatieve aanmelding gebruikt vaak een andere identiteitsdienst. Begin bij de bekende schoolapp of bladwijzer, controleer de volledige uiteindelijke hostname en vergelijk het gedrag met de afgesproken schoollogin. Een Microsoft-logo of het woord Microsoft ergens in een URL bewijst niets.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="10B">Opdracht 10B voltooid</label></div></section><section class="lesson" id="scripts" aria-labelledby="scripts-title"><span class="lesson-number">Les 11</span><h2 id="scripts-title">Tampermonkey en scripts draaien op jouw toestel.</h2><p class="lead">Een userscript past een webpagina aan of automatiseert acties. Dat kan nuttig zijn, maar het script krijgt toegang tot de pagina’s waarop het mag draaien.</p>
+<h3>Waar kun je scripts tegenkomen?</h3><p>Tampermonkey beheert userscripts. Browserextensies kunnen meer functies en rechten hebben. Bookmarklets voeren JavaScript uit via een bladwijzer. Code in de ontwikkelaarsconsole draait binnen de geselecteerde paginacontext. PowerShell-, batch- of shellscripts werken op het besturingssysteem en hebben andere mogelijkheden.</p>
+<div class="danger"><strong>HTTPS stopt een schadelijk userscript niet</strong>De browser heeft de pagina al ontsleuteld. Een script met toegang tot de pagina kan zichtbare persoonsgegevens lezen, formulierwaarden bekijken, knoppen wijzigen of acties binnen je ingelogde sessie uitvoeren. Extra mogelijkheden hangen af van de extensie, toegekende rechten en browserbeveiliging.</div>
+<h3>Lees het userscript-headerblok</h3>
+<div class="terminal"><div class="terminal-title">Een bewust beperkt voorbeeld om te lezen</div><button class="copy-button" type="button">Kopieer</button><pre><code>// ==UserScript==
+// @name         Lesmarkering
+// @match        https://les.school.example/*
+// @grant        none
+// ==/UserScript==
+
+document.querySelectorAll(&quot;h2&quot;).forEach(function (titel) {
+  titel.style.backgroundColor = &quot;#fff1bc&quot;;
+});</code></pre></div>
+<div class="table-wrap"><table><tr><th>Regel</th><th>Wat controleer je?</th></tr><tr><td><code>@match</code> / <code>@include</code></td><td>Op welke adressen draait het script? Een patroon voor vrijwel alle websites geeft een veel groter bereik.</td></tr><tr><td><code>@grant</code></td><td>Welke extra userscript-API’s worden gevraagd? <code>none</code> betekent geen zulke extra grants, niet “geen toegang tot de pagina”.</td></tr><tr><td><code>@connect</code></td><td>Welke bestemmingen zijn toegestaan voor bepaalde geprivilegieerde netwerkfuncties? Controleer bijvoorbeeld externe dataverzameling.</td></tr><tr><td><code>@require</code></td><td>Welke extra code wordt geladen? Alleen het zichtbare hoofdscript lezen is dan onvoldoende.</td></tr><tr><td><code>@updateURL</code> / <code>@downloadURL</code></td><td>Waar komen latere versies vandaan? Een update kan de werking veranderen.</td></tr></table></div>
+<div class="lab"><h3>Een pagina kan lokaal gewijzigd worden</h3><p>Bekijk hoe een script alleen de weergave van een fictieve pagina aanpast. Er is geen koppeling met Smartschool en er wordt niets opgeslagen op een server.</p><div class="demo-page"><h4>Fictieve resultatenpagina</h4><div class="demo-value">Weergegeven resultaat: <span id="demoGrade">6/10</span></div><p id="scriptExplanation">Originele weergave van de demonstratie.</p></div><div class="controls"><button class="button" id="scriptChange" type="button">Pas de weergave lokaal aan</button><button class="button" id="scriptReset" type="button">Herstel</button></div></div>
+<p>Een gewijzigde weergave is geen gewijzigd serverresultaat. Daarom is een screenshot geen sluitend bewijs van een cijfer of betaling. Een script kan echter méér doen dan tonen als het requests of acties in jouw sessie uitvoert.</p>
+<h3>Self-XSS: jij voert de aanval zelf uit</h3><p>“Plak dit in F12 om gratis credits te krijgen” is een bekende vorm van self-XSS: iemand verleidt je om schadelijke code zelf uit te voeren. Een consolewaarschuwing omzeilen op verzoek van zo’n bericht vergroot het probleem. Bij een les lees je eerst de volledige code en voer je uitsluitend de afgesproken, begrepen oefening uit.</p>
+<p>Een <code>HttpOnly</code>-cookie is niet rechtstreeks via gewone pagina-JavaScript leesbaar. Toch kan schadelijke code soms acties uitvoeren met je bestaande sessie. “Het kan mijn cookie niet lezen” betekent dus niet dat je account veilig is. CORS is evenmin een algemene beveiliging tegen kwaadaardige code op een toegestane pagina of tegen alle extensiefuncties.</p>
+<div class="task"><div class="task-head"><div class="task-icon">11A</div><div><h3>Beoordeel rechten en bereik</h3></div></div><p>Een script voor “donkere modus” gebruikt <code>@match *://*/*</code>, <code>@grant GM_xmlhttpRequest</code>, <code>@connect *</code> en een onbekende <code>@require</code>-URL. Waarom vraagt dit nader onderzoek?</p><details><summary>Oplossing en uitleg</summary><div><p>Het draait op veel websites, krijgt een extra netwerkfunctie, vraagt een breed bestemmingsbereik en laadt code die je nog niet hebt gelezen. Dat bewijst geen malware, maar is een groot bereik voor een eenvoudige visuele aanpassing. Controleer bron, volledige code, noodzaak en updates vóór installatie.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="11A">Opdracht 11A voltooid</label></div><div class="task"><div class="task-head"><div class="task-icon">11B</div><div><h3>Weergave tegenover werkelijkheid</h3></div></div><p>Gebruik de lokale demonstratie. Wat verandert er? Wat blijft gelijk? Waarom kan HTTPS dit niet verhinderen?</p><details><summary>Oplossing en uitleg</summary><div><p>Alleen de tekst in de lokale pagina verandert. Er is geen serverdatabase die wordt aangepast. HTTPS beschermt de gegevens onderweg; het bepaalt niet welke code de browser na ontvangst uitvoert en welke tekst die code toont.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="11B">Opdracht 11B voltooid</label></div></section><section class="lesson" id="toepassen" aria-labelledby="toepassen-title"><span class="lesson-number">Les 12</span><h2 id="toepassen-title">Onderzoek per laag en reageer doelgericht.</h2><p class="lead">“Internet werkt niet” kan een probleem met naamomzetting, verbinding, certificaat of toepassing zijn. Test die lagen afzonderlijk.</p>
+<div class="terminal"><div class="terminal-title">Windows PowerShell: leesgerichte controles</div><button class="copy-button" type="button">Kopieer</button><pre><code>ipconfig /all
+nslookup www.sfevergem.be
+Test-NetConnection www.sfevergem.be -Port 443
+Get-Content &quot;$env:SystemRoot\System32\drivers\etc\hosts&quot;</code></pre></div>
+<div class="table-wrap"><table><tr><th>Waarneming</th><th>Wat weet je?</th><th>Wat weet je nog niet?</th></tr><tr><td>DNS geeft een adres</td><td>Die DNS-vraag kreeg een antwoord.</td><td>Of de dienst bereikbaar is of de server authentiek is.</td></tr><tr><td><code>TcpTestSucceeded: True</code></td><td>Een TCP-verbinding naar poort 443 lukte.</td><td>Of TLS correct is en de toepassing een goed antwoord geeft.</td></tr><tr><td>Een ping faalt</td><td>Geen geslaagd ICMP-antwoord.</td><td>Of webverkeer werkt; ICMP kan geblokkeerd zijn.</td></tr><tr><td>Een certificaatfout</td><td>De browser kan de TLS-identiteit of geldigheid niet accepteren.</td><td>De oorzaak: klok, configuratie, inspectie of mogelijke aanval.</td></tr><tr><td>Alleen één browser faalt</td><td>Het probleem kan browsergebonden zijn.</td><td>Of extensies, cache, proxy, DNS-instellingen of andere factoren de oorzaak zijn.</td></tr></table></div>
+<p><code>ipconfig /all</code> toont lokale netwerkgegevens en DNS-instellingen. <code>Test-NetConnection</code> test hier TCP; het is geen volledige HTTPS-test en geen HTTP/3-test. Deel bij een melding vooral de relevante fout en hostname; stuur geen wachtwoorden of sessietokens mee.</p>
+<h3>Als je al iets verdachts hebt gedaan</h3><ol class="steps"><li><strong>Stop de verdachte handeling.</strong> Sluit de pagina; geef geen verdere wachtwoorden of MFA-goedkeuringen. Schakel een verdacht userscript of onbekende extensie uit.</li><li><strong>Meld het bij ICT.</strong> Geef URL, tijdstip, foutmelding en uitgevoerde handelingen door. Bewaar het bericht of een screenshot.</li><li><strong>Beveilig je account via een bekende route.</strong> Als je gegevens hebt ingevuld: gebruik een betrouwbaar toestel, wijzig je wachtwoord en laat sessies, MFA-instellingen en mogelijke toestemmingstoekenningen controleren of intrekken.</li><li><strong>Laat wijzigingen aan het toestel controleren.</strong> Een geïnstalleerd certificaat, uitvoerbaar bestand of script vraagt onderzoek van het toestel. Alleen een wachtwoordwijziging maakt die wijziging niet ongedaan.</li></ol>
+<div class="task"><div class="task-head"><div class="task-icon">12A</div><div><h3>Van naam naar beveiligde verbinding</h3></div></div><p>Voer <code>nslookup</code> en <code>Test-NetConnection ... -Port 443</code> voor de opgegeven schoolsite uit. Noteer per commando wat je wel en niet bewijst. Vergelijk daarna met wat je browser over de verbinding meldt.</p><details><summary>Oplossing en uitleg</summary><div><p>DNS toont de naam-IP-omzetting via de gekozen resolver. De TCP-test toont bereikbaarheid van een TCP-dienst. De browser onderzoekt daarna TLS en de webtoepassing. Eén geslaagde test vervangt de volgende controle niet.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="12A">Opdracht 12A voltooid</label></div><div class="task"><div class="task-head"><div class="task-icon">12B</div><div><h3>Eindopdracht: verklaar het incident</h3></div></div><p>Een leerling verbindt met “School Gratis Wifi”, krijgt een mail met een verkorte link, installeert een “veiligheidscertificaat” en een userscript voor “sneller inloggen”. Daarna ziet hij een vreemd inlogscherm. Schrijf een korte analyse: vier risico’s, de grenzen van HTTPS en VPN, en drie eerste acties.</p><details><summary>Oplossing en uitleg</summary><div><p>Risico’s: een mogelijk valse hotspot, verborgen redirectbestemming, onverwacht rootcertificaat en code in de browser. HTTPS helpt alleen met een correcte vertrouwensketen en beschermt niet tegen code op het eindpunt. Een VPN kan de lokale netwerkroute beschermen, maar herstelt geen verkeerd vertrouwd certificaat, verwijdert geen script en voorkomt geen phishing. Eerste acties: stoppen en verdachte verbinding/code uitschakelen, ICT informeren met gegevens, en eventuele accounttoegang via een betrouwbaar toestel beveiligen. Laat ook certificaten en toestelwijzigingen onderzoeken.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="12B">Opdracht 12B voltooid</label></div></section><section class="lesson" id="spiekbrief" aria-labelledby="spiekbrief-title"><span class="lesson-number">Naslag</span><h2 id="spiekbrief-title">De kern op één blad.</h2><p class="lead">Gebruik deze begrippen om een link, verbinding of foutmelding nauwkeurig te beschrijven.</p>
+<div class="table-wrap"><table><thead><tr><th>Begrip</th><th>Onthouden</th></tr></thead><tbody><tr><td>URL</td><td>Schema + bestemming + optionele poort + pad + query + fragment.</td></tr><tr><td>Hostname</td><td>De bestemmingsnaam in het adres; kan ook een IP-literal zijn.</td></tr><tr><td>Domein / TLD</td><td>Lees de hiërarchie rechts naar links. Registreerbare grens is niet altijd twee labels.</td></tr><tr><td>IP / poort</td><td>Netwerkadres / dienstnummer. Geen bewijs van betrouwbaarheid.</td></tr><tr><td>DNS / hosts</td><td>Gedecentraliseerd namenstelsel / lokale naam-IP-koppeling.</td></tr><tr><td>DDNS</td><td>DNS-record automatisch bijwerken bij veranderend IP.</td></tr><tr><td>HTTPS / TLS</td><td>Beveiligt de verbinding met controle van de TLS-eindpartij.</td></tr><tr><td>MITM</td><td>Een partij op de route misbruikt zijn tussenpositie.</td></tr><tr><td>Firewall</td><td>Filtert verkeer; keurt niet automatisch elke inhoud goed.</td></tr><tr><td>Proxy / VPN</td><td>Tussenserver voor aanvragen / beveiligde tunnel voor geselecteerd verkeer.</td></tr><tr><td>Hover</td><td>Bekijk het doel, controleer daarna eventuele redirects.</td></tr><tr><td>Userscript</td><td>Code met toegang tot de pagina op jouw toestel; controleer bereik, rechten en updates.</td></tr></tbody></table></div>
+<div class="success"><strong>De vaste denkvraag</strong>Welke bestemming vraag ik aan, welke partij vertrouw ik, welk deel is versleuteld en welke code draait op mijn toestel?</div>
+</section><section class="lesson" id="zelftest" aria-labelledby="zelftest-title"><span class="lesson-number">Zelftest</span><h2 id="zelftest-title">Controleer of je het kunt toepassen.</h2><p class="lead">Vijftien vragen. Na controle krijg je per vraag uitleg. Je score wordt niet naar een server verstuurd.</p><form id="quizForm" class="quiz"><fieldset><legend>1. Welke hostname hoort bij https://school.example@hulp.example/login?</legend><label><input type="radio" name="q0" value="0">school.example</label><label><input type="radio" name="q0" value="1">hulp.example</label><label><input type="radio" name="q0" value="2">login</label><p class="quiz-feedback" id="qf0" hidden></p></fieldset><fieldset><legend>2. Wat is het registreerbare domein in login.school.co.uk?</legend><label><input type="radio" name="q1" value="0">co.uk</label><label><input type="radio" name="q1" value="1">login.school</label><label><input type="radio" name="q1" value="2">school.co.uk</label><p class="quiz-feedback" id="qf1" hidden></p></fieldset><fieldset><legend>3. Wat bewijst een correct werkende HTTPS-verbinding?</legend><label><input type="radio" name="q2" value="0">Dat de website eerlijk is</label><label><input type="radio" name="q2" value="1">Dat de verbinding naar de gecontroleerde hostname beveiligd is</label><label><input type="radio" name="q2" value="2">Dat alle extensies veilig zijn</label><p class="quiz-feedback" id="qf2" hidden></p></fieldset><fieldset><legend>4. Een DNS-query slaagt. Wat weet je?</legend><label><input type="radio" name="q3" value="0">Dat er een DNS-antwoord is ontvangen</label><label><input type="radio" name="q3" value="1">Dat poort 443 open is</label><label><input type="radio" name="q3" value="2">Dat de gebruiker is ingelogd</label><p class="quiz-feedback" id="qf3" hidden></p></fieldset><fieldset><legend>5. Welke opdracht bevraagt DNS en gebruikt niet de hostsregels als lokale resolver?</legend><label><input type="radio" name="q4" value="0">Get-Content</label><label><input type="radio" name="q4" value="1">nslookup</label><label><input type="radio" name="q4" value="2">window.print()</label><p class="quiz-feedback" id="qf4" hidden></p></fieldset><fieldset><legend>6. Wat doet DDNS?</legend><label><input type="radio" name="q5" value="0">Het opent beheerpoorten</label><label><input type="radio" name="q5" value="1">Het maakt een VPN-tunnel</label><label><input type="radio" name="q5" value="2">Het houdt een DNS-record bij een veranderend IP</label><p class="quiz-feedback" id="qf5" hidden></p></fieldset><fieldset><legend>7. Wat betekent TcpTestSucceeded: True voor poort 443?</legend><label><input type="radio" name="q6" value="0">Een TCP-verbinding lukte</label><label><input type="radio" name="q6" value="1">Het certificaat is geldig</label><label><input type="radio" name="q6" value="2">De pagina is vrij van malware</label><p class="quiz-feedback" id="qf6" hidden></p></fieldset><fieldset><legend>8. Wat kan een schadelijke hotspot bij correct gecontroleerd HTTPS?</legend><label><input type="radio" name="q7" value="0">Altijd het wachtwoord lezen</label><label><input type="radio" name="q7" value="1">Wel verkeer blokkeren en metadata zien, maar niet zomaar de TLS-inhoud lezen</label><label><input type="radio" name="q7" value="2">De pagina ongemerkt herschrijven</label><p class="quiz-feedback" id="qf7" hidden></p></fieldset><fieldset><legend>9. Waarom is een onverwacht rootcertificaat relevant?</legend><label><input type="radio" name="q8" value="0">Het maakt DNS sneller</label><label><input type="radio" name="q8" value="1">Het kan wijzigen welke certificaatketens het toestel vertrouwt</label><label><input type="radio" name="q8" value="2">Het verandert alleen de schermkleuren</label><p class="quiz-feedback" id="qf8" hidden></p></fieldset><fieldset><legend>10. Welke grens beschermt een VPN-tunnel?</legend><label><input type="radio" name="q9" value="0">Automatisch elke website tegen phishing</label><label><input type="radio" name="q9" value="1">Het traject van toestel tot VPN-eindpunt voor verkeer in de tunnel</label><label><input type="radio" name="q9" value="2">Alleen de e-mailtekst</label><p class="quiz-feedback" id="qf9" hidden></p></fieldset><fieldset><legend>11. Wat zegt @grant none over een userscript?</legend><label><input type="radio" name="q10" value="0">Het kan de pagina niet lezen</label><label><input type="radio" name="q10" value="1">Het is gegarandeerd veilig</label><label><input type="radio" name="q10" value="2">Het vraagt geen extra userscript-API-grants, maar kan nog paginacode uitvoeren</label><p class="quiz-feedback" id="qf10" hidden></p></fieldset><fieldset><legend>12. Waarom is hovercontrole alleen onvoldoende?</legend><label><input type="radio" name="q11" value="0">Omdat links nooit een doel hebben</label><label><input type="radio" name="q11" value="1">Omdat iedere hover een virus installeert</label><label><input type="radio" name="q11" value="2">Omdat redirects later naar een ander doel kunnen leiden</label><p class="quiz-feedback" id="qf11" hidden></p></fieldset><fieldset><legend>13. Welke informatie wordt niet in het HTTP-request meegestuurd?</legend><label><input type="radio" name="q12" value="0">Het fragment na #</label><label><input type="radio" name="q12" value="1">Het pad</label><label><input type="radio" name="q12" value="2">De query na ?</label><p class="quiz-feedback" id="qf12" hidden></p></fieldset><fieldset><legend>14. Waarom kan HTTPS een userscript niet tegenhouden dat een cijfertekst verandert?</legend><label><input type="radio" name="q13" value="0">Omdat TLS alleen op poort 80 werkt</label><label><input type="radio" name="q13" value="1">Omdat die code lokaal op het eindpunt draait</label><label><input type="radio" name="q13" value="2">Omdat HTTPS geen versleuteling gebruikt</label><p class="quiz-feedback" id="qf13" hidden></p></fieldset><fieldset><legend>15. Je hebt je wachtwoord op een verdachte pagina ingevuld. Wat past het best?</legend><label><input type="radio" name="q14" value="0">Alleen de browser sluiten</label><label><input type="radio" name="q14" value="1">Via een betrouwbaar toestel je account beveiligen en ICT sessies/toestel laten controleren</label><label><input type="radio" name="q14" value="2">Dezelfde link opnieuw openen voor een test</label><p class="quiz-feedback" id="qf14" hidden></p></fieldset><div class="controls"><button class="button" type="submit">Controleer antwoorden</button><button class="button" id="quizReset" type="button">Opnieuw proberen</button></div><p id="quizResult" class="quiz-result" role="status"></p></form><details><summary>Antwoorden met uitleg</summary><div><ol><li>hulp.example. Het deel vóór @ is gebruikersinformatie. De hostname is hulp.example.</li><li>school.co.uk. co.uk is de public suffix; school.co.uk ligt direct daaronder.</li><li>Dat de verbinding naar de gecontroleerde hostname beveiligd is. TLS beschermt transport en controleert de serveridentiteit binnen het vertrouwensmodel.</li><li>Dat er een DNS-antwoord is ontvangen. Naamomzetting en een dienstverbinding zijn verschillende stappen.</li><li>nslookup. nslookup vraagt DNS rechtstreeks; normale lokale naamresolutie kan hosts gebruiken.</li><li>Het houdt een DNS-record bij een veranderend IP. DDNS verandert de naam-IP-koppeling, niet de bereikbaarheid of toegangscontrole.</li><li>Een TCP-verbinding lukte. De TCP-test onderzoekt hier geen TLS-certificaat of pagina-inhoud.</li><li>Wel verkeer blokkeren en metadata zien, maar niet zomaar de TLS-inhoud lezen. Een tussenpositie alleen doorbreekt TLS niet.</li><li>Het kan wijzigen welke certificaatketens het toestel vertrouwt. Een vertrouwde inspectie-CA kan bijvoorbeeld certificaten voor een proxy laten accepteren.</li><li>Het traject van toestel tot VPN-eindpunt voor verkeer in de tunnel. Buiten de tunnel blijft HTTPS nodig voor de webverbinding.</li><li>Het vraagt geen extra userscript-API-grants, maar kan nog paginacode uitvoeren. Geen extra grants is niet hetzelfde als geen invloed op de pagina.</li><li>Omdat redirects later naar een ander doel kunnen leiden. Controleer ook de uiteindelijke hostname vóór je gegevens invoert.</li><li>Het fragment na #. Het fragment blijft in de browser; pagina-JavaScript kan het wel lezen.</li><li>Omdat die code lokaal op het eindpunt draait. De browser heeft de inhoud ontvangen en ontsleuteld; lokale code kan de weergave wijzigen.</li><li>Via een betrouwbaar toestel je account beveiligen en ICT sessies/toestel laten controleren. Een aanvaller kan meer hebben dan een wachtwoord, zoals een sessie of toegewezen toestemming.</li></ol></div></details></section><section class="lesson" id="bronnen" aria-labelledby="bronnen-title"><span class="lesson-number">Bronnen</span><h2 id="bronnen-title">Technische documentatie.</h2><p class="lead">De les legt de concepten vereenvoudigd uit. Voor implementatiedetails gebruik je de documentatie van browser, besturingssysteem en dienst.</p><ul class="source-list"><li><a href="https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Authority" target="_blank" rel="noopener noreferrer">MDN: URL-structuur en authority</a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/API/URL/hostname" target="_blank" rel="noopener noreferrer">MDN: hostname en internationale namen</a></li><li><a href="https://publicsuffix.org/learn/" target="_blank" rel="noopener noreferrer">Public Suffix List: domeingrenzen</a></li><li><a href="https://www.cloudflare.com/learning/dns/what-is-dns/" target="_blank" rel="noopener noreferrer">Cloudflare: DNS</a></li><li><a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/networking/troubleshoot-dns-client-resolution-issues" target="_blank" rel="noopener noreferrer">Microsoft: Windows-naamresolutie en hosts</a></li><li><a href="https://support.microsoft.com/en-us/windows/experience/how-to-reset-the-hosts-file-back-to-the-default" target="_blank" rel="noopener noreferrer">Microsoft: formaat van het hostsbestand</a></li><li><a href="https://www.cloudflare.com/learning/dns/glossary/dynamic-dns/" target="_blank" rel="noopener noreferrer">Cloudflare: Dynamic DNS</a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Transport_Layer_Security" target="_blank" rel="noopener noreferrer">MDN: TLS en certificaatcontrole</a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/TLS" target="_blank" rel="noopener noreferrer">MDN: TLS-configuratie en HSTS</a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/MITM" target="_blank" rel="noopener noreferrer">MDN: MITM</a></li><li><a href="https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/" target="_blank" rel="noopener noreferrer">Cloudflare: proxy en reverse proxy</a></li><li><a href="https://www.cloudflare.com/learning/access-management/what-is-a-vpn/" target="_blank" rel="noopener noreferrer">Cloudflare: VPN</a></li><li><a href="https://www.tampermonkey.net/documentation.php?locale=en" target="_blank" rel="noopener noreferrer">Tampermonkey: userscripts en rechten</a></li><li><a href="https://developer.chrome.com/blog/self-xss" target="_blank" rel="noopener noreferrer">Chrome Developers: self-XSS</a></li><li><a href="https://learn.microsoft.com/powershell/module/nettcpip/test-netconnection" target="_blank" rel="noopener noreferrer">Microsoft: Test-NetConnection</a></li><li><a href="https://learn.microsoft.com/windows-server/administration/windows-commands/nslookup" target="_blank" rel="noopener noreferrer">Microsoft: nslookup</a></li></ul><p>Samengesteld op 4 oktober 2026. IP-adressen uit 192.0.2.0/24, 198.51.100.0/24 en 2001:db8::/32 worden alleen als documentatievoorbeelden gebruikt. Namen onder .example zijn fictief.</p></section><p class="footer">Veilig internet · ICT-basis · voortgang alleen in deze browser</p></main><script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const checks=[...document.querySelectorAll('.progress-check')];const storageKey='sfe-veilig-internet-voortgang-v1';
+function progress(){const n=checks.filter(c=>c.checked).length;$('progressText').textContent=n+'/'+checks.length;$('progressBar').style.width=(100*n/checks.length)+'%';}
+let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')||{};}catch(e){}
+checks.forEach(c=>{c.checked=!!saved[c.dataset.id];c.addEventListener('change',()=>{const state={};checks.forEach(c=>state[c.dataset.id]=c.checked);try{localStorage.setItem(storageKey,JSON.stringify(state));}catch(e){}progress();});});progress();
+$('printBtn').addEventListener('click',()=>window.print());
+const openDetails=new Map();window.addEventListener('beforeprint',()=>{document.querySelectorAll('details').forEach(d=>{openDetails.set(d,d.open);d.open=true;});});window.addEventListener('afterprint',()=>{openDetails.forEach((opened,d)=>d.open=opened);openDetails.clear();});
+function fallbackCopy(text){const a=document.createElement('textarea');a.value=text;document.body.append(a);a.select();let ok=false;try{ok=document.execCommand('copy');}catch(e){}a.remove();return ok;}
+document.querySelectorAll('.copy-button').forEach(b=>b.addEventListener('click',async()=>{const code=b.parentElement.querySelector('code').textContent;let ok=false;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(code);ok=true;}else ok=fallbackCopy(code);}catch(e){ok=fallbackCopy(code);}b.textContent=ok?'Gekopieerd':'Selecteer handmatig';setTimeout(()=>b.textContent='Kopieer',1400);}));
+function registrable(host){const h=host.toLowerCase().replace(/\.$/,'');if(h.startsWith('[')||/^\d+\.\d+\.\d+\.\d+$/.test(h)||h==='localhost')return 'Geen domein: IP-literal of lokale naam';const suffixes=['co.uk','org.uk','ac.uk','github.io','blogspot.com','example','be','nl','com','net','org','edu','uk','io'];const suffix=suffixes.find(s=>h===s||h.endsWith('.'+s));if(!suffix)return 'Niet bepaald: suffix ontbreekt in de beperkte leslijst';const labels=h.split('.'),n=suffix.split('.').length;if(labels.length<=n)return 'Geen extra registreerbaar label in dit lesmodel';return labels.slice(-(n+1)).join('.');}
+function parseUrl(){const target=$('urlResult');target.replaceChildren();try{const raw=$('urlInput').value.trim();if(!/^https?:\/\//i.test(raw))throw Error('Gebruik een volledig adres dat met http:// of https:// begint.');const u=new URL(raw);const intro=document.createElement('p');intro.textContent='Bestemming: '+u.hostname;intro.className='status-label';target.append(intro);const dl=document.createElement('dl');dl.className='result-grid';const rows=[['Schema',u.protocol],['Hostname',u.hostname],['Domein (lesmodel)',registrable(u.hostname)],['Poort',u.port|| (u.protocol==='https:'?'443 (standaard)':'80 (standaard)')],['Gebruikersinfo',u.username||u.password?'Aanwezig vóór @; niet de hostname':'Geen'],['Pad',u.pathname],['Query',u.search||'Geen'],['Fragment',u.hash||'Geen'],['Origin',u.origin]];rows.forEach(([name,value])=>{const dt=document.createElement('dt');dt.textContent=name;const dd=document.createElement('dd');dd.textContent=value;dl.append(dt,dd);});target.append(dl);const note=document.createElement('p');note.textContent='Een correct ontleed adres is nog geen bewijs van betrouwbaarheid. Controleer de verwachte volledige hostname.';target.append(note);}catch(e){const p=document.createElement('p');p.textContent=e.message;p.style.color='var(--danger)';target.append(p);}}
+$('parseUrl').addEventListener('click',parseUrl);$('urlInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();parseUrl();}});document.querySelectorAll('[data-url]').forEach(b=>b.addEventListener('click',()=>{$('urlInput').value=b.dataset.url;parseUrl();}));parseUrl();
+const dnsSteps=[['Start: de computer heeft het adres nog niet.','dnsClient'],['De computer vraagt de resolver om het A-record van www.school.example.','dnsResolver'],['De resolver vraagt een rootserver waar de nameservers voor de suffix zijn.','dnsAuthority'],['De resolver vraagt de TLD-nameserver waar de autoritatieve nameservers van school.example zijn.','dnsAuthority'],['De autoritatieve nameserver geeft het A-record: 192.0.2.25.','dnsAuthority'],['De resolver bewaart het antwoord volgens de TTL en stuurt het naar de computer.','dnsResolver'],['De computer kan nu een verbinding naar 192.0.2.25 opzetten. TLS-controle komt daarna.','dnsClient']];let dnsStep=0;
+function drawDns(){['dnsClient','dnsResolver','dnsAuthority'].forEach(id=>$(id).classList.toggle('active',id===dnsSteps[dnsStep][1]));$('dnsStatus').textContent=(dnsStep+1)+'/'+dnsSteps.length+' · '+dnsSteps[dnsStep][0];$('dnsNext').disabled=dnsStep===dnsSteps.length-1;$('dnsNext').textContent=dnsStep===dnsSteps.length-1?'Opzoeking voltooid':'Volgende stap';}
+$('dnsNext').addEventListener('click',()=>{dnsStep=Math.min(dnsStep+1,dnsSteps.length-1);drawDns();});$('dnsReset').addEventListener('click',()=>{dnsStep=0;drawDns();});drawDns();
+function hosts(){const on=$('hostsToggle').checked;$('hostsResult').textContent=on?'Windows-resolver (lesmodel): 127.0.0.1 via hosts. DNS wordt hiervoor niet gevraagd. nslookup blijft de DNS-server bevragen en krijgt in deze simulatie 192.0.2.25.':'Windows-resolver (lesmodel): 192.0.2.25 via DNS. Geen actieve hostsregel. nslookup krijgt in deze simulatie hetzelfde DNS-antwoord.';}$('hostsToggle').addEventListener('change',hosts);hosts();
+const mitm={http:['Leesbaar: klas = 5ICW','Bij HTTP kan de partij op de route inhoud lezen en wijzigen. De browser heeft geen TLS-bescherming voor dit verkeer.'],https:['TLS-inhoud niet leesbaar','Met correcte HTTPS-controle ziet deze partij verkeersmetadata, maar kan zij de inhoud niet zomaar lezen of ongemerkt aanpassen.'],root:['Inspectieproxy: klas = 5ICW','Met een vertrouwde inspectie-CA kan de proxy twee TLS-verbindingen maken en tussendoor inhoud lezen. De browser vertrouwt dan deze proxy.'],endpoint:['Route: TLS-inhoud niet leesbaar','Het schadelijke script zit op het eindpunt: in de browser. Het kan daar pagina-inhoud lezen na ontsleuteling. Dit is geen doorbraak van TLS onderweg.']};function drawMitm(){const v=mitm[$('mitmMode').value];$('mitmRead').textContent=v[0];$('mitmResult').textContent=v[1];}$('mitmMode').addEventListener('change',drawMitm);drawMitm();
+function reveal(){$('mailTarget').textContent='Werkelijk doel: '+$('mailLink').getAttribute('href')+' · Registreerbaar domein: account-hulp.example';}['mouseenter','focus'].forEach(ev=>$('mailLink').addEventListener(ev,reveal));$('mailLink').addEventListener('click',e=>{e.preventDefault();reveal();});$('revealLink').addEventListener('click',reveal);
+$('scriptChange').addEventListener('click',()=>{$('demoGrade').textContent='10/10';$('scriptExplanation').textContent='Alleen de lokale schermtekst is aangepast. Er is geen serverresultaat veranderd.';});$('scriptReset').addEventListener('click',()=>{$('demoGrade').textContent='6/10';$('scriptExplanation').textContent='Originele weergave van de demonstratie.';});
+const quizData=[{"correct": 1, "explanation": "Het deel vóór @ is gebruikersinformatie. De hostname is hulp.example."}, {"correct": 2, "explanation": "co.uk is de public suffix; school.co.uk ligt direct daaronder."}, {"correct": 1, "explanation": "TLS beschermt transport en controleert de serveridentiteit binnen het vertrouwensmodel."}, {"correct": 0, "explanation": "Naamomzetting en een dienstverbinding zijn verschillende stappen."}, {"correct": 1, "explanation": "nslookup vraagt DNS rechtstreeks; normale lokale naamresolutie kan hosts gebruiken."}, {"correct": 2, "explanation": "DDNS verandert de naam-IP-koppeling, niet de bereikbaarheid of toegangscontrole."}, {"correct": 0, "explanation": "De TCP-test onderzoekt hier geen TLS-certificaat of pagina-inhoud."}, {"correct": 1, "explanation": "Een tussenpositie alleen doorbreekt TLS niet."}, {"correct": 1, "explanation": "Een vertrouwde inspectie-CA kan bijvoorbeeld certificaten voor een proxy laten accepteren."}, {"correct": 1, "explanation": "Buiten de tunnel blijft HTTPS nodig voor de webverbinding."}, {"correct": 2, "explanation": "Geen extra grants is niet hetzelfde als geen invloed op de pagina."}, {"correct": 2, "explanation": "Controleer ook de uiteindelijke hostname vóór je gegevens invoert."}, {"correct": 0, "explanation": "Het fragment blijft in de browser; pagina-JavaScript kan het wel lezen."}, {"correct": 1, "explanation": "De browser heeft de inhoud ontvangen en ontsleuteld; lokale code kan de weergave wijzigen."}, {"correct": 1, "explanation": "Een aanvaller kan meer hebben dan een wachtwoord, zoals een sessie of toegewezen toestemming."}];
+$('quizForm').addEventListener('submit',e=>{e.preventDefault();const selected=quizData.map((_,i)=>document.querySelector('input[name="q'+i+'"]:checked'));if(selected.some(s=>!s)){$('quizResult').textContent='Beantwoord eerst alle '+quizData.length+' vragen.';return;}let score=0;quizData.forEach((q,i)=>{const correct=Number(selected[i].value)===q.correct;if(correct)score++;const f=$('qf'+i);f.hidden=false;f.textContent=(correct?'Juist. ':'Nog niet juist. ')+q.explanation;f.style.color=correct?'var(--success)':'var(--danger)';document.querySelectorAll('input[name="q'+i+'"]').forEach(inp=>{inp.closest('label').classList.toggle('correct',Number(inp.value)===q.correct);inp.closest('label').classList.toggle('wrong',inp.checked&&!correct);});});$('quizResult').textContent=score+'/'+quizData.length+' juist. Lees de uitleg bij je antwoorden.';});
+$('quizReset').addEventListener('click',()=>{$('quizForm').reset();$('quizResult').textContent='';quizData.forEach((_,i)=>{$('qf'+i).hidden=true;});document.querySelectorAll('.quiz label').forEach(l=>l.classList.remove('correct','wrong'));});
+if('IntersectionObserver' in window){const obs=new IntersectionObserver(entries=>{const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);if(!visible.length)return;document.querySelectorAll('.sidebar nav a').forEach(a=>{const active=a.hash==='#'+visible[0].target.id;a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});},{rootMargin:'-5% 0px -60% 0px'});document.querySelectorAll('section.lesson[id]').forEach(s=>obs.observe(s));}
+}());
+</script></body></html>

@@ -1,0 +1,490 @@
+<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Korte les cookies en sessies: browseropslag, sessie-ID, aanmelding, uitloggen en beveiliging."><title>Cookies en sessies | ICT-basis</title><style>
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0d47a1;
+      --primary-soft: #e8f1fb;
+      --accent: #ffb300;
+      --ink: #17212b;
+      --muted: #5f6b76;
+      --line: #d9e0e7;
+      --surface: #ffffff;
+      --background: #f4f7fa;
+      --success: #18794e;
+      --success-soft: #e8f7ef;
+      --warning: #9a5b00;
+      --warning-soft: #fff5dc;
+      --danger: #b42318;
+      --danger-soft: #ffebe9;
+      --code: #102235;
+      --shadow: 0 4px 18px rgba(23, 33, 43, .09);
+      --radius: 14px;
+      --nav-width: 270px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--background);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.58;
+    }
+
+    button, input { font: inherit; }
+    a { color: var(--primary); }
+    code, kbd, pre { font-family: "Cascadia Code", Consolas, monospace; }
+    code {
+      padding: .08rem .32rem;
+      border-radius: 5px;
+      color: #0b4d86;
+      background: #edf3f8;
+    }
+    kbd {
+      display: inline-block;
+      min-width: 1.8em;
+      margin: 0 .08em;
+      padding: .08em .42em;
+      border: 1px solid #aeb8c2;
+      border-bottom-width: 3px;
+      border-radius: 5px;
+      color: #253341;
+      background: #fff;
+      font-size: .9em;
+      text-align: center;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: -60px;
+      left: 16px;
+      padding: 10px 14px;
+      color: #fff;
+      background: var(--primary-dark);
+      border-radius: 0 0 8px 8px;
+    }
+    .skip-link:focus { top: 0; }
+
+    .sidebar {
+      position: fixed;
+      z-index: 20;
+      inset: 0 auto 0 0;
+      width: var(--nav-width);
+      padding: 24px 18px;
+      overflow-y: auto;
+      color: #fff;
+      background: linear-gradient(175deg, #0d47a1 0%, #12324f 100%);
+    }
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .brand-mark {
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--primary-dark);
+      background: #fff;
+      font-weight: 900;
+    }
+    .brand strong, .brand small { display: block; }
+    .brand small { color: #cfe1f5; }
+    .sidebar nav a {
+      display: block;
+      margin: 3px 0;
+      padding: 9px 11px;
+      border-radius: 8px;
+      color: #e5f0fc;
+      text-decoration: none;
+      font-size: .94rem;
+    }
+    .sidebar nav a:hover,
+    .sidebar nav a:focus {
+      color: #fff;
+      background: rgba(255, 255, 255, .12);
+      outline: none;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      color: #d7e8f8;
+      font-size: .82rem;
+    }
+    .progress-track {
+      height: 7px;
+      margin-top: 6px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .18);
+    }
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: var(--accent);
+      transition: width .25s ease;
+    }
+
+    main {
+      width: min(1100px, calc(100% - var(--nav-width)));
+      margin-left: var(--nav-width);
+      padding: 32px clamp(20px, 4vw, 62px) 80px;
+    }
+    .hero {
+      position: relative;
+      min-height: 390px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 26px;
+      padding: clamp(32px, 6vw, 72px);
+      overflow: hidden;
+      border-radius: 22px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(255, 179, 0, .95) 0 7%, transparent 7.3%),
+        radial-gradient(circle at 92% 62%, rgba(255, 255, 255, .12) 0 18%, transparent 18.3%),
+        linear-gradient(135deg, #1565c0, #0d3d70 72%);
+      box-shadow: var(--shadow);
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #dcecff;
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+    .hero p:not(.eyebrow) {
+      max-width: 700px;
+      margin: 20px 0 0;
+      color: #e7f1fb;
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+    .button {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      min-height: 42px;
+      padding: 9px 15px;
+      border: 0;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button:hover { filter: brightness(.95); }
+    .button.light { color: var(--primary-dark); background: #fff; }
+    .button.ghost { border: 1px solid rgba(255,255,255,.45); background: transparent; }
+
+    .lesson {
+      margin: 26px 0;
+      padding: clamp(22px, 4vw, 42px);
+      scroll-margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 2px 10px rgba(23, 33, 43, .055);
+    }
+    .lesson-number {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    h2 {
+      margin: 10px 0 8px;
+      font-size: clamp(1.65rem, 3vw, 2.3rem);
+      line-height: 1.15;
+      letter-spacing: -.025em;
+    }
+    h3 { margin: 30px 0 8px; font-size: 1.25rem; }
+    h4 { margin: 20px 0 5px; font-size: 1rem; }
+    p { margin: .55rem 0 1rem; }
+    .lead { max-width: 820px; color: var(--muted); font-size: 1.08rem; }
+
+    .goal-grid, .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+    .mini-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfcfd;
+    }
+    .mini-card strong { display: block; margin-bottom: 3px; }
+    .mini-card p { margin: 0; color: var(--muted); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin: 24px 0;
+    }
+    .flow-box {
+      min-height: 104px;
+      display: grid;
+      place-content: center;
+      padding: 14px;
+      border: 2px solid #bdd2e7;
+      border-radius: 12px;
+      background: #f7fbff;
+      text-align: center;
+    }
+    .flow-box strong { display: block; color: var(--primary-dark); }
+    .flow-arrow { color: var(--primary); font-size: 1.7rem; font-weight: 900; }
+
+    .note, .warning, .danger, .success {
+      margin: 18px 0;
+      padding: 14px 16px;
+      border-left: 5px solid var(--primary);
+      border-radius: 8px;
+      background: var(--primary-soft);
+    }
+    .warning { border-color: var(--accent); background: var(--warning-soft); }
+    .danger { border-color: var(--danger); background: var(--danger-soft); }
+    .success { border-color: var(--success); background: var(--success-soft); }
+    .note strong, .warning strong, .danger strong, .success strong { display: block; }
+
+    .table-wrap { margin: 18px 0; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { color: #334251; background: #f1f5f8; }
+    tr:last-child td { border-bottom: 0; }
+
+    .steps { margin: 16px 0; padding: 0; counter-reset: steps; list-style: none; }
+    .steps li {
+      position: relative;
+      min-height: 42px;
+      margin: 10px 0;
+      padding-left: 50px;
+      counter-increment: steps;
+    }
+    .steps li::before {
+      position: absolute;
+      top: -2px;
+      left: 0;
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 800;
+      content: counter(steps);
+    }
+
+    .terminal {
+      position: relative;
+      margin: 16px 0;
+      overflow: hidden;
+      border-radius: 10px;
+      color: #e8eef5;
+      background: var(--code);
+      box-shadow: 0 4px 12px rgba(7, 20, 32, .2);
+    }
+    .terminal-title {
+      padding: 8px 14px;
+      color: #9fb4c8;
+      background: #0b1a29;
+      font-size: .78rem;
+    }
+    pre { margin: 0; padding: 18px 55px 18px 18px; overflow-x: auto; white-space: pre; line-height: 1.52; }
+    pre code { padding: 0; color: inherit; background: transparent; }
+    .copy-button {
+      position: absolute;
+      top: 42px;
+      right: 10px;
+      padding: 6px 9px;
+      border: 1px solid #50677d;
+      border-radius: 6px;
+      color: #dce8f4;
+      background: #1e3850;
+      font-size: .76rem;
+      cursor: pointer;
+    }
+
+    .task {
+      margin: 22px 0;
+      padding: 19px;
+      border: 2px solid #bad0e5;
+      border-radius: 12px;
+      background: #f8fbfe;
+    }
+    .task-head { display: flex; gap: 12px; align-items: flex-start; }
+    .task-icon {
+      display: grid;
+      flex: 0 0 38px;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 9px;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 900;
+    }
+    .task h3, .task h4 { margin-top: 2px; }
+    .done-row {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--success);
+      font-weight: 700;
+    }
+    .done-row input { width: 19px; height: 19px; accent-color: var(--success); }
+
+    details { margin: 14px 0; border: 1px solid var(--line); border-radius: 9px; background: #fff; }
+    summary { padding: 13px 15px; color: var(--primary-dark); font-weight: 750; cursor: pointer; }
+    details > div { padding: 0 15px 15px; }
+    details.teacher { border-left: 5px solid #7b1fa2; }
+    details.teacher summary { color: #6a1b9a; }
+
+    .checklist { padding-left: 0; list-style: none; }
+    .checklist li { margin: 8px 0; padding-left: 28px; }
+    .checklist li::before {
+      float: left;
+      margin-left: -28px;
+      color: var(--success);
+      font-weight: 900;
+      content: "✓";
+    }
+
+    .quiz label {
+      display: block;
+      margin: 7px 0;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    .quiz label:hover { background: #f4f8fb; }
+    .quiz input { margin-right: 8px; accent-color: var(--primary); }
+    .quiz-result { min-height: 1.4em; margin-top: 12px; font-weight: 800; }
+    .footer { padding: 28px 8px 0; color: var(--muted); text-align: center; font-size: .88rem; }
+
+    @media (max-width: 880px) {
+      .sidebar { position: static; width: 100%; max-height: none; padding: 15px 18px; }
+      .sidebar nav { display: flex; gap: 3px; overflow-x: auto; padding-bottom: 5px; }
+      .sidebar nav a { flex: 0 0 auto; white-space: nowrap; }
+      .brand { margin-bottom: 8px; }
+      .progress-label, .progress-track { display: none; }
+      main { width: 100%; margin: 0; padding: 18px 14px 60px; }
+      .hero { min-height: 350px; border-radius: 14px; }
+    }
+    @media (max-width: 680px) {
+      .goal-grid, .card-grid { grid-template-columns: 1fr; }
+      .lesson { padding: 22px 17px; }
+      .flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); text-align: center; }
+      th, td { padding: 9px; }
+      pre { font-size: .82rem; }
+    }
+    @media print {
+      @page { size: A4; margin: 15mm; }
+      body { color: #000; background: #fff; font-size: 10.5pt; }
+      .sidebar, .hero-actions, .copy-button, .done-row, .quiz button, .footer { display: none !important; }
+      main { width: 100%; margin: 0; padding: 0; }
+      .hero { min-height: 0; margin: 0 0 10mm; padding: 14mm; color: #fff; box-shadow: none; }
+      .lesson { margin: 0 0 9mm; padding: 0; border: 0; box-shadow: none; break-before: page; }
+      .lesson:first-of-type { break-before: auto; }
+      .task, .note, .warning, .danger, .success, .terminal, table, details, .flow { break-inside: avoid; }
+      details > div { display: block; }
+      a { color: inherit; text-decoration: none; }
+    }
+  
+
+.hero {min-height:300px}.hero h1{font-size:clamp(2.5rem,5vw,4.2rem)}
+.lab{padding:20px;margin:20px 0;border:1px solid #bad0e5;background:#f8fbfe;border-radius:12px}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}.panels{display:grid;grid-template-columns:1fr 1fr;gap:12px}.panel{padding:16px;background:white;border:1px solid var(--line);border-radius:10px;min-width:0}.panel h4{margin:0 0 8px}.panel code{display:block;overflow-wrap:anywhere}.demo-step{font-weight:800;color:var(--primary-dark)}.demo-message{min-height:4.6em;padding:14px;background:var(--primary-soft);border-radius:8px}.transcript{white-space:pre-wrap;overflow-wrap:anywhere;font: .86rem/1.6 Consolas,monospace;background:#102235;color:#e8eef5;padding:16px;border-radius:8px}.quiz fieldset{border:0;border-bottom:1px solid var(--line);padding:15px 0}.quiz legend{font-weight:750}.quiz-feedback{font-weight:400}.quiz label.correct{background:var(--success-soft);border-color:var(--success)}.quiz label.wrong{background:var(--danger-soft);border-color:var(--danger)}.button:disabled{opacity:.55;cursor:default}button:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #ffb300;outline-offset:3px}.source-list li{margin:8px 0}
+@media(max-width:680px){.panels{grid-template-columns:1fr}.hero{padding:28px 22px}.lab{padding:14px}.demo-message{min-height:0}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+@media print{.controls{display:none}.hero{background:#e8f1fb;color:#000;padding:9mm}.hero p,.eyebrow{color:#333!important}.lesson{break-before:auto;margin-bottom:8mm}.lab,.quiz fieldset{break-inside:avoid}.terminal{background:#eef2f6;color:#000;box-shadow:none}.terminal-title{background:#dfe6ec;color:#333}.transcript{background:#eef2f6;color:#000}.source-list{font-size:9pt}}
+</style></head><body><a class="skip-link" href="#inhoud">Ga naar de les</a><aside class="sidebar" aria-label="Lesnavigatie"><div class="brand"><div class="brand-mark">WEB</div><div><strong>Cookies en sessies</strong><small>ICT-basis · Sint-Franciscus Evergem</small></div></div><nav><a href="#start">Overzicht: Hoe weet een website dat jij het bent?</a><a href="#cookies">Onderdeel 1: Een cookie is een klein stukje browsergeheugen.</a><a href="#sessies">Onderdeel 2: Het sessie-ID is je toegangskaartje.</a><a href="#veilig">Onderdeel 3: Een sessie beschermen vraagt meerdere controles.</a><a href="#onderzoek">Onderdeel 4: Bekijk het in de browser.</a><a href="#zelftest">Zelftest: Begrijp je het verschil?</a><a href="#bronnen">Naslag: Bronnen.</a></nav><div class="progress-label"><span>Mijn oefeningen</span><strong id="progressText">0/4</strong></div><div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div></aside><main id="inhoud"><header class="hero"><p class="eyebrow">Korte les · ongeveer 50 minuten</p><h1>Waarom blijf je<br>ingelogd?</h1><p>Ontdek hoe browser en server je aanmelding onthouden, wat een sessie-ID doet en waarom uitloggen belangrijk is.</p><div class="hero-actions"><a class="button light" href="#cookies">Start de les</a><button class="button ghost" id="printBtn" type="button">Afdrukken / pdf</button></div></header><section class="lesson" id="start" aria-labelledby="start-title"><span class="lesson-number">Overzicht</span><h2 id="start-title">Hoe weet een website dat jij het bent?</h2><p class="lead">Je meldt je één keer aan en opent daarna tien pagina’s zonder opnieuw je wachtwoord in te vullen. Cookies en sessies maken dat mogelijk.</p>
+<div class="card-grid"><div class="mini-card"><strong>Cookie</strong><p>Kleine naam-waardegegevens die de browser bewaart en bij passende aanvragen kan meesturen.</p></div><div class="mini-card"><strong>Sessie</strong><p>Een samenhangende toestand tussen aanvragen, bijvoorbeeld je aanmelding. In deze les bewaart de server de sessiegegevens.</p></div></div>
+<p>Na de les kun je uitleggen waar de cookie en sessie zich bevinden, hoe een sessie-ID werkt en waarom je op een gedeeld toestel bewust uitlogt.</p>
+<details class="teacher"><summary>Docentfiche: één lesuur van ongeveer 50 minuten</summary><div><p>5 minuten introductie, 10 minuten cookies en headers, 15 minuten sessies en de demo, 10 minuten beveiliging en opdrachten, 10 minuten browseronderzoek en zelftest. De fictieve aanmelddemo is volledig lokaal: er is geen echte login en er worden geen echte sessiecookies gezet.</p><p>Kernvraag voor de nabespreking: “Waar zit het bewijs waarmee de browser zichzelf bij de volgende aanvraag herkent, en wie beslist of dat bewijs nog geldig is?”</p></div></details>
+</section><section class="lesson" id="cookies" aria-labelledby="cookies-title"><span class="lesson-number">Onderdeel 1</span><h2 id="cookies-title">Een cookie is een klein stukje browsergeheugen.</h2><p class="lead">HTTP-aanvragen dragen niet vanzelf een gebruikersaanmelding over. Een cookie kan informatie tussen opeenvolgende aanvragen laten terugkomen.</p>
+<p>Een site kan bijvoorbeeld <code>taal=nl</code> bewaren. Bij een volgende passende aanvraag stuurt de browser die waarde mee. Cookies dienen onder meer voor voorkeuren, winkelmandjes, aanmelding en tracking. Een cookie is geen programma en voert zelf geen code uit.</p>
+<div class="terminal"><div class="terminal-title">Antwoord van de server naar de browser</div><pre><code>HTTP/1.1 200 OK
+Set-Cookie: taal=nl; Path=/; Max-Age=2592000</code></pre></div><div class="terminal"><div class="terminal-title">Latere aanvraag van de browser naar de server</div><pre><code>GET /nieuws HTTP/1.1
+Host: school.example
+Cookie: taal=nl</code></pre></div>
+<p><code>Set-Cookie</code> laat de browser een cookie opslaan of wijzigen. <code>Cookie</code> stuurt passende opgeslagen naam-waardeparen terug. Hier betekent <code>Max-Age=2592000</code> maximaal 30 dagen. De browser stuurt die bewaarinstructies niet mee in de <code>Cookie</code>-header.</p>
+<div class="note"><strong>Niet elke website krijgt al je cookies</strong>De browser kijkt onder meer naar hostname/domein, pad, HTTPS, SameSite en privacybeleid. Zonder <code>Domain</code>-attribuut hoort de cookie bij de hostname die hem heeft gezet. Een cookie voor een schoolsite wordt dus niet zomaar naar een los, vreemd domein gestuurd.</div>
+<div class="task"><div class="task-head"><div class="task-icon">1A</div><div><h3>Lees de twee headers</h3></div></div><p>Waar staat <code>taal=nl</code> tussen de aanvragen? Welke header komt van de server en welke van de browser? Is <code>Max-Age</code> onderdeel van de latere <code>Cookie</code>-header?</p><details><summary>Oplossing en uitleg</summary><div><p>De browser bewaart de cookie. <code>Set-Cookie</code> komt in het antwoord van de server; <code>Cookie</code> staat in een aanvraag van de browser. <code>Max-Age</code> is een bewaarinstructie en staat hier niet in de volgende aanvraag.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="1A">Opdracht 1A voltooid</label></div></section><section class="lesson" id="sessies" aria-labelledby="sessies-title"><span class="lesson-number">Onderdeel 2</span><h2 id="sessies-title">Het sessie-ID is je toegangskaartje.</h2><p class="lead">Bij een gewone serversessie bewaart de server de aanmelding. De browser krijgt een onvoorspelbaar ID waarmee hij die sessie bij volgende aanvragen kan terugvinden.</p>
+<ol class="steps"><li>Je meldt je aan. De server controleert je aanmeldgegevens.</li><li>De server maakt een sessie en koppelt een nieuw sessie-ID aan je account.</li><li>De browser bewaart dat ID, meestal in een cookie.</li><li>Bij een volgende aanvraag stuurt de browser het ID mee. De server controleert of de sessie bestaat, geldig is en welke rechten erbij horen.</li></ol>
+<p>Het wachtwoord hoeft niet bij elke pagina-aanvraag meegestuurd te worden. Het sessie-ID is wel gevoelig: wie een geldig ID kan gebruiken, kan soms je sessie overnemen zonder je wachtwoord opnieuw te kennen.</p>
+<div class="lab"><h3>Demo: browser en server houden verschillende dingen bij</h3><p>Doorloop de fictieve stappen. <code>LES-001</code> is een leesbaar oefentoken; een echte sessie-ID moet lang en onvoorspelbaar zijn. De “server” hieronder is alleen een lokaal model.</p><p class="demo-step" id="demoStep"></p><div class="panels"><div class="panel"><h4>Browser</h4><p>Opgeslagen sessiecookie:</p><code id="browserCookie"></code></div><div class="panel"><h4>Servermodel</h4><p>Sessietabel:</p><code id="serverSession"></code></div></div><p id="demoMessage" class="demo-message" aria-live="polite"></p><div id="demoTraffic" class="transcript" aria-label="Fictief verkeer"></div><div class="controls"><button type="button" class="button" id="demoNext">Volgende stap</button><button type="button" class="button" id="demoReset">Opnieuw</button></div><p><small>De kopie van het token is onderdeel van het oefenscenario. Deze demo leest geen cookies van websites en verstuurt geen netwerkverkeer.</small></p></div>
+<div class="warning"><strong>Cookies wissen is niet hetzelfde als een serversessie intrekken</strong>Je browser verliest het opgeslagen ID, maar de server kan de sessie nog geldig vinden. Een eerder gekopieerd token kan dan nog werken. Goed uitloggen maakt bij dit sessiemodel de serversessie ongeldig en verwijdert ook de browsercookie.</div>
+<div class="task"><div class="task-head"><div class="task-icon">2A</div><div><h3>Leg de demo uit</h3></div></div><p>Doorloop alle stappen. Waarom werkt de gekopieerde sessie-ID nog na “cookie wissen”? Waarom werkt hij niet meer nadat de server de sessie intrekt?</p><details><summary>Oplossing en uitleg</summary><div><p>De cookie verdwijnt alleen uit de browser. De sessietabel op de server verandert daardoor niet. Na intrekking keurt de server het oude ID af, ook als iemand nog een kopie heeft.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="2A">Opdracht 2A voltooid</label></div>
+<details><summary>Verdieping: niet elke sessie staat in een sessietabel</summary><div><p>Sommige systemen gebruiken ondertekende tokens, zoals bepaalde JWT-oplossingen. Dan moet intrekking anders geregeld worden, bijvoorbeeld via korte geldigheid en intrekken van vernieuwingstokens. Een cookie is het opslag- en verzendmechanisme; de sessie is de toestand of afspraak erachter. Ze zijn niet hetzelfde begrip.</p></div></details>
+</section><section class="lesson" id="veilig" aria-labelledby="veilig-title"><span class="lesson-number">Onderdeel 3</span><h2 id="veilig-title">Een sessie beschermen vraagt meerdere controles.</h2><p class="lead">HTTPS beschermt het token onderweg. Cookie-instellingen en servercontroles beperken andere risico’s.</p>
+<div class="terminal"><div class="terminal-title">Fictief voorbeeld van een sessiecookie</div><pre><code>Set-Cookie: session=LES-001; Path=/; Secure; HttpOnly; SameSite=Lax</code></pre></div>
+<div class="table-wrap"><table><thead><tr><th>Instelling</th><th>Betekenis</th></tr></thead><tbody><tr><td><code>Secure</code></td><td>De browser verstuurt de cookie alleen over een beveiligde verbinding, doorgaans HTTPS.</td></tr><tr><td><code>HttpOnly</code></td><td>Gewone pagina-JavaScript kan de cookie niet rechtstreeks lezen via <code>document.cookie</code>. De browser kan hem wel bij requests meesturen.</td></tr><tr><td><code>SameSite</code></td><td>Beperkt meesturen bij verzoeken tussen sites. <code>Lax</code> laat onder meer bepaalde navigaties naar de site toe; het is geen volledige bescherming tegen alle aanvallen.</td></tr></tbody></table></div>
+<p>Een schadelijk script kan soms acties in jouw ingelogde pagina uitvoeren, ook zonder de HttpOnly-cookie te lezen. De browser voegt de cookie dan bij passende aanvragen toe. Daarom beschermt één instelling niet tegen elk misbruik.</p>
+<h3>Wanneer eindigt je aanmelding?</h3><div class="table-wrap"><table><tr><th>Handeling of grens</th><th>Wat gebeurt er?</th></tr><tr><td>Tabblad sluiten</td><td>Trekt een serversessie niet automatisch in.</td></tr><tr><td>Cookie zonder Expires/Max-Age</td><td>Een sessiecookie: de browser bepaalt het einde van zijn browsersessie. Sessieherstel kan de cookie behouden.</td></tr><tr><td>Cookie met Expires/Max-Age</td><td>Kan langer bewaard blijven. Dat bewijst niet dat de serversessie zolang geldig blijft.</td></tr><tr><td>Servertimeout</td><td>De server kan de sessie laten verlopen na inactiviteit of een maximale duur.</td></tr><tr><td>Uitloggen</td><td>Hoort de sessie of bijbehorende aanmeldtokens volgens het gebruikte model ongeldig te maken.</td></tr></table></div>
+<div class="success"><strong>Op een gedeelde computer</strong>Log bewust uit en sluit daarna de browser. Gebruik geen “aangemeld blijven” op een gedeeld account of toestel. Bij vermoeden van sessiediefstal laat je actieve sessies intrekken; alleen een wachtwoord veranderen beëindigt niet bij elke dienst alle bestaande sessies.</div>
+<div class="task"><div class="task-head"><div class="task-icon">3A</div><div><h3>Is het account veilig na tabblad sluiten?</h3></div></div><p>Een leerling sluit het tabblad van een ingelogde schoolapp en laat de computer aan de volgende leerling. Waarom is dit geen betrouwbare afmelding? Helpt MFA tegen elk gestolen sessie-ID?</p><details><summary>Oplossing en uitleg</summary><div><p>De cookie en serversessie kunnen blijven bestaan. De volgende gebruiker kan de site opnieuw openen. MFA beschermt de aanmelding, maar een geldig sessie-ID kan de al voltooide aanmelding vertegenwoordigen. Intrekking en servercontroles blijven nodig.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="3A">Opdracht 3A voltooid</label></div></section><section class="lesson" id="onderzoek" aria-labelledby="onderzoek-title"><span class="lesson-number">Onderdeel 4</span><h2 id="onderzoek-title">Bekijk het in de browser.</h2><p class="lead">Gebruik een gewone website of eigen testapp. Je onderzoekt namen en instellingen; je hoeft geen cookie-inhoud te delen.</p>
+<ol class="steps"><li>Open de ontwikkelaarstools met <kbd>F12</kbd>. Kies in Chrome/Edge <strong>Application → Storage → Cookies</strong>; in Firefox <strong>Storage → Cookies</strong>.</li><li>Zoek een cookie en noteer alleen naam, domein, vervaltijd en de vlaggen Secure, HttpOnly en SameSite. De naam alleen bewijst niet dat het een sessiecookie voor aanmelding is.</li><li>Open <strong>Network</strong> en herlaad de pagina. Bekijk bij een passend request de <code>Cookie</code>-header en bij een antwoord eventueel <code>Set-Cookie</code>. Niet elk antwoord zet een cookie.</li><li>Als je een eigen testaccount gebruikt, log uit en vraag daarna opnieuw een beschermde pagina op. Moet je weer aanmelden? Dat is zinvoller dan alleen kijken of een cookie verdwenen is.</li></ol>
+<div class="danger"><strong>Een sessietoken behandel je als een geheim</strong>Deel geen cookie-waarden, volledige requestheaders of ongefilterde netwerkexports. Een HAR-bestand of screenshot kan tokens bevatten.</div>
+<div class="task"><div class="task-head"><div class="task-icon">4A</div><div><h3>Cookie, sessie of opslag?</h3></div></div><p>Vergelijk drie dingen: een cookie <code>taal=nl</code>, een cookie met een sessie-ID en de oefenvoortgang die deze les in <code>localStorage</code> bewaart. Welke wordt automatisch met passende requests meegestuurd? Welke verwijst naar de serversessie?</p><details><summary>Oplossing en uitleg</summary><div><p>Cookies kunnen automatisch bij passende requests meegaan. De sessie-ID-cookie verwijst in ons model naar de serversessie. <code>taal=nl</code> is een voorkeur. <code>localStorage</code> wordt niet automatisch als HTTP-header meegestuurd; paginacode kan die gegevens wel uitlezen en versturen.</p></div></details><label class="done-row"><input class="progress-check" type="checkbox" data-id="4A">Opdracht 4A voltooid</label></div>
+<div class="note"><strong>First-party, third-party en “cookies accepteren”</strong>Een first-partycookie hoort bij de site die je bezoekt; een third-partycookie wordt gebruikt in een context van een andere site, bijvoorbeeld een ingesloten dienst. Dat is een onderscheid in context, niet automatisch in goed of slecht. Een cookiebanner gaat over gebruik en toestemming. Een noodzakelijke aanmeldcookie is technisch iets anders dan een trackingcookie.</div>
+</section><section class="lesson" id="zelftest" aria-labelledby="zelftest-title"><span class="lesson-number">Zelftest</span><h2 id="zelftest-title">Begrijp je het verschil?</h2><p class="lead">Vijf korte vragen. Je antwoorden blijven lokaal.</p><form id="quizForm" class="quiz"><fieldset><legend>1. Waar bewaart de browser in dit lesmodel zijn sessie-ID?</legend><label><input type="radio" name="q0" value="0">In een cookie</label><label><input type="radio" name="q0" value="1">In de DNS-server</label><label><input type="radio" name="q0" value="2">In het wachtwoord van de gebruiker</label><p id="qf0" class="quiz-feedback" hidden></p></fieldset><fieldset><legend>2. Wat doet de server met een ontvangen sessie-ID?</legend><label><input type="radio" name="q1" value="0">Altijd vertrouwen omdat het uit een cookie komt</label><label><input type="radio" name="q1" value="1">Controleren of de sessie geldig is en welke rechten erbij horen</label><label><input type="radio" name="q1" value="2">Het als nieuw wachtwoord bewaren</label><p id="qf1" class="quiz-feedback" hidden></p></fieldset><fieldset><legend>3. Wat bewijst cookies wissen?</legend><label><input type="radio" name="q2" value="0">Dat alle serversessies zijn ingetrokken</label><label><input type="radio" name="q2" value="1">Dat elk gestolen token ongeldig is</label><label><input type="radio" name="q2" value="2">Dat deze browser de betreffende cookie niet meer heeft</label><p id="qf2" class="quiz-feedback" hidden></p></fieldset><fieldset><legend>4. Wat doet HttpOnly?</legend><label><input type="radio" name="q3" value="0">Voorkomt alle scripts in de pagina</label><label><input type="radio" name="q3" value="1">Verhindert rechtstreeks lezen via gewone pagina-JavaScript</label><label><input type="radio" name="q3" value="2">Schakelt de cookie uit</label><p id="qf3" class="quiz-feedback" hidden></p></fieldset><fieldset><legend>5. Waarom is een tabblad sluiten geen betrouwbare afmelding?</legend><label><input type="radio" name="q4" value="0">Omdat de server en cookie nog een geldige sessie kunnen hebben</label><label><input type="radio" name="q4" value="1">Omdat elke website je wachtwoord onthoudt</label><label><input type="radio" name="q4" value="2">Omdat HTTPS alleen in nieuwe tabbladen werkt</label><p id="qf4" class="quiz-feedback" hidden></p></fieldset><div class="controls"><button type="submit" class="button">Controleer antwoorden</button><button type="button" class="button" id="quizReset">Opnieuw</button></div><p id="quizResult" role="status" class="quiz-result"></p></form><details><summary>Antwoorden met uitleg</summary><div><ol><li>In een cookie. De cookie bevat het ID. De server bewaart de gekoppelde sessiegegevens.</li><li>Controleren of de sessie geldig is en welke rechten erbij horen. Een cookie is geen bewijs zonder controle van het ID en de sessie.</li><li>Dat deze browser de betreffende cookie niet meer heeft. Serverintrekking is een aparte handeling. Een kopie kan nog geldig zijn.</li><li>Verhindert rechtstreeks lezen via gewone pagina-JavaScript. De browser kan de cookie nog bij passende requests meesturen.</li><li>Omdat de server en cookie nog een geldige sessie kunnen hebben. Sluiten van de weergave beëindigt de aanmelding niet automatisch.</li></ol></div></details><div class="success"><strong>Onthouden</strong>De cookie zit in de browser. In ons sessiemodel bewaart de server de aanmelding. Het sessie-ID verbindt die twee. De server beslist of het ID nog toegang geeft.</div></section><section class="lesson" id="bronnen" aria-labelledby="bronnen-title"><span class="lesson-number">Naslag</span><h2 id="bronnen-title">Bronnen.</h2><p class="lead">Voor technische details over browsergedrag en sessiebeveiliging:</p><ul class="source-list"><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies" target="_blank" rel="noopener noreferrer">MDN: cookies</a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cookie" target="_blank" rel="noopener noreferrer">MDN: Cookie-header</a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie" target="_blank" rel="noopener noreferrer">MDN: Set-Cookie en attributen</a></li><li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP: sessiebeveiliging</a></li></ul><p>Samengesteld op 4 oktober 2026. De les gebruikt een vereenvoudigd serversessiemodel. <code>school.example</code> en <code>LES-001</code> zijn fictieve oefengegevens.</p></section><p class="footer">Cookies en sessies · korte les · voortgang alleen in deze browser</p></main><script>
+(function(){'use strict';const $=id=>document.getElementById(id);
+const checks=[...document.querySelectorAll('.progress-check')],storageKey='sfe-cookies-sessies-voortgang-v1';let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')||{};}catch(e){}
+function progress(){const n=checks.filter(c=>c.checked).length;$('progressText').textContent=n+'/'+checks.length;$('progressBar').style.width=(100*n/checks.length)+'%';}
+checks.forEach(c=>{c.checked=!!saved[c.dataset.id];c.addEventListener('change',()=>{const s={};checks.forEach(c=>s[c.dataset.id]=c.checked);try{localStorage.setItem(storageKey,JSON.stringify(s));}catch(e){}progress();});});progress();
+$('printBtn').addEventListener('click',()=>window.print());const printed=new Map();window.addEventListener('beforeprint',()=>{document.querySelectorAll('details').forEach(d=>{printed.set(d,d.open);d.open=true;});});window.addEventListener('afterprint',()=>{printed.forEach((v,d)=>d.open=v);printed.clear();});
+const stages=[
+{title:'Een beschermde pagina zonder aanmelding',cookie:'Geen',session:'Geen actieve sessie',message:'Zonder aanmelding kent de server geen account bij deze aanvraag. De app vraagt om in te loggen.',traffic:'Browser → server: GET /mijn-rapport\nGeen sessiecookie\nServer → browser: 401 Unauthorized (demo)'},
+{title:'Aanmelden maakt een sessie',cookie:'session=LES-001',session:'LES-001 → leerling Noor → geldig',message:'De server controleert de fictieve aanmelding, maakt een sessie en zet een cookie. Een kopie van het oefentoken blijft in dit scenario beschikbaar.',traffic:'Server → browser:\nSet-Cookie: session=LES-001; Path=/; Secure; HttpOnly; SameSite=Lax'},
+{title:'Een volgende pagina opvragen',cookie:'session=LES-001',session:'LES-001 → leerling Noor → geldig',message:'De browser stuurt het ID mee. De server herkent de geldige sessie en geeft toegang zonder opnieuw het wachtwoord te vragen.',traffic:'Browser → server: GET /mijn-rapport\nCookie: session=LES-001\nServer → browser: 200 OK · rapport van Noor'},
+{title:'Alleen de browsercookie wissen',cookie:'Geen',session:'LES-001 → leerling Noor → nog geldig',message:'Deze browser kan het ID niet meer automatisch meesturen. De server krijgt door het wissen geen verzoek om de sessie in te trekken.',traffic:'Browser: verwijdert cookie\nBrowser → server: GET /mijn-rapport, zonder sessie-ID\nServer → browser: 401 Unauthorized (demo)'},
+{title:'De eerder gekopieerde ID gebruiken',cookie:'Geen',session:'LES-001 → leerling Noor → nog geldig',message:'Een andere client met een kopie van het ID kan in dit model nog toegang krijgen. De server ziet een geldig sessie-ID.',traffic:'Andere client → server: GET /mijn-rapport\nCookie: session=LES-001\nServer → andere client: 200 OK · rapport van Noor'},
+{title:'De sessie op de server intrekken',cookie:'Geen',session:'LES-001 → ingetrokken',message:'De sessie wordt ongeldig gemaakt. Denk aan “actieve sessies intrekken” via accountbeheer. Bij gewoon uitloggen doet de app dit voor de betreffende sessie.',traffic:'Servermodel: trekt LES-001 in\nHet hebben van een kopie geeft daarna geen geldige sessie meer.'},
+{title:'De oude kopie opnieuw aanbieden',cookie:'Geen',session:'LES-001 → ingetrokken',message:'De server weigert de oude ID. Dit is het verschil tussen lokaal wissen en de sessie daadwerkelijk ongeldig maken.',traffic:'Andere client → server: GET /mijn-rapport\nCookie: session=LES-001\nServer → andere client: 401 Unauthorized (demo)'}];
+let index=0;function render(){const s=stages[index];$('demoStep').textContent=(index+1)+'/'+stages.length+' · '+s.title;$('browserCookie').textContent=s.cookie;$('serverSession').textContent=s.session;$('demoMessage').textContent=s.message;$('demoTraffic').textContent=s.traffic;$('demoNext').disabled=index===stages.length-1;$('demoNext').textContent=index===stages.length-1?'Demo voltooid':'Volgende stap';}
+$('demoNext').addEventListener('click',()=>{index=Math.min(index+1,stages.length-1);render();});$('demoReset').addEventListener('click',()=>{index=0;render();});render();
+const questions=[{"correct": 0, "explanation": "De cookie bevat het ID. De server bewaart de gekoppelde sessiegegevens."}, {"correct": 1, "explanation": "Een cookie is geen bewijs zonder controle van het ID en de sessie."}, {"correct": 2, "explanation": "Serverintrekking is een aparte handeling. Een kopie kan nog geldig zijn."}, {"correct": 1, "explanation": "De browser kan de cookie nog bij passende requests meesturen."}, {"correct": 0, "explanation": "Sluiten van de weergave beëindigt de aanmelding niet automatisch."}];
+$('quizForm').addEventListener('submit',e=>{e.preventDefault();const selected=questions.map((_,i)=>document.querySelector('input[name="q'+i+'"]:checked'));if(selected.some(s=>!s)){$('quizResult').textContent='Beantwoord eerst alle vijf vragen.';return;}let score=0;questions.forEach((q,i)=>{const ok=Number(selected[i].value)===q.correct;if(ok)score++;const f=$('qf'+i);f.hidden=false;f.textContent=(ok?'Juist. ':'Nog niet juist. ')+q.explanation;f.style.color=ok?'var(--success)':'var(--danger)';document.querySelectorAll('input[name="q'+i+'"]').forEach(r=>{r.closest('label').classList.toggle('correct',Number(r.value)===q.correct);r.closest('label').classList.toggle('wrong',r.checked&&!ok);});});$('quizResult').textContent=score+'/5 juist. Bekijk de uitleg bij je antwoorden.';});
+$('quizReset').addEventListener('click',()=>{$('quizForm').reset();$('quizResult').textContent='';questions.forEach((_,i)=>$('qf'+i).hidden=true);document.querySelectorAll('.quiz label').forEach(l=>l.classList.remove('correct','wrong'));});
+}());
+</script></body></html>
